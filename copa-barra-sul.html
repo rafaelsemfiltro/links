@@ -104,6 +104,24 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
 .sticker-qty-badge{position:absolute;top:6px;right:6px;background:var(--gold);color:#000;font-weight:bold;font-size:13px;padding:2px 8px;border-radius:12px}
 .sticker-img-label{font-size:12px;font-weight:bold;color:var(--text);padding:6px 8px 2px}
 .sticker-img-gols{font-size:11px;color:var(--gold)}
+
+/* CORREÇÃO DE ERROS */
+.mgr-card-danger{border-color:#4a1000!important}
+.corr-hint{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4}
+.corr-list{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:320px;overflow-y:auto}
+.corr-item{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:9px 10px}
+.corr-item-pun{background:#1a0000;border-color:#4a0000}
+.corr-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.corr-info{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.corr-label{font-size:13px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.corr-date{font-size:10px;color:var(--muted)}
+.corr-gols{font-size:13px;font-weight:bold;flex-shrink:0}
+.corr-gols.plus{color:var(--green)}
+.corr-gols.minus{color:var(--red)}
+.corr-del{background:#3a0000;border:1px solid #7a0000;color:#ff6b6b;width:28px;height:28px;border-radius:6px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:bold}
+.corr-del:active{background:#5a0000}
+.corr-empty{color:var(--muted);font-size:13px;text-align:center;padding:16px;font-style:italic}
+
 /* CARTA PICKER */
 .carta-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;max-height:360px;overflow-y:auto;padding:2px}
 .carta-pick{background:var(--bg2);border:2px solid var(--border);border-radius:10px;padding:6px;text-align:center;cursor:pointer;transition:all .15s;-webkit-tap-highlight-color:transparent}
@@ -519,10 +537,78 @@ function renderManager(){
     `<select id="mp1">${puOpts}</select>`+
     `<button class="btn-d" onclick="aplicarPun()">🚨 Aplicar Punição</button></div>`+
     `<div class="mgr-card"><h3>🏅 Ranking Geral</h3><div id="rankDiv"></div></div>`+
+    `<div class="mgr-card mgr-card-danger"><h3>🗑️ Corrigir Erro</h3>`+
+    `<p class="corr-hint">Selecione o colaborador para ver e remover itens lançados por engano.</p>`+
+    `<select id="mc3" onchange="renderCorrection()">${coOpts}</select>`+
+    `<div id="corrList"></div></div>`+
     `<button class="btn-out" onclick="logout()">Sair do Painel</button>`;
 
   renderRanking();
+  renderCorrection();
   showView('manager');
+}
+
+
+function renderCorrection(){
+  const sel=document.getElementById('mc3');
+  if(!sel) return;
+  const colId=sel.value;
+  const col=getCol(colId);
+  const sd=getSeed(colId);
+  const div=document.getElementById('corrList');
+  if(!div||!col) return;
+
+  // Build combined list: figurinhas + punições, newest first with index
+  const figItems=col.fig.map((f,i)=>{
+    const st=STICKERS.find(x=>x.id===f.sid);
+    return{tipo:'fig',idx:i,label:st?st.nome:'?',gols:st?st.gols:0,dt:f.dt,cor:st?st.cor:'#888',carta:st?st.carta:null};
+  });
+  const punItems=col.pun.map((p,i)=>{
+    const pu=PUNICOES.find(x=>x.id===p.pid);
+    return{tipo:'pun',idx:i,label:pu?pu.desc:'?',gols:pu?pu.gols:0,dt:p.dt,emoji:pu?pu.emoji:'⚠️'};
+  });
+  const all=[...figItems,...punItems].sort((a,b)=>new Date(b.dt)-new Date(a.dt));
+
+  if(!all.length){
+    div.innerHTML='<div class="corr-empty">Nenhum item para este colaborador.</div>';
+    return;
+  }
+  let h='<div class="corr-list">';
+  for(const ev of all){
+    const dateStr=formatDate(ev.dt);
+    if(ev.tipo==='fig'){
+      const gSign='+'+ev.gols;
+      h+=`<div class="corr-item">`;
+      h+=`<div class="corr-dot" style="background:${ev.cor}"></div>`;
+      h+=`<div class="corr-info"><span class="corr-label">📌 ${ev.label}</span><span class="corr-date">${dateStr}</span></div>`;
+      h+=`<span class="corr-gols plus">+${ev.gols}</span>`;
+      h+=`<button class="corr-del" onclick="confirmRemove('fig',${ev.idx},'${colId}','${ev.label}')">✕</button>`;
+      h+=`</div>`;
+    } else {
+      h+=`<div class="corr-item corr-item-pun">`;
+      h+=`<div class="corr-dot" style="background:#c0392b"></div>`;
+      h+=`<div class="corr-info"><span class="corr-label">${ev.emoji} ${ev.label}</span><span class="corr-date">${dateStr}</span></div>`;
+      h+=`<span class="corr-gols minus">${ev.gols}</span>`;
+      h+=`<button class="corr-del" onclick="confirmRemove('pun',${ev.idx},'${colId}','${ev.label}')">✕</button>`;
+      h+=`</div>`;
+    }
+  }
+  h+='</div>';
+  div.innerHTML=h;
+}
+
+function confirmRemove(tipo,idx,colId,label){
+  const sd=getSeed(colId);
+  const msg=`Remover "${label}" do álbum de ${sd?sd.nome:colId}?\n\nEsta ação não pode ser desfeita.`;
+  if(!confirm(msg)) return;
+  const col=getCol(colId);
+  if(!col) return;
+  if(tipo==='fig') col.fig.splice(idx,1);
+  else col.pun.splice(idx,1);
+  save();
+  toast(`🗑️ Item removido do álbum de ${sd?sd.nome:colId}`);
+  renderCorrection();
+  renderRanking();
 }
 
 function renderRanking(){
