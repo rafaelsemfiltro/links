@@ -450,7 +450,7 @@ let curType = 'Júnior';
 
 function initState() {
   try { S = JSON.parse(localStorage.getItem(KEY)); } catch(e) { S = null; }
-  if (!S || !S.vendedores) {
+  if (!S || !S.vendedores || !S.vendedores.length) {
     S = {
       senha: 'gerente123',
       vendedores: [
@@ -579,13 +579,21 @@ function doLogout(){ loggedIn=false; showHome(); toast('Sessão encerrada'); }
 // ═══════════════════════════════════════════════════════════
 function renderHome(){
   const rnk=ranked();
+  const el=document.getElementById('homeMain');
+  if(!el)return;
   let html=`<div style="max-width:1400px;margin:0 auto;padding:30px 20px">
     <div class="home-header">
       <div class="home-title">COPA DAS VENDAS</div>
       <div class="home-sub">2026 ★ Álbum Oficial de Figurinhas ★</div>
     </div>
-    <div class="sec-title">👥 SELECIONE SEU ÁLBUM</div>
-    <div class="players-grid">`;
+    <div class="sec-title">👥 SELECIONE SEU ÁLBUM</div>`;
+
+  if(!rnk.length){
+    html+=`<div style="text-align:center;padding:40px 20px;font-family:'Oswald',sans-serif;color:rgba(255,255,255,.4);font-size:16px;letter-spacing:2px">Nenhum jogador cadastrado.<br><span style="font-size:12px">Acesse o Painel do Gerente para adicionar.</span></div>`;
+    html+=`</div>`;el.innerHTML=html;return;
+  }
+
+  html+=`<div class="players-grid">`;
 
   rnk.forEach((v,i)=>{
     const pts=calcPts(v), figs=v.figurinhas.length, pct=Math.round(figs/SLOTS*100);
@@ -614,7 +622,7 @@ function renderHome(){
   });
 
   html+=`</div></div>`;
-  document.getElementById('homeMain').innerHTML=html;
+  el.innerHTML=html;
 }
 
 // ═══════════════════════════════════════════════════════════
