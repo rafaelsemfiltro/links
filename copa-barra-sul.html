@@ -270,7 +270,12 @@ function goBack(){showView('home');}
 function renderHome(){
   const grid=document.getElementById('grid');
   grid.innerHTML='';
-  for(const sd of SEED){
+  const sorted=[...SEED].sort((a,b)=>{
+    const ga=totalGols(getCol(a.id)||{fig:[],pun:[]});
+    const gb=totalGols(getCol(b.id)||{fig:[],pun:[]});
+    return gb-ga;
+  });
+  for(const sd of sorted){
     const col=getCol(sd.id);
     const gols=col?totalGols(col):0;
     const foto=IMGS[sd.fk]||'';
