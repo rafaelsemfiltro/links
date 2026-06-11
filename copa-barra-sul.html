@@ -324,21 +324,22 @@ async function loadState(){
     const raw=localStorage.getItem(KEY);
     if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.cols)&&s.cols.length){STATE=s;hideLoader();startAutoRefresh();return;}}
   }catch(e){}
-  STATE={cols:SEED.map(s=>({id:s.id,nome:s.nome,fig:[],pun:[]}))};
+  // Always ensure STATE is set
+  STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[]}))};
   hideLoader();
   startAutoRefresh();
-  await save();
+  try{await save();}catch(e){console.warn('Initial save failed:',e);}
 }
 
 async function save(){
-  localStorage.setItem(KEY,JSON.stringify(STATE));
+  try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}
   try{
     await fetch(GIST_URL,{
       method:'PATCH',
       headers:{'Authorization':'token '+GIST_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github+json'},
       body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(STATE)}}})
     });
-  }catch(e){console.warn('Gist save failed:',e);toast('⚠️ Falha na sincronização');}
+  }catch(e){console.warn('Gist save failed:',e);toast('⚠️ Sem conexão — dados salvos localmente');}
 }
 
 async function _refreshFromGist(){
@@ -782,8 +783,11 @@ function renderRankingView(){
 window.addEventListener('load',async()=>{
   const logoEl=document.getElementById('headerLogo');
   if(IMGS.logo){logoEl.src=IMGS.logo;const ll=document.getElementById('loaderLogoImg');if(ll)ll.src=IMGS.logo;}
-
-  await loadState();
+  try{await loadState();}catch(e){
+    console.error('loadState error:',e);
+    if(!STATE) STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[]}))};
+    hideLoader();
+  }
   renderHome();
 });
 
