@@ -301,17 +301,32 @@ function hideLoader(){document.getElementById('loader').style.display='none';}
 
 async function loadState(){
   showLoader('Carregando álbum...');
+  // 1. Try localStorage first — instant, no network needed
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){
+      const s=JSON.parse(raw);
+      if(s&&Array.isArray(s.cols)&&s.cols.length){
+        STATE=s;
+        hideLoader();
+        startAutoRefresh();
+        return;
+      }
+    }
+  }catch(e){}
+  // 2. No local data — fetch from Gist (first-time collaborators)
   try{
     const resp=await fetch(GIST_URL,{headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
     if(resp.ok){
       const data=await resp.json();
       const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
-      if(raw){
+      if(raw&&raw.length>10){
         const s=JSON.parse(raw);
         if(s&&Array.isArray(s.cols)&&s.cols.length){
           const ids=new Set(s.cols.map(c=>c.id));
           for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[]});}
           STATE=s;
+          try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}
           hideLoader();
           startAutoRefresh();
           return;
@@ -319,16 +334,10 @@ async function loadState(){
       }
     }
   }catch(e){console.warn('Gist load failed:',e);}
-  // Fallback localStorage
-  try{
-    const raw=localStorage.getItem(KEY);
-    if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.cols)&&s.cols.length){STATE=s;hideLoader();startAutoRefresh();return;}}
-  }catch(e){}
-  // Always ensure STATE is set
+  // 3. Fallback — fresh start from seed
   STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[]}))};
   hideLoader();
   startAutoRefresh();
-  try{await save();}catch(e){console.warn('Initial save failed:',e);}
 }
 
 async function save(){
@@ -348,10 +357,13 @@ async function _refreshFromGist(){
     if(!resp.ok) return;
     const data=await resp.json();
     const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
-    if(!raw) return;
+    if(!raw||raw.length<=10) return;
     const s=JSON.parse(raw);
-    if(!(s&&Array.isArray(s.cols))) return;
+    if(!(s&&Array.isArray(s.cols)&&s.cols.length)) return;
+    const ids=new Set(s.cols.map(c=>c.id));
+    for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[]});}
     STATE=s;
+    try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}
     if(_curAlbumId&&document.getElementById('albumView').style.display!=='none') openAlbum(_curAlbumId);
     else if(document.getElementById('homeView').style.display!=='none') renderHome();
   }catch(e){}
@@ -784,7 +796,6 @@ window.addEventListener('load',async()=>{
   const logoEl=document.getElementById('headerLogo');
   if(IMGS.logo){logoEl.src=IMGS.logo;const ll=document.getElementById('loaderLogoImg');if(ll)ll.src=IMGS.logo;}
   try{await loadState();}catch(e){
-    console.error('loadState error:',e);
     if(!STATE) STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[]}))};
     hideLoader();
   }
