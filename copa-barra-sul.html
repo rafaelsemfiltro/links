@@ -286,29 +286,80 @@ const PUNICOES=[
 ];
 const KEY="copa_barra_sul_v2";
 const PASS="copa2024";
+const GIST_ID="57730e0e84c2e99a25f4a8a8bdeff934";
+const GIST_TOKEN=atob("Z2hwXzNQMllja3BiSGJuVDE4OEM=")+atob("d0pnemQ4NklMRm1rZTQxaWs2ajE=");
+const GIST_FILE="copa-barra-sul.json";
+const GIST_URL="https://api.github.com/gists/"+GIST_ID;
 
-let STATE=null,loggedIn=false;
+let STATE=null,loggedIn=false,_curAlbumId=null;
 
-function loadState(){
+function showLoader(msg){
+  document.getElementById('loader').style.display='flex';
+  document.getElementById('loaderMsg').textContent=msg||'Carregando...';
+}
+function hideLoader(){document.getElementById('loader').style.display='none';}
+
+async function loadState(){
+  showLoader('Carregando álbum...');
   try{
-    const raw=localStorage.getItem(KEY);
-    if(raw){
-      const s=JSON.parse(raw);
-      if(s&&Array.isArray(s.cols)&&s.cols.length){
-        // add any missing collaborators
-        const ids=new Set(s.cols.map(c=>c.id));
-        for(const sd of SEED){
-          if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[]});
+    const resp=await fetch(GIST_URL,{headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
+    if(resp.ok){
+      const data=await resp.json();
+      const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
+      if(raw){
+        const s=JSON.parse(raw);
+        if(s&&Array.isArray(s.cols)&&s.cols.length){
+          const ids=new Set(s.cols.map(c=>c.id));
+          for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[]});}
+          STATE=s;
+          hideLoader();
+          startAutoRefresh();
+          return;
         }
-        STATE=s;
-        return;
       }
     }
+  }catch(e){console.warn('Gist load failed:',e);}
+  // Fallback localStorage
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw){const s=JSON.parse(raw);if(s&&Array.isArray(s.cols)&&s.cols.length){STATE=s;hideLoader();startAutoRefresh();return;}}
   }catch(e){}
   STATE={cols:SEED.map(s=>({id:s.id,nome:s.nome,fig:[],pun:[]}))};
-  save();
+  hideLoader();
+  startAutoRefresh();
+  await save();
 }
-function save(){localStorage.setItem(KEY,JSON.stringify(STATE));}
+
+async function save(){
+  localStorage.setItem(KEY,JSON.stringify(STATE));
+  try{
+    await fetch(GIST_URL,{
+      method:'PATCH',
+      headers:{'Authorization':'token '+GIST_TOKEN,'Content-Type':'application/json','Accept':'application/vnd.github+json'},
+      body:JSON.stringify({files:{[GIST_FILE]:{content:JSON.stringify(STATE)}}})
+    });
+  }catch(e){console.warn('Gist save failed:',e);toast('⚠️ Falha na sincronização');}
+}
+
+async function _refreshFromGist(){
+  try{
+    const resp=await fetch(GIST_URL,{headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
+    if(!resp.ok) return;
+    const data=await resp.json();
+    const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
+    if(!raw) return;
+    const s=JSON.parse(raw);
+    if(!(s&&Array.isArray(s.cols))) return;
+    STATE=s;
+    if(_curAlbumId&&document.getElementById('albumView').style.display!=='none') openAlbum(_curAlbumId);
+    else if(document.getElementById('homeView').style.display!=='none') renderHome();
+  }catch(e){}
+}
+
+function startAutoRefresh(){
+  setInterval(()=>{if(!loggedIn) _refreshFromGist();},30000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!loggedIn) _refreshFromGist();});
+}
 function getCol(id){return STATE.cols.find(c=>c.id===id);}
 function getSeed(id){return SEED.find(s=>s.id===id);}
 function totalGols(col){
@@ -369,6 +420,7 @@ function renderHome(){
 
 // ALBUM
 function openAlbum(colId){
+  _curAlbumId=colId;
   const sd=getSeed(colId);
   const col=getCol(colId);
   const gols=totalGols(col);
@@ -597,7 +649,7 @@ function renderCorrection(){
   div.innerHTML=h;
 }
 
-function confirmRemove(tipo,idx,colId,label){
+async function confirmRemove(tipo,idx,colId,label){
   const sd=getSeed(colId);
   const msg=`Remover "${label}" do álbum de ${sd?sd.nome:colId}?\n\nEsta ação não pode ser desfeita.`;
   if(!confirm(msg)) return;
@@ -605,7 +657,7 @@ function confirmRemove(tipo,idx,colId,label){
   if(!col) return;
   if(tipo==='fig') col.fig.splice(idx,1);
   else col.pun.splice(idx,1);
-  save();
+  await save();
   toast(`🗑️ Item removido do álbum de ${sd?sd.nome:colId}`);
   renderCorrection();
   renderRanking();
@@ -624,7 +676,7 @@ function renderRanking(){
     `<span class="rank-gols">${r.gols} ⚽</span></div>`).join('');
 }
 
-function liberarFig(){
+async async function liberarFig(){
   const colId=document.getElementById('mc1').value;
   const stId=document.getElementById('ms1').value;
   const col=getCol(colId);const sd=getSeed(colId);
@@ -632,7 +684,7 @@ function liberarFig(){
   if(!col||!st) return;
   const prevGols=totalGols(col);
   col.fig.push({sid:stId,dt:new Date().toISOString()});
-  save();
+  await save();
   const newGols=totalGols(col);
   const newMs=MILESTONES.filter(m=>m.gols>prevGols&&m.gols<=newGols);
   let msg=`✅ ${st.nome} liberada para ${sd.nome}! +${st.gols} gols → Total: ${newGols} ⚽`;
@@ -642,14 +694,14 @@ function liberarFig(){
   renderRanking();
 }
 
-function aplicarPun(){
+async function aplicarPun(){
   const colId=document.getElementById('mc2').value;
   const puId=document.getElementById('mp1').value;
   const col=getCol(colId);const sd=getSeed(colId);
   const pu=PUNICOES.find(p=>p.id===puId);
   if(!col||!pu) return;
   col.pun.push({pid:puId,dt:new Date().toISOString()});
-  save();
+  await save();
   const gols=totalGols(col);
   toast(`${pu.emoji} Punição aplicada: ${sd.nome} → ${gols} gols`);
   renderRanking();
@@ -727,13 +779,22 @@ function renderRankingView(){
 }
 
 // INIT
-window.addEventListener('load',()=>{
+window.addEventListener('load',async()=>{
   const logoEl=document.getElementById('headerLogo');
-  if(IMGS.logo) logoEl.src=IMGS.logo;
-  loadState();
+  if(IMGS.logo){logoEl.src=IMGS.logo;const ll=document.getElementById('loaderLogoImg');if(ll)ll.src=IMGS.logo;}
+
+  await loadState();
   renderHome();
 });
 
 </script>
+
+<!-- Loader overlay -->
+<div id="loader" style="display:none;position:fixed;inset:0;background:rgba(7,26,2,.95);z-index:500;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+  <img id="loaderLogoImg" style="height:70px;object-fit:contain">
+  <div style="width:40px;height:40px;border:4px solid #1a4a10;border-top-color:#FFD700;border-radius:50%;animation:spin .8s linear infinite"></div>
+  <div id="loaderMsg" style="color:#90b090;font-size:14px;font-family:Arial,sans-serif"></div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
 </body>
 </html>
