@@ -26,9 +26,13 @@ header{background:linear-gradient(135deg,#0a2a00 0%,#1a5a00 100%);padding:10px 1
 #grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .player-card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;-webkit-tap-highlight-color:transparent}
 .player-card:active{transform:scale(.97);box-shadow:0 0 0 2px var(--gold)}
-.player-photo{width:100%;aspect-ratio:1/1;background-size:cover;background-position:center top;background-color:#0a2005}
-.player-name{padding:7px 8px 3px;font-weight:bold;font-size:13px;text-align:center;color:var(--text)}
-.player-gols{padding:3px 8px 9px;font-size:13px;color:var(--gold);text-align:center}
+.player-photo{width:100%;aspect-ratio:1/1;background-size:cover;background-position:center top;background-color:#0a2005;position:relative}
+.gols-badge{position:absolute;top:34%;left:50%;transform:translate(-50%,-50%);font-size:clamp(18px,5.5vw,26px);font-weight:900;color:#111;line-height:1;pointer-events:none;text-shadow:0 1px 2px rgba(255,255,255,.4)}
+.player-name{padding:7px 8px 7px;font-weight:bold;font-size:13px;text-align:center;color:var(--text)}
+.collab-picker{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;max-height:160px;overflow-y:auto;padding:4px 0}
+.collab-chip{background:var(--bg2);border:1.5px solid var(--border);border-radius:20px;padding:6px 11px;font-size:12px;color:var(--text);cursor:pointer;white-space:nowrap;transition:all .15s;-webkit-tap-highlight-color:transparent}
+.collab-chip.selected{background:var(--green);border-color:var(--green);color:#fff;font-weight:bold}
+.collab-sel-hint{font-size:11px;color:var(--muted);margin-bottom:8px}
 /* ALBUM */
 #albumView{padding:14px;display:none}
 .album-top{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;margin-bottom:14px}
@@ -423,9 +427,9 @@ function renderHome(){
     const card=document.createElement('div');
     card.className='player-card';
     card.onclick=()=>openAlbum(sd.id);
-    card.innerHTML=`<div class="player-photo" style="background-image:url('${foto}')"></div>`+
-      `<div class="player-name">${sd.nome}</div>`+
-      `<div class="player-gols">${gols} ⚽</div>`;
+    card.innerHTML=`<div class="player-photo" style="background-image:url('${foto}')">`+
+      `<div class="gols-badge">${gols}</div></div>`+
+      `<div class="player-name">${sd.nome}</div>`;
     grid.appendChild(card);
   }
   showView('home');
@@ -568,6 +572,13 @@ function checkPass(){
 function closePw(){document.getElementById('pwModal').classList.remove('open');}
 function logout(){loggedIn=false;renderHome();}
 
+function buildCollabPicker(){
+  return SEED.map(s=>`<div class="collab-chip" data-id="${s.id}" onclick="toggleCollab('${s.id}')">${s.nome}</div>`).join('');
+}
+function toggleCollab(id){
+  const el=document.querySelector(`.collab-chip[data-id="${id}"]`);
+  if(el) el.classList.toggle('selected');
+}
 function buildCartaPicker(){
   return STICKERS.map(st=>{
     const img=st.carta&&IMGS[st.carta]?IMGS[st.carta]:'';
@@ -593,7 +604,8 @@ function renderManager(){
   document.getElementById('managerView').innerHTML=
     `<div class="mgr-head"><h2>🏆 Painel do Gerente</h2><p class="mgr-sub">LEONARDO BORGES</p></div>`+
     `<div class="mgr-card"><h3>📌 Liberar Figurinha</h3>`+
-    `<select id="mc1">${coOpts}</select>`+
+    `<div class="collab-sel-hint">Toque para selecionar (pode marcar mais de um):</div>`+
+    `<div class="collab-picker" id="mc1chips">${buildCollabPicker()}</div>`+
     `<div class="carta-picker" id="cartaPicker">${buildCartaPicker()}</div>`+
     `<input type="hidden" id="ms1" value="master_verao">`+
     `<button class="btn-p" onclick="liberarFig()">✅ Liberar Figurinha</button></div>`+
@@ -690,20 +702,29 @@ function renderRanking(){
 }
 
 async function liberarFig(){
-  const colId=document.getElementById('mc1').value;
+  const selected=[...document.querySelectorAll('.collab-chip.selected')].map(el=>el.dataset.id);
+  if(!selected.length){toast('⚠️ Selecione ao menos um colaborador');return;}
   const stId=document.getElementById('ms1').value;
-  const col=getCol(colId);const sd=getSeed(colId);
   const st=STICKERS.find(s=>s.id===stId);
-  if(!col||!st) return;
-  const prevGols=totalGols(col);
-  col.fig.push({sid:stId,dt:new Date().toISOString()});
+  if(!st) return;
+  const coringas=[];
+  for(const colId of selected){
+    const col=getCol(colId);const sd=getSeed(colId);
+    if(!col||!sd) continue;
+    const prev=totalGols(col);
+    col.fig.push({sid:stId,dt:new Date().toISOString()});
+    const novo=totalGols(col);
+    const ms=MILESTONES.filter(m=>m.gols>prev&&m.gols<=novo);
+    if(ms.length) coringas.push({sd,ms});
+  }
   await save();
-  const newGols=totalGols(col);
-  const newMs=MILESTONES.filter(m=>m.gols>prevGols&&m.gols<=newGols);
-  let msg=`✅ ${st.nome} liberada para ${sd.nome}! +${st.gols} gols → Total: ${newGols} ⚽`;
-  if(newMs.length) msg+='\n\n🎉 CORINGA DESBLOQUEADO!\n'+newMs.map(m=>`${m.emoji} ${m.premio}`).join('\n');
-  toast(msg.split('\n')[0]);
-  if(newMs.length) setTimeout(()=>alert(msg),500);
+  const nomes=selected.map(id=>getSeed(id)?.nome).filter(Boolean).join(', ');
+  toast(`✅ ${st.nome} liberada para ${nomes}!`);
+  if(coringas.length){
+    const msg='🎉 CORINGA DESBLOQUEADO!\n'+coringas.map(c=>`${c.sd.nome}: ${c.ms.map(m=>`${m.emoji} ${m.premio}`).join(', ')}`).join('\n');
+    setTimeout(()=>alert(msg),500);
+  }
+  document.querySelectorAll('.collab-chip.selected').forEach(el=>el.classList.remove('selected'));
   renderRanking();
 }
 
