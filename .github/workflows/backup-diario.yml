@@ -1,0 +1,61 @@
+name: Backup Diário Copa Barra Sul
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 22:00 UTC = 19:00 BRT
+  workflow_dispatch:       # Permite rodar manualmente pelo GitHub
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Baixar dados do Gist
+        run: |
+          DATE=$(python3 -c "
+          from datetime import datetime, timezone, timedelta
+          brt = timezone(timedelta(hours=-3))
+          print(datetime.now(brt).strftime('%Y-%m-%d'))
+          ")
+          echo "DATE=$DATE" >> $GITHUB_ENV
+
+          python3 -c "
+          import urllib.request, json, sys
+
+          token = '${{ secrets.GIST_TOKEN }}'
+          gist_id = '57730e0e84c2e99a25f4a8a8bdeff934'
+          url = f'https://api.github.com/gists/{gist_id}'
+
+          req = urllib.request.Request(url)
+          req.add_header('Authorization', f'token {token}')
+          req.add_header('Accept', 'application/vnd.github+json')
+
+          with urllib.request.urlopen(req) as resp:
+              data = json.load(resp)
+
+          content = data['files']['copa-barra-sul.json']['content']
+          parsed = json.loads(content)
+
+          # Salva backup formatado
+          with open('backups/copa-barra-sul-$DATE.json', 'w', encoding='utf-8') as f:
+              json.dump(parsed, f, ensure_ascii=False, indent=2)
+
+          cols = parsed.get('cols', [])
+          total_figs = sum(len(c.get('fig',[])) for c in cols)
+          print(f'Backup OK: {len(cols)} colaboradores, {total_figs} figurinhas')
+          "
+
+      - name: Commitar backup
+        run: |
+          git config user.name "Backup Automático"
+          git config user.email "actions@github.com"
+          git add backups/
+          git diff --staged --quiet && echo "Sem mudanças" || (
+            git commit -m "Backup automático ${{ env.DATE }}"
+            git push
+          )

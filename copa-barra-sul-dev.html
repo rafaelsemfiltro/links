@@ -618,6 +618,9 @@ function renderManager(){
     `<p class="corr-hint">Selecione o colaborador para ver e remover itens lançados por engano.</p>`+
     `<select id="mc3" onchange="renderCorrection()">${coOpts}</select>`+
     `<div id="corrList"></div></div>`+
+    `<div class="mgr-card"><h3>💾 Backup Manual</h3>`+
+    `<p class="corr-hint">Baixe uma cópia dos dados completos da copa em JSON.</p>`+
+    `<button class="btn-p" onclick="backupManual()">⬇️ Baixar Backup Agora</button></div>`+
     `<button class="btn-out" onclick="logout()">Sair do Painel</button>`;
 
   renderRanking();
@@ -742,6 +745,22 @@ async function aplicarPun(){
 }
 
 // TOAST
+function backupManual(){
+  try{
+    const json=JSON.stringify(STATE,null,2);
+    const blob=new Blob([json],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    const d=new Date();
+    const dt=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    a.download=`copa-barra-sul-backup-${dt}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast('✅ Backup baixado com sucesso!');
+  }catch(e){toast('❌ Erro ao gerar backup');}
+}
+
 let toastTimer=null;
 function toast(msg){
   const el=document.getElementById('toast');
