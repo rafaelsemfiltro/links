@@ -462,29 +462,25 @@ function openAlbum(colId){
   cgHtml+='</div>';
 
   // Stickers
-  const grps={};
-  for(const f of col.fig) grps[f.sid]=(grps[f.sid]||0)+1;
   let stHtml='<div class="stickers-grid">';
   if(!col.fig.length){
     stHtml+='<div class="no-stickers">Nenhuma figurinha ainda</div>';
   }else{
-    for(const [sid,qty] of Object.entries(grps)){
-      const st=STICKERS.find(s=>s.id===sid);
+    for(const f of col.fig){
+      const st=STICKERS.find(s=>s.id===f.sid);
       if(!st) continue;
       const cartaImg=st.carta&&IMGS[st.carta]?IMGS[st.carta]:'';
       if(cartaImg){
         stHtml+=`<div class="sticker-card-img">`;
         stHtml+=`<div class="sticker-img-wrap"><img src="${cartaImg}" class="sticker-img-real" alt="${st.nome}">`;
-        if(qty>1) stHtml+=`<div class="sticker-qty-badge">${qty}×</div>`;
         stHtml+=`</div>`;
         stHtml+=`<div class="sticker-img-label">${st.nome}</div>`;
-        stHtml+=`<div class="sticker-img-gols">${st.gols * qty} gol${st.gols*qty>1?'s':''} totais</div>`;
+        stHtml+=`<div class="sticker-img-gols">${st.gols} gol${st.gols>1?'s':''}</div>`;
         stHtml+='</div>';
       }else{
         stHtml+=`<div class="sticker-card" style="border-color:${st.cor}">`;
-        stHtml+=`<div class="sticker-qty" style="color:${st.cor}">${qty}×</div>`;
         stHtml+=`<div class="sticker-nome" style="color:${st.cor}">${st.nome}</div>`;
-        stHtml+=`<div class="sticker-gols">${st.gols} gol${st.gols>1?'s':''} cada</div>`;
+        stHtml+=`<div class="sticker-gols">${st.gols} gol${st.gols>1?'s':''}</div>`;
         stHtml+='</div>';
       }
     }
