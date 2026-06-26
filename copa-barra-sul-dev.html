@@ -784,7 +784,7 @@ function getRankingData(period){
   function inPeriod(isoDate){
     const d=new Date(isoDate);
     if(period==='dia') return d.toDateString()===now.toDateString();
-    if(period==='artilheiro'){const ini=new Date('2026-06-20T00:00:00');const fim=new Date('2026-06-23T23:59:59');return d>=ini&&d<=fim;}
+    if(period==='artilheiro'){const ini=new Date('2026-06-25T00:00:00');const fim=new Date('2026-06-29T23:59:59');return d>=ini&&d<=fim;}
     return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
   }
   return STATE.cols.map(col=>{
@@ -801,7 +801,7 @@ function renderRankingView(){
   const tabs=periods.map(p=>`<button class="rank-tab${rankPeriod===p.id?' active':''}" onclick="setRankPeriod('${p.id}')">${p.label}</button>`).join('');
   let sub='';
   if(rankPeriod==='dia') sub=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
-  else if(rankPeriod==='artilheiro') sub='20/06 a 23/06';
+  else if(rankPeriod==='artilheiro') sub='25/06 a 29/06';
   else sub=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
   const data=getRankingData(rankPeriod);
   const vis=data.filter(r=>r.gols>0);
