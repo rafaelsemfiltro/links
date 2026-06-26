@@ -3,20 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>CRM WhatsApp — Rafael Versutti</title>
+<title>CRM — Costão Estaleirinho</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --bg: #0d0d0d;
-    --surface: #161616;
-    --surface2: #1e1e1e;
-    --border: #2a2a2a;
-    --border2: #333;
-    --text: #f0f0f0;
-    --text2: #999;
-    --text3: #555;
+    --bg: #09111e;
+    --surface: #0f1c2e;
+    --surface2: #162438;
+    --border: #1e3352;
+    --border2: #274368;
+    --text: #eef2f7;
+    --text2: #7a9bbf;
+    --text3: #3a5878;
     --green: #25D366;
+    --teal: #4CC5B9;
+    --teal-dim: #2a8f86;
+    --teal-bg: #0d2e2c;
+    --navy: #1e3462;
     --yellow: #f5c842;
     --red: #e05252;
     --blue: #4a9eff;
@@ -52,15 +56,15 @@
     position: sticky; top: 61px; z-index: 99;
   }
   .tab { flex: 1; padding: 12px 8px; text-align: center; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
-  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
   .badge { display: inline-block; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
 
   .view { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
   .view.active { display: block; }
 
-  .pending-banner { background: linear-gradient(135deg, #1a3a1a, #0d2b1a); border: 1px solid #2a5a2a; border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
-  .pending-banner h2 { font-size: 15px; font-weight: 600; color: #7dde8a; margin-bottom: 4px; }
-  .pending-banner p { font-size: 13px; color: #5ab866; }
+  .pending-banner { background: linear-gradient(135deg, #0d2e2c, #091e30); border: 1px solid #1a5a55; border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+  .pending-banner h2 { font-size: 15px; font-weight: 600; color: var(--teal); margin-bottom: 4px; }
+  .pending-banner p { font-size: 13px; color: var(--teal-dim); }
 
   .empty-state { text-align: center; padding: 48px 24px; color: var(--text2); }
   .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
@@ -88,9 +92,9 @@
   .btn:active { opacity: 0.7; }
   .btn-whatsapp { background: var(--green); color: #fff; flex: 1; justify-content: center; }
   .btn-skip { background: var(--surface2); color: var(--text2); }
-  .btn-done { background: #1a3a1a; color: #7dde8a; }
-  .btn-media { background: #1a2a3a; color: var(--blue); }
-  .btn-copy { background: #2a2a1a; color: var(--yellow); }
+  .btn-done { background: #0d2e2c; color: var(--teal); }
+  .btn-media { background: #162438; color: var(--blue); }
+  .btn-copy { background: #1e1a08; color: var(--yellow); }
 
   /* ── Media Preview Block ── */
   .media-block {
@@ -115,20 +119,20 @@
   .customer-date { font-size: 12px; color: var(--text3); margin-left: auto; }
   .timeline { display: flex; gap: 4px; flex-wrap: wrap; }
   .tl-step { display: flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 7px; border-radius: 20px; font-weight: 600; }
-  .tl-step.done    { background: #1a3a1a; color: #7dde8a; }
-  .tl-step.due     { background: #3a2a1a; color: var(--yellow); }
+  .tl-step.done    { background: #0d2e2c; color: var(--teal); }
+  .tl-step.due     { background: #2a2008; color: var(--yellow); }
   .tl-step.future  { background: var(--surface2); color: var(--text3); }
-  .tl-step.skipped { background: #1a1a1a; color: var(--text3); text-decoration: line-through; }
+  .tl-step.skipped { background: #0f1c2e; color: var(--text3); text-decoration: line-through; }
 
   .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
   .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
   .field input, .field textarea, .field select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: 15px; padding: 11px 13px; outline: none; font-family: inherit; transition: border-color .2s; }
-  .field input:focus, .field textarea:focus { border-color: var(--green); }
+  .field input:focus, .field textarea:focus { border-color: var(--teal); }
   .field textarea { resize: vertical; min-height: 70px; }
   .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
-  .btn-primary { width: 100%; padding: 14px; background: var(--green); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
+  .btn-primary { width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
   .btn-primary:active { opacity: 0.8; }
 
   .template-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
@@ -136,7 +140,7 @@
   .template-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .template-label { font-size: 14px; font-weight: 600; flex: 1; }
   .template-body { font-size: 13px; color: var(--text2); line-height: 1.6; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; white-space: pre-wrap; margin-bottom: 0; }
-  .template-media-badge { font-size: 11px; background: #1a2a3a; color: var(--blue); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
+  .template-media-badge { font-size: 11px; background: #0d2e2c; color: var(--teal); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
 
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
@@ -144,10 +148,10 @@
   .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 16px; }
   .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
 
-  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #1a3a1a; color: #7dde8a; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; z-index: 300; opacity: 0; transition: opacity .3s; white-space: nowrap; }
+  .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #0d2e2c; color: var(--teal); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; z-index: 300; opacity: 0; transition: opacity .3s; white-space: nowrap; border: 1px solid var(--teal-dim); }
   .toast.show { opacity: 1; }
 
-  .info-box { background: #1a2a3a; border: 1px solid #2a3a4a; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: #6090c0; line-height: 1.6; margin-bottom: 14px; }
+  .info-box { background: #0d1e30; border: 1px solid #1a3a55; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: #5a8ab0; line-height: 1.6; margin-bottom: 14px; }
   hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
   .btn-danger { background: #3a1a1a; color: var(--red); border: 1px solid #5a2a2a; }
 
@@ -157,9 +161,21 @@
 <body>
 
 <div class="header">
-  <div>
-    <div class="header-title">CRM WhatsApp</div>
-    <div class="header-sub">Rafael Versutti — Vendas</div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Costão Estaleirinho symbol — stylized hourglass with flowing lines -->
+      <path d="M50 20 C35 28, 25 38, 30 50 C25 62, 35 72, 50 80 C65 72, 75 62, 70 50 C75 38, 65 28, 50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M50 14 C30 24, 16 36, 22 50 C16 64, 30 76, 50 86 C70 76, 84 64, 78 50 C84 36, 70 24, 50 14Z" stroke="#4CC5B9" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
+      <path d="M50 8 C26 20, 10 34, 16 50 C10 66, 26 80, 50 92 C74 80, 90 66, 84 50 C90 34, 74 20, 50 8Z" stroke="#4CC5B9" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.4"/>
+      <line x1="30" y1="50" x2="10" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="70" y1="50" x2="90" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="22" y1="50" x2="6"  y2="50" stroke="#4CC5B9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <line x1="78" y1="50" x2="94" y2="50" stroke="#4CC5B9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    </svg>
+    <div>
+      <div class="header-title">Costão Estaleirinho</div>
+      <div class="header-sub">CRM de Vendas — Rafael Versutti</div>
+    </div>
   </div>
   <span class="wa-badge">WhatsApp</span>
 </div>
