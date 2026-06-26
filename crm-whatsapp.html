@@ -24,45 +24,34 @@
     --yellow: #f5c842;
     --red: #e05252;
     --blue: #4a9eff;
+    --purple: #a070f0;
     --radius: 14px;
     --radius-sm: 8px;
   }
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 80px;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding-bottom: 80px; }
 
-  .header {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky; top: 0; z-index: 100;
-  }
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
   .header-title { font-size: 17px; font-weight: 600; }
   .header-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
   .wa-badge { background: var(--green); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
 
-  .tabs {
-    display: flex;
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    position: sticky; top: 61px; z-index: 99;
-  }
-  .tab { flex: 1; padding: 12px 8px; text-align: center; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
+  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); position: sticky; top: 61px; z-index: 99; }
+  .tab { flex: 1; padding: 12px 4px; text-align: center; font-size: 12px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; transition: all .2s; }
   .tab.active { color: var(--teal); border-bottom-color: var(--teal); }
-  .badge { display: inline-block; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 10px; margin-left: 4px; vertical-align: middle; }
+  .badge { display: inline-block; background: var(--red); color: #fff; font-size: 10px; font-weight: 700; padding: 1px 5px; border-radius: 10px; margin-left: 3px; vertical-align: middle; }
 
   .view { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
   .view.active { display: block; }
 
-  .pending-banner { background: linear-gradient(135deg, #0d2e2c, #091e30); border: 1px solid #1a5a55; border-radius: var(--radius); padding: 16px; margin-bottom: 16px; }
+  /* ── Group headers ── */
+  .step-group { margin-bottom: 20px; }
+  .step-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+  .step-group-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
+  .step-group-count { font-size: 11px; font-weight: 700; background: var(--surface2); color: var(--text2); padding: 2px 8px; border-radius: 20px; }
+  .step-group-line { flex: 1; height: 1px; background: var(--border); }
+
+  .pending-banner { background: linear-gradient(135deg, #0d2e2c, #091e30); border: 1px solid #1a5a55; border-radius: var(--radius); padding: 14px 16px; margin-bottom: 16px; }
   .pending-banner h2 { font-size: 15px; font-weight: 600; color: var(--teal); margin-bottom: 4px; }
   .pending-banner p { font-size: 13px; color: var(--teal-dim); }
 
@@ -79,7 +68,7 @@
   .msg-card-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .msg-card-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
   .day-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 20px; flex-shrink: 0; }
-  .day-pill.d1  { background: #2a3a1a; color: #7dde8a; }
+  .day-pill.d1  { background: #1a3a1a; color: #7dde8a; }
   .day-pill.d7  { background: #2a2a1a; color: #f5c842; }
   .day-pill.d15 { background: #2a1a1a; color: #f07070; }
   .day-pill.d30 { background: #1a2a3a; color: #70a0f0; }
@@ -95,15 +84,14 @@
   .btn-done { background: #0d2e2c; color: var(--teal); }
   .btn-media { background: #162438; color: var(--blue); }
   .btn-copy { background: #1e1a08; color: var(--yellow); }
+  .btn-edit { background: #1a1a2e; color: var(--purple); }
+  .btn-danger { background: #3a1a1a; color: var(--red); border: 1px solid #5a2a2a; }
 
-  /* ── Media Preview Block ── */
-  .media-block {
-    background: var(--surface2);
-    border: 1px solid var(--border2);
-    border-radius: var(--radius-sm);
-    padding: 10px;
-    margin-bottom: 10px;
-  }
+  /* ── Consolidação badge ── */
+  .destino-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; background: #1a1a2e; color: var(--purple); padding: 3px 10px; border-radius: 20px; border: 1px solid #2a2a4a; }
+
+  /* ── Media ── */
+  .media-block { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 10px; }
   .media-block-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
   .media-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 8px; }
   .media-link-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--blue); word-break: break-all; margin-bottom: 8px; }
@@ -111,49 +99,60 @@
   .media-url-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
   .media-actions { display: flex; gap: 6px; }
 
+  /* ── Customers ── */
   .customer-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
   .customer-card:hover { background: var(--surface2); }
   .customer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .customer-name { font-size: 15px; font-weight: 600; }
   .customer-phone { font-size: 12px; color: var(--text2); }
-  .customer-date { font-size: 12px; color: var(--text3); margin-left: auto; }
+  .customer-date { font-size: 12px; color: var(--text3); margin-left: auto; flex-shrink: 0; }
   .timeline { display: flex; gap: 4px; flex-wrap: wrap; }
   .tl-step { display: flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 7px; border-radius: 20px; font-weight: 600; }
   .tl-step.done    { background: #0d2e2c; color: var(--teal); }
   .tl-step.due     { background: #2a2008; color: var(--yellow); }
   .tl-step.future  { background: var(--surface2); color: var(--text3); }
-  .tl-step.skipped { background: #0f1c2e; color: var(--text3); text-decoration: line-through; }
+  .tl-step.skipped { background: var(--surface); color: var(--text3); text-decoration: line-through; }
 
-  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; }
+  /* ── Form ── */
+  .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; }
   .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .form-section-title { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
   .field { margin-bottom: 14px; }
   .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
   .field input, .field textarea, .field select { width: 100%; background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); font-size: 15px; padding: 11px 13px; outline: none; font-family: inherit; transition: border-color .2s; }
   .field input:focus, .field textarea:focus { border-color: var(--teal); }
   .field textarea { resize: vertical; min-height: 70px; }
-  .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .field-hint { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
   .btn-primary { width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
   .btn-primary:active { opacity: 0.8; }
 
+  /* ── Templates ── */
   .template-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
   .template-card:hover { background: var(--surface2); }
   .template-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .template-label { font-size: 14px; font-weight: 600; flex: 1; }
-  .template-body { font-size: 13px; color: var(--text2); line-height: 1.6; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; white-space: pre-wrap; margin-bottom: 0; }
+  .template-body { font-size: 13px; color: var(--text2); line-height: 1.6; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; white-space: pre-wrap; }
   .template-media-badge { font-size: 11px; background: #0d2e2c; color: var(--teal); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
 
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; align-items: flex-end; justify-content: center; }
+  /* ── Modals ── */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 20px; width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto; }
+  .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 20px; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; }
   .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 16px; }
   .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+
+  /* ── Consolidação card inside modal ── */
+  .consol-card { background: var(--surface2); border: 1px solid #2a2a4a; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; }
+  .consol-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
+  .consol-label { color: var(--text2); font-weight: 600; min-width: 80px; flex-shrink: 0; }
+  .consol-value { color: var(--text); }
 
   .toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: #0d2e2c; color: var(--teal); padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 600; z-index: 300; opacity: 0; transition: opacity .3s; white-space: nowrap; border: 1px solid var(--teal-dim); }
   .toast.show { opacity: 1; }
 
   .info-box { background: #0d1e30; border: 1px solid #1a3a55; border-radius: var(--radius-sm); padding: 12px 14px; font-size: 13px; color: #5a8ab0; line-height: 1.6; margin-bottom: 14px; }
+  .vars-box { background: #12102a; border: 1px solid #2a2a4a; border-radius: var(--radius-sm); padding: 10px 14px; font-size: 12px; color: var(--purple); margin-bottom: 14px; line-height: 1.8; }
   hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
-  .btn-danger { background: #3a1a1a; color: var(--red); border: 1px solid #5a2a2a; }
 
   @media (min-width: 600px) { .view { padding: 20px; } }
 </style>
@@ -162,15 +161,11 @@
 
 <div class="header">
   <div style="display:flex;align-items:center;gap:12px;">
-    <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Costão Estaleirinho symbol — stylized hourglass with flowing lines -->
-      <path d="M50 20 C35 28, 25 38, 30 50 C25 62, 35 72, 50 80 C65 72, 75 62, 70 50 C75 38, 65 28, 50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-      <path d="M50 14 C30 24, 16 36, 22 50 C16 64, 30 76, 50 86 C70 76, 84 64, 78 50 C84 36, 70 24, 50 14Z" stroke="#4CC5B9" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.7"/>
-      <path d="M50 8 C26 20, 10 34, 16 50 C10 66, 26 80, 50 92 C74 80, 90 66, 84 50 C90 34, 74 20, 50 8Z" stroke="#4CC5B9" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.4"/>
-      <line x1="30" y1="50" x2="10" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="70" y1="50" x2="90" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
-      <line x1="22" y1="50" x2="6"  y2="50" stroke="#4CC5B9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
-      <line x1="78" y1="50" x2="94" y2="50" stroke="#4CC5B9" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none">
+      <path d="M50 20 C35 28,25 38,30 50 C25 62,35 72,50 80 C65 72,75 62,70 50 C75 38,65 28,50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M50 12 C28 23,13 36,20 50 C13 64,28 77,50 88 C72 77,87 64,80 50 C87 36,72 23,50 12Z" stroke="#4CC5B9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
+      <line x1="30" y1="50" x2="8"  y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="70" y1="50" x2="92" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
     <div>
       <div class="header-title">Costão Estaleirinho</div>
@@ -190,10 +185,10 @@
 <div class="view active" id="view-hoje"><div id="today-content"></div></div>
 <div class="view" id="view-clientes"><div id="clients-content"></div></div>
 
+<!-- ── NOVO CLIENTE ── -->
 <div class="view" id="view-novo">
   <div class="form-card">
     <div class="form-title">Nova Venda</div>
-    <div class="info-box">Depois de cadastrar, o sistema calcula automaticamente quando enviar cada mensagem de follow-up.</div>
     <div class="field">
       <label>Nome do Cliente</label>
       <input type="text" id="f-name" placeholder="Ex: João Silva" autocomplete="off">
@@ -207,27 +202,79 @@
       <input type="date" id="f-date">
     </div>
     <div class="field">
-      <label>Produto / Destino</label>
+      <label>Produto / Destino Vendido</label>
       <input type="text" id="f-product" placeholder="Ex: Costão do Santinho 3 noites" autocomplete="off">
     </div>
+
+    <div class="form-section-title">🌎 Consolidação do Cliente</div>
+    <div class="info-box" style="margin-bottom:12px;">Informações sobre os interesses do cliente. Use depois dos primeiros contatos para personalizar as mensagens de D+30 e D+60.</div>
+
     <div class="field">
-      <label>Observações (opcional)</label>
-      <textarea id="f-notes" placeholder="Data da viagem, detalhes extras..."></textarea>
+      <label>Sonho de Viagem / Destino dos Sonhos</label>
+      <input type="text" id="f-destino" placeholder="Ex: Chile, Gramado, Europa, Caribe..." autocomplete="off">
+      <div class="field-hint">Usado automaticamente nas mensagens de longo prazo com {destino}</div>
+    </div>
+    <div class="field">
+      <label>Orçamento Estimado</label>
+      <input type="text" id="f-orcamento" placeholder="Ex: R$ 8.000 por pessoa" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Período / Época Preferida</label>
+      <input type="text" id="f-periodo" placeholder="Ex: Julho 2025, férias de verão..." autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Observações</label>
+      <textarea id="f-notes" placeholder="Família, casal, mochileiro, detalhes da conversa..."></textarea>
     </div>
     <button class="btn-primary" onclick="addCustomer()">✓ Cadastrar Cliente</button>
   </div>
 </div>
 
+<!-- ── TEMPLATES ── -->
 <div class="view" id="view-mensagens">
-  <div class="info-box">
-    Use <strong>{nome}</strong> e <strong>{produto}</strong> nas mensagens. Cada etapa pode ter uma <strong>foto, vídeo ou link</strong> (post do Instagram, PDF, etc.) que aparece na hora do envio. Clique para editar.
+  <div class="vars-box">
+    <strong>Variáveis disponíveis:</strong><br>
+    <code>{nome}</code> — Nome do cliente<br>
+    <code>{produto}</code> — Produto/destino vendido<br>
+    <code>{destino}</code> — Sonho de viagem do cliente<br>
+    <code>{orcamento}</code> — Orçamento do cliente<br>
+    <code>{periodo}</code> — Período preferido
   </div>
   <div id="templates-content"></div>
 </div>
 
-<!-- Modal: Detalhes do Cliente -->
+<!-- Modal: Cliente -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal"><div class="modal-handle"></div><div id="modal-content"></div></div>
+</div>
+
+<!-- Modal: Editar Consolidação -->
+<div class="modal-overlay" id="consol-overlay" onclick="closeConsolModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🌎 Consolidação do Cliente</div>
+    <input type="hidden" id="consol-id">
+    <div class="field">
+      <label>Sonho de Viagem / Destino dos Sonhos</label>
+      <input type="text" id="c-destino" placeholder="Ex: Chile, Europa, Caribe...">
+    </div>
+    <div class="field">
+      <label>Orçamento Estimado</label>
+      <input type="text" id="c-orcamento" placeholder="Ex: R$ 8.000 por pessoa">
+    </div>
+    <div class="field">
+      <label>Período / Época Preferida</label>
+      <input type="text" id="c-periodo" placeholder="Ex: Julho 2025, férias...">
+    </div>
+    <div class="field">
+      <label>Observações / Interesses</label>
+      <textarea id="c-notes" placeholder="Família, casal, interesses específicos..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveConsol()">Salvar</button>
+      <button class="btn btn-skip" onclick="closeConsolModal()">Cancelar</button>
+    </div>
+  </div>
 </div>
 
 <!-- Modal: Editar Template -->
@@ -236,13 +283,13 @@
     <div class="modal-handle"></div>
     <div class="modal-title" id="tpl-modal-title"></div>
     <div class="field">
-      <label>Mensagem de Texto</label>
+      <label>Mensagem</label>
       <textarea id="tpl-text" style="min-height:130px;"></textarea>
     </div>
     <div class="field">
       <label>Mídia — Foto / Vídeo / Link (opcional)</label>
-      <input type="url" id="tpl-media" placeholder="https://... (Instagram, Google Drive, Dropbox, etc.)">
-      <div class="field-hint">Cole aqui o link da foto, vídeo, PDF ou post do Instagram que quer enviar junto com a mensagem.</div>
+      <input type="url" id="tpl-media" placeholder="https://... (Instagram, Drive, Dropbox...)">
+      <div class="field-hint">Link da foto, vídeo ou post do Instagram a enviar junto com a mensagem.</div>
     </div>
     <div id="tpl-media-preview" style="margin-bottom:12px;"></div>
     <div style="display:flex;gap:8px;">
@@ -260,20 +307,19 @@ const TPL_KEY = 'rv_tpl_v3';
 let editingTplKey = null;
 
 const STEPS = [
-  { key: 'd1',  label: 'Dia 1',   days: 1  },
-  { key: 'd7',  label: 'Dia 7',   days: 7  },
-  { key: 'd15', label: 'Dia 15',  days: 15 },
-  { key: 'd30', label: 'Dia 30',  days: 30 },
-  { key: 'd60', label: '2 Meses', days: 60 },
+  { key: 'd1',  label: 'Dia 1',   days: 1,  color: '#7dde8a' },
+  { key: 'd7',  label: 'Dia 7',   days: 7,  color: '#f5c842' },
+  { key: 'd15', label: 'Dia 15',  days: 15, color: '#f07070' },
+  { key: 'd30', label: 'Dia 30',  days: 30, color: '#70a0f0' },
+  { key: 'd60', label: '2 Meses', days: 60, color: '#c070f0' },
 ];
 
-// Each template: { text: "...", media: "url or empty" }
 const DEFAULT_TEMPLATES = {
   d1:  { text: `Olá {nome}! 😊 Aqui é o Rafael Versutti. Muito obrigado pela sua confiança! Sua reserva em {produto} foi confirmada. Se tiver qualquer dúvida sobre a viagem, pode me chamar! 🏖️`, media: '' },
   d7:  { text: `Olá {nome}! Tudo certo com os preparativos para {produto}? 🗺️ Passando para saber se posso ajudar com roteiro, dicas ou qualquer informação. Pode contar comigo!`, media: '' },
   d15: { text: `Olá {nome}! Faltam poucos dias para a sua viagem a {produto}! 🎒 Leve protetor solar, documentos originais e bastante animação. Me avisa se precisar de algo!`, media: '' },
-  d30: { text: `Oi {nome}! 🌟 Espero que a experiência em {produto} tenha sido incrível! Me conta como foi — sua opinião é muito importante pra mim. Obrigado pela confiança! 🙏`, media: '' },
-  d60: { text: `Oi {nome}! Saudade da última viagem? 😄 Tenho novidades e ofertas especiais esperando por você! Quando quiser planejar a próxima aventura, é só me chamar. ✈️`, media: '' },
+  d30: { text: `Oi {nome}! 🌟 Espero que a experiência em {produto} tenha sido incrível!\n\nMe conta como foi — sua opinião é muito importante pra mim. 🙏\n\nE já pensando na próxima aventura... vi algumas opções incríveis para {destino} que combinam muito com você! Quer que eu te mande algumas sugestões e valores?`, media: '' },
+  d60: { text: `Oi {nome}! Saudade de {produto}? 😄\n\nEstou com novidades especiais para {destino} — exatamente o que você me falou que sonhava! Tenho pacotes com ótima relação custo-benefício para {periodo}.\n\nPosso te mandar os detalhes? ✈️`, media: '' },
 };
 
 function getDB() {
@@ -286,15 +332,11 @@ function getTpls() {
   try {
     const saved = JSON.parse(localStorage.getItem(TPL_KEY));
     if (!saved) return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
-    // merge with defaults so new keys are always present
     const merged = JSON.parse(JSON.stringify(DEFAULT_TEMPLATES));
     for (const k in saved) {
-      if (typeof saved[k] === 'string') {
-        // migrate old string-only format
-        merged[k] = { text: saved[k], media: '' };
-      } else {
-        merged[k] = { ...merged[k], ...saved[k] };
-      }
+      merged[k] = typeof saved[k] === 'string'
+        ? { text: saved[k], media: '' }
+        : { ...merged[k], ...saved[k] };
     }
     return merged;
   } catch { return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES)); }
@@ -313,19 +355,19 @@ function addDays(ds, n) {
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
 }
 function fmtDate(ds) { const [y,m,d]=ds.split('-'); return `${d}/${m}/${y}`; }
-function initials(name) { return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
+function initials(n) { return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
 
 // ─── Message builder ──────────────────────────────────────────────
-function buildText(key, customer) {
+function buildText(key, c) {
   const tpls = getTpls();
   return (tpls[key]?.text || '')
-    .replace(/\{nome\}/gi, customer.name)
-    .replace(/\{produto\}/gi, customer.product || 'sua viagem');
+    .replace(/\{nome\}/gi,      c.name)
+    .replace(/\{produto\}/gi,   c.product  || 'sua viagem')
+    .replace(/\{destino\}/gi,   c.destino  || 'sua próxima viagem')
+    .replace(/\{orcamento\}/gi, c.orcamento|| '')
+    .replace(/\{periodo\}/gi,   c.periodo  || 'em breve');
 }
-function getMedia(key) {
-  const tpls = getTpls();
-  return tpls[key]?.media || '';
-}
+function getMedia(key) { return getTpls()[key]?.media || ''; }
 function waLink(phone, message) {
   const clean = phone.replace(/\D/g,'');
   const num = clean.startsWith('55') ? clean : '55' + clean;
@@ -337,74 +379,61 @@ function mediaType(url) {
   if (!url) return null;
   const u = url.toLowerCase().split('?')[0];
   if (/\.(jpg|jpeg|png|gif|webp|avif)$/.test(u)) return 'image';
-  if (/\.(mp4|mov|webm|avi)$/.test(u)) return 'video';
+  if (/\.(mp4|mov|webm)$/.test(u)) return 'video';
   if (url.includes('instagram.com')) return 'instagram';
-  if (/\.(pdf)$/.test(u)) return 'pdf';
+  if (/\.pdf$/.test(u)) return 'pdf';
   return 'link';
 }
-function mediaIcon(type) {
-  return { image: '🖼️', video: '🎬', instagram: '📸', pdf: '📄', link: '🔗' }[type] || '🔗';
-}
-function mediaLabel(type) {
-  return { image: 'Imagem', video: 'Vídeo', instagram: 'Post do Instagram', pdf: 'PDF / Documento', link: 'Link' }[type] || 'Mídia';
-}
+function mediaIcon(t) { return {image:'🖼️',video:'🎬',instagram:'📸',pdf:'📄',link:'🔗'}[t]||'🔗'; }
+function mediaLabel(t) { return {image:'Imagem',video:'Vídeo',instagram:'Post do Instagram',pdf:'Documento PDF',link:'Link'}[t]||'Mídia'; }
 
-function renderMediaBlock(mediaUrl, customerId, stepKey, showCopy) {
-  if (!mediaUrl) return '';
-  const type = mediaType(mediaUrl);
-  const icon = mediaIcon(type);
-  const label = mediaLabel(type);
-  const imgHtml = type === 'image' ? `<img class="media-img" src="${esc(mediaUrl)}" onerror="this.style.display='none'" alt="mídia">` : '';
-  const copyId = showCopy ? `media-url-${customerId}-${stepKey}` : '';
+function renderMediaBlock(url, cid, key, showCopy) {
+  if (!url) return '';
+  const t = mediaType(url);
   return `
     <div class="media-block">
-      <div class="media-block-label">${icon} ${label}</div>
-      ${imgHtml}
-      <div class="media-link-row">
-        <span class="media-icon">${icon}</span>
-        <span class="media-url-text">${esc(mediaUrl)}</span>
-      </div>
+      <div class="media-block-label">${mediaIcon(t)} ${mediaLabel(t)}</div>
+      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}
+      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
       <div class="media-actions">
-        <a href="${esc(mediaUrl)}" target="_blank" class="btn btn-media" style="font-size:12px;padding:7px 12px;">Abrir mídia</a>
-        ${showCopy ? `<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(mediaUrl)}')">Copiar link</button>` : ''}
+        <a href="${esc(url)}" target="_blank" class="btn btn-media" style="font-size:12px;padding:7px 12px;">Abrir</a>
+        ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')">Copiar link</button>`:''}
       </div>
-      ${showCopy ? `<div style="font-size:11px;color:var(--text3);margin-top:6px;">Abra o WhatsApp → envie o texto → depois cole o link acima na mesma conversa.</div>` : ''}
-    </div>
-  `;
+      ${showCopy?`<div style="font-size:11px;color:var(--text3);margin-top:6px;">Envie o texto → depois cole o link acima na mesma conversa.</div>`:''}
+    </div>`;
 }
 
 function copyMedia(url) {
   navigator.clipboard.writeText(url).then(()=>showToast('Link copiado!')).catch(()=>{
-    const el = document.createElement('textarea');
-    el.value = url; document.body.appendChild(el); el.select();
-    document.execCommand('copy'); document.body.removeChild(el);
-    showToast('Link copiado!');
+    const el=document.createElement('textarea'); el.value=url;
+    document.body.appendChild(el); el.select(); document.execCommand('copy');
+    document.body.removeChild(el); showToast('Link copiado!');
   });
 }
 
 // ─── Pending / Upcoming ───────────────────────────────────────────
 function getPending(c) {
-  const t = today(); const sent = c.sent||{}; const skipped = c.skipped||{};
-  return STEPS.filter(s => addDays(c.saleDate, s.days) <= t && !sent[s.key] && !skipped[s.key]);
+  const t=today(), sent=c.sent||{}, skip=c.skipped||{};
+  return STEPS.filter(s => addDays(c.saleDate,s.days)<=t && !sent[s.key] && !skip[s.key]);
 }
 function getUpcoming(c) {
-  const t = today();
-  return STEPS.filter(s => addDays(c.saleDate, s.days) > t);
+  const t=today();
+  return STEPS.filter(s => addDays(c.saleDate,s.days)>t);
 }
 
 // ─── Actions ─────────────────────────────────────────────────────
-function markSent(cid, key) {
-  const db = getDB(); const c = db.find(x=>x.id===cid); if(!c) return;
-  c.sent = c.sent||{}; c.sent[key] = today();
+function markSent(cid,key) {
+  const db=getDB(), c=db.find(x=>x.id===cid); if(!c) return;
+  c.sent=c.sent||{}; c.sent[key]=today();
   saveDB(db); render(); showToast('Marcado como enviado ✓');
 }
-function markSkipped(cid, key) {
-  const db = getDB(); const c = db.find(x=>x.id===cid); if(!c) return;
-  c.skipped = c.skipped||{}; c.skipped[key] = today();
+function markSkipped(cid,key) {
+  const db=getDB(), c=db.find(x=>x.id===cid); if(!c) return;
+  c.skipped=c.skipped||{}; c.skipped[key]=today();
   saveDB(db); render(); showToast('Etapa ignorada');
 }
-function undoStep(cid, key) {
-  const db = getDB(); const c = db.find(x=>x.id===cid); if(!c) return;
+function undoStep(cid,key) {
+  const db=getDB(), c=db.find(x=>x.id===cid); if(!c) return;
   delete (c.sent||{})[key]; delete (c.skipped||{})[key];
   saveDB(db); openCustomer(cid); render();
 }
@@ -414,17 +443,20 @@ function deleteCustomer(id) {
   closeModal(); render(); showToast('Cliente removido');
 }
 function addCustomer() {
-  const name    = document.getElementById('f-name').value.trim();
-  const phone   = document.getElementById('f-phone').value.trim();
-  const date    = document.getElementById('f-date').value;
-  const product = document.getElementById('f-product').value.trim();
-  const notes   = document.getElementById('f-notes').value.trim();
+  const name     = document.getElementById('f-name').value.trim();
+  const phone    = document.getElementById('f-phone').value.trim();
+  const date     = document.getElementById('f-date').value;
+  const product  = document.getElementById('f-product').value.trim();
+  const destino  = document.getElementById('f-destino').value.trim();
+  const orcamento= document.getElementById('f-orcamento').value.trim();
+  const periodo  = document.getElementById('f-periodo').value.trim();
+  const notes    = document.getElementById('f-notes').value.trim();
   if(!name||!phone||!date){ alert('Preencha nome, telefone e data da venda.'); return; }
-  const db = getDB();
-  db.push({ id:uid(), name, phone, saleDate:date, product, notes, sent:{}, skipped:{}, createdAt:today() });
+  const db=getDB();
+  db.push({ id:uid(), name, phone, saleDate:date, product, destino, orcamento, periodo, notes, sent:{}, skipped:{}, createdAt:today() });
   saveDB(db);
-  ['f-name','f-phone','f-product','f-notes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('f-date').value = today();
+  ['f-name','f-phone','f-product','f-destino','f-orcamento','f-periodo','f-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-date').value=today();
   showToast('Cliente cadastrado! ✓');
   switchTab('hoje'); render();
 }
@@ -433,43 +465,58 @@ function addCustomer() {
 function render() { renderToday(); renderClients(); renderTemplates(); }
 
 function renderToday() {
-  const db = getDB();
-  const pending = [];
-  db.forEach(c => getPending(c).forEach(s => pending.push({ customer:c, step:s })));
+  const db=getDB();
+  // build a map: stepKey -> list of {customer, step}
+  const groups = {};
+  STEPS.forEach(s => groups[s.key]=[]);
+  db.forEach(c => getPending(c).forEach(s => groups[s.key].push({ customer:c, step:s })));
 
-  const badge = document.getElementById('badge-hoje');
-  badge.textContent = pending.length || '';
-  badge.style.display = pending.length ? 'inline-block' : 'none';
+  const totalPending = STEPS.reduce((n,s)=>n+groups[s.key].length, 0);
+  const badge=document.getElementById('badge-hoje');
+  badge.textContent=totalPending||'';
+  badge.style.display=totalPending?'inline-block':'none';
 
-  const el = document.getElementById('today-content');
-  if (!pending.length) {
-    const upcoming = [];
-    db.forEach(c => getUpcoming(c).forEach(s => upcoming.push({ customer:c, step:s })));
-    const next = upcoming.sort((a,b) => addDays(a.customer.saleDate,a.step.days).localeCompare(addDays(b.customer.saleDate,b.step.days)))[0];
-    el.innerHTML = `
+  const el=document.getElementById('today-content');
+  if (!totalPending) {
+    const upcoming=[];
+    db.forEach(c=>getUpcoming(c).forEach(s=>upcoming.push({customer:c,step:s})));
+    const next=upcoming.sort((a,b)=>addDays(a.customer.saleDate,a.step.days).localeCompare(addDays(b.customer.saleDate,b.step.days)))[0];
+    el.innerHTML=`
       <div class="empty-state">
         <div class="icon">✅</div>
         <h3>Tudo em dia!</h3>
         <p>Nenhuma mensagem pendente para hoje.</p>
-        ${next ? `<p style="margin-top:8px;color:var(--text3);">Próxima: ${next.customer.name} — ${next.step.label} em ${fmtDate(addDays(next.customer.saleDate,next.step.days))}</p>` : ''}
+        ${next?`<p style="margin-top:8px;color:var(--text3);">Próxima: <strong style="color:var(--text2)">${next.customer.name}</strong> — ${next.step.label} em ${fmtDate(addDays(next.customer.saleDate,next.step.days))}</p>`:''}
       </div>
-      ${!db.length ? `<div style="text-align:center;"><button class="btn-primary" style="max-width:240px;margin:0 auto;" onclick="switchTab('novo')">+ Cadastrar Primeiro Cliente</button></div>` : ''}
+      ${!db.length?`<div style="text-align:center;"><button class="btn-primary" style="max-width:240px;margin:0 auto;" onclick="switchTab('novo')">+ Cadastrar Primeiro Cliente</button></div>`:''}
     `;
     return;
   }
-  el.innerHTML = `
-    <div class="pending-banner">
-      <h2>📨 ${pending.length} mensagem${pending.length>1?'s':''} para enviar hoje</h2>
-      <p>Clique em "Abrir WhatsApp" — o texto já vem preenchido. Se tiver foto/vídeo, copie o link e envie na sequência.</p>
-    </div>
-    ${pending.map(({customer,step}) => renderMsgCard(customer, step)).join('')}
-  `;
+
+  let html=`<div class="pending-banner"><h2>📨 ${totalPending} mensagem${totalPending>1?'s':''} para enviar hoje</h2><p>Separadas por etapa. O texto já vem pronto no WhatsApp.</p></div>`;
+
+  STEPS.forEach(s => {
+    const items=groups[s.key];
+    if (!items.length) return;
+    html+=`
+      <div class="step-group">
+        <div class="step-group-header">
+          <span class="day-pill ${s.key}">${s.label}</span>
+          <span class="step-group-count">${items.length} cliente${items.length>1?'s':''}</span>
+          <span class="step-group-line"></span>
+        </div>
+        ${items.map(({customer,step})=>renderMsgCard(customer,step)).join('')}
+      </div>`;
+  });
+
+  el.innerHTML=html;
 }
 
 function renderMsgCard(c, step) {
-  const msg   = buildText(step.key, c);
-  const media = getMedia(step.key);
-  const link  = waLink(c.phone, msg);
+  const msg  =buildText(step.key,c);
+  const media=getMedia(step.key);
+  const link =waLink(c.phone,msg);
+  const hasDestino = c.destino && (step.key==='d30'||step.key==='d60');
   return `
     <div class="msg-card urgent">
       <div class="msg-card-header">
@@ -480,78 +527,94 @@ function renderMsgCard(c, step) {
         </div>
         <span class="day-pill ${step.key}">${step.label}</span>
       </div>
+      ${hasDestino?`<div style="margin-bottom:8px;"><span class="destino-badge">🌎 ${esc(c.destino)}</span></div>`:''}
       <div class="msg-preview">${esc(msg)}</div>
-      ${renderMediaBlock(media, c.id, step.key, true)}
+      ${renderMediaBlock(media,c.id,step.key,true)}
       <div class="msg-actions">
         <a href="${link}" target="_blank" class="btn btn-whatsapp" onclick="setTimeout(()=>markSent('${c.id}','${step.key}'),2500)">📱 Abrir WhatsApp</a>
         <button class="btn btn-done" onclick="markSent('${c.id}','${step.key}')">✓</button>
         <button class="btn btn-skip" onclick="markSkipped('${c.id}','${step.key}')">Ignorar</button>
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function renderClients() {
-  const db = getDB();
-  const el = document.getElementById('clients-content');
+  const db=getDB();
+  const el=document.getElementById('clients-content');
   if (!db.length) {
-    el.innerHTML = `<div class="empty-state"><div class="icon">👥</div><h3>Nenhum cliente</h3><p>Vá em "+ Novo" para cadastrar sua primeira venda.</p></div>`;
+    el.innerHTML=`<div class="empty-state"><div class="icon">👥</div><h3>Nenhum cliente</h3><p>Vá em "+ Novo" para cadastrar sua primeira venda.</p></div>`;
     return;
   }
-  el.innerHTML = [...db].sort((a,b)=>b.saleDate.localeCompare(a.saleDate)).map(c => {
-    const sent=c.sent||{}, skipped=c.skipped||{}, t=today();
-    const steps = STEPS.map(s => {
-      const due = addDays(c.saleDate, s.days);
-      let state = due<=t ? (sent[s.key]?'done':skipped[s.key]?'skipped':'due') : 'future';
-      const icons = { done:'✓', due:'!', future:'', skipped:'–' };
+  el.innerHTML=[...db].sort((a,b)=>b.saleDate.localeCompare(a.saleDate)).map(c=>{
+    const sent=c.sent||{},skip=c.skipped||{},t=today();
+    const steps=STEPS.map(s=>{
+      const due=addDays(c.saleDate,s.days);
+      let state=due<=t?(sent[s.key]?'done':skip[s.key]?'skipped':'due'):'future';
+      const icons={done:'✓',due:'!',future:'',skipped:'–'};
       return `<span class="tl-step ${state}" title="${fmtDate(due)}">${icons[state]?icons[state]+' ':''}${s.label}</span>`;
     }).join('');
     return `
       <div class="customer-card" onclick="openCustomer('${c.id}')">
         <div class="customer-header">
           <div class="avatar" style="width:32px;height:32px;font-size:13px;">${initials(c.name)}</div>
-          <div><div class="customer-name">${esc(c.name)}</div><div class="customer-phone">${esc(c.phone)}</div></div>
+          <div style="flex:1;min-width:0;">
+            <div class="customer-name">${esc(c.name)}</div>
+            <div class="customer-phone">${esc(c.phone)}${c.destino?` · 🌎 ${esc(c.destino)}`:''}</div>
+          </div>
           <div class="customer-date">${fmtDate(c.saleDate)}</div>
         </div>
         <div class="timeline">${steps}</div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
 function openCustomer(id) {
-  const db = getDB(); const c = db.find(x=>x.id===id); if(!c) return;
-  const t=today(), sent=c.sent||{}, skipped=c.skipped||{};
-  const stepsHtml = STEPS.map(s => {
-    const due = addDays(c.saleDate, s.days);
-    const msg  = buildText(s.key, c);
-    const media = getMedia(s.key);
-    const link = waLink(c.phone, msg);
-    let state, stateLabel;
-    if      (sent[s.key])    { state='done';    stateLabel='Enviado em '+fmtDate(sent[s.key]); }
-    else if (skipped[s.key]) { state='skipped'; stateLabel='Ignorado'; }
-    else if (due<=t)         { state='due';     stateLabel='Pendente desde '+fmtDate(due); }
-    else                      { state='future'; stateLabel='Previsto para '+fmtDate(due); }
-    const actions = (state==='done'||state==='skipped') ? `
+  const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
+  const t=today(), sent=c.sent||{}, skip=c.skipped||{};
+
+  const consolHtml = `
+    <div class="consol-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:13px;font-weight:700;color:var(--purple);">🌎 Consolidação</span>
+        <button class="btn btn-edit" style="font-size:12px;padding:5px 10px;" onclick="openConsolModal('${id}')">Editar</button>
+      </div>
+      ${c.destino  ?`<div class="consol-row"><span class="consol-label">Destino</span><span class="consol-value">${esc(c.destino)}</span></div>`:''}
+      ${c.orcamento?`<div class="consol-row"><span class="consol-label">Orçamento</span><span class="consol-value">${esc(c.orcamento)}</span></div>`:''}
+      ${c.periodo  ?`<div class="consol-row"><span class="consol-label">Período</span><span class="consol-value">${esc(c.periodo)}</span></div>`:''}
+      ${c.notes    ?`<div class="consol-row"><span class="consol-label">Obs</span><span class="consol-value">${esc(c.notes)}</span></div>`:''}
+      ${!c.destino&&!c.orcamento&&!c.periodo&&!c.notes?`<div style="font-size:13px;color:var(--text3);">Nenhuma informação ainda. Clique em Editar para adicionar.</div>`:''}
+    </div>`;
+
+  const stepsHtml=STEPS.map(s=>{
+    const due=addDays(c.saleDate,s.days);
+    const msg=buildText(s.key,c);
+    const media=getMedia(s.key);
+    const link=waLink(c.phone,msg);
+    let state,stateLabel;
+    if      (sent[s.key]) { state='done';    stateLabel='Enviado em '+fmtDate(sent[s.key]); }
+    else if (skip[s.key]) { state='skipped'; stateLabel='Ignorado'; }
+    else if (due<=t)      { state='due';     stateLabel='Pendente desde '+fmtDate(due); }
+    else                   { state='future'; stateLabel='Previsto para '+fmtDate(due); }
+    const actions=(state==='done'||state==='skipped')?`
       <button class="btn btn-skip" style="font-size:12px;" onclick="undoStep('${id}','${s.key}')">Desfazer</button>
-    ` : state==='due' ? `
+    `:state==='due'?`
       <a href="${link}" target="_blank" class="btn btn-whatsapp" onclick="setTimeout(()=>markSent('${id}','${s.key}'),2500)" style="flex:1;justify-content:center;">📱 WhatsApp</a>
       <button class="btn btn-done" onclick="markSent('${id}','${s.key}')">✓</button>
       <button class="btn btn-skip" onclick="markSkipped('${id}','${s.key}')">Ignorar</button>
-    ` : `<span style="font-size:12px;color:var(--text3);">Aguardando data</span>`;
+    `:`<span style="font-size:12px;color:var(--text3);">Previsto para ${fmtDate(due)}</span>`;
     return `
       <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
           <span class="tl-step ${state}" style="flex-shrink:0;">${s.label}</span>
           <span style="font-size:12px;color:var(--text2);flex:1;">${stateLabel}</span>
-          ${media ? `<span class="template-media-badge">${mediaIcon(mediaType(media))} Tem mídia</span>` : ''}
+          ${media?`<span class="template-media-badge">${mediaIcon(mediaType(media))}</span>`:''}
         </div>
-        ${state==='due' ? renderMediaBlock(media, id, s.key, true) : ''}
+        ${state==='due'?renderMediaBlock(media,id,s.key,true):''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;">${actions}</div>
-      </div>
-    `;
+      </div>`;
   }).join('');
-  document.getElementById('modal-content').innerHTML = `
+
+  document.getElementById('modal-content').innerHTML=`
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
       <div class="avatar" style="width:46px;height:46px;font-size:18px;">${initials(c.name)}</div>
       <div>
@@ -559,14 +622,13 @@ function openCustomer(id) {
         <div style="font-size:13px;color:var(--text2);">${esc(c.phone)}</div>
       </div>
     </div>
-    <hr>
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">
       <strong style="color:var(--text);">Venda:</strong> ${fmtDate(c.saleDate)}
-      ${c.product?`<br><strong style="color:var(--text);">Produto:</strong> ${esc(c.product)}`:''}
-      ${c.notes?`<br><strong style="color:var(--text);">Obs:</strong> ${esc(c.notes)}`:''}
+      ${c.product?`&nbsp;·&nbsp;<strong style="color:var(--text);">Produto:</strong> ${esc(c.product)}`:''}
     </div>
+    ${consolHtml}
     <hr>
-    <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Follow-up</div>
+    <div style="font-size:13px;font-weight:700;margin-bottom:10px;">Follow-up</div>
     ${stepsHtml}
     <hr>
     <button class="btn btn-danger" style="width:100%;justify-content:center;" onclick="deleteCustomer('${id}')">Remover Cliente</button>
@@ -575,93 +637,105 @@ function openCustomer(id) {
 }
 
 function closeModal(e) {
-  if (!e || e.target === document.getElementById('modal-overlay'))
+  if(!e||e.target===document.getElementById('modal-overlay'))
     document.getElementById('modal-overlay').classList.remove('open');
 }
 
+// ─── Consolidação ─────────────────────────────────────────────────
+function openConsolModal(id) {
+  const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
+  document.getElementById('consol-id').value=id;
+  document.getElementById('c-destino').value=c.destino||'';
+  document.getElementById('c-orcamento').value=c.orcamento||'';
+  document.getElementById('c-periodo').value=c.periodo||'';
+  document.getElementById('c-notes').value=c.notes||'';
+  document.getElementById('consol-overlay').classList.add('open');
+}
+function saveConsol() {
+  const id=document.getElementById('consol-id').value;
+  const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
+  c.destino  =document.getElementById('c-destino').value.trim();
+  c.orcamento=document.getElementById('c-orcamento').value.trim();
+  c.periodo  =document.getElementById('c-periodo').value.trim();
+  c.notes    =document.getElementById('c-notes').value.trim();
+  saveDB(db);
+  closeConsolModal();
+  openCustomer(id);
+  render();
+  showToast('Consolidação salva ✓');
+}
+function closeConsolModal(e) {
+  if(!e||e.target===document.getElementById('consol-overlay'))
+    document.getElementById('consol-overlay').classList.remove('open');
+}
+
 // ─── Templates ────────────────────────────────────────────────────
-const TEMPLATE_NAMES = { d1:'Boas-vindas', d7:'Acompanhamento', d15:'Pré-viagem', d30:'Pós-viagem', d60:'Fidelização' };
+const TPL_NAMES={ d1:'Boas-vindas', d7:'Acompanhamento', d15:'Pré-viagem', d30:'Pós-venda + Sonho', d60:'Fidelização' };
 
 function renderTemplates() {
-  const tpls = getTpls();
-  document.getElementById('templates-content').innerHTML = STEPS.map(s => {
-    const tpl = tpls[s.key] || {};
-    const hasMedia = !!(tpl.media);
-    const mtype = hasMedia ? mediaType(tpl.media) : null;
+  const tpls=getTpls();
+  document.getElementById('templates-content').innerHTML=STEPS.map(s=>{
+    const tpl=tpls[s.key]||{};
+    const hasMedia=!!(tpl.media);
     return `
       <div class="template-card" onclick="editTpl('${s.key}')">
         <div class="template-header">
           <span class="day-pill ${s.key}">${s.label}</span>
-          <span class="template-label">${TEMPLATE_NAMES[s.key]}</span>
-          ${hasMedia ? `<span class="template-media-badge">${mediaIcon(mtype)} ${mediaLabel(mtype)}</span>` : ''}
+          <span class="template-label">${TPL_NAMES[s.key]}</span>
+          ${hasMedia?`<span class="template-media-badge">${mediaIcon(mediaType(tpl.media))}</span>`:''}
           <span style="color:var(--text3);font-size:13px;">✏️</span>
         </div>
         <div class="template-body">${esc(tpl.text||'')}</div>
-      </div>
-    `;
+      </div>`;
   }).join('');
 }
 
 function editTpl(key) {
-  const tpls = getTpls();
-  editingTplKey = key;
-  const step = STEPS.find(s => s.key === key);
-  document.getElementById('tpl-modal-title').textContent = `${TEMPLATE_NAMES[key]} — ${step.label}`;
-  document.getElementById('tpl-text').value  = tpls[key]?.text  || '';
-  document.getElementById('tpl-media').value = tpls[key]?.media || '';
+  const tpls=getTpls();
+  editingTplKey=key;
+  document.getElementById('tpl-modal-title').textContent=`${TPL_NAMES[key]} — ${STEPS.find(s=>s.key===key).label}`;
+  document.getElementById('tpl-text').value=tpls[key]?.text||'';
+  document.getElementById('tpl-media').value=tpls[key]?.media||'';
   updateTplMediaPreview();
   document.getElementById('tpl-overlay').classList.add('open');
 }
-
-document.getElementById('tpl-media').addEventListener('input', updateTplMediaPreview);
-
+document.getElementById('tpl-media').addEventListener('input',updateTplMediaPreview);
 function updateTplMediaPreview() {
-  const url = document.getElementById('tpl-media').value.trim();
-  const el  = document.getElementById('tpl-media-preview');
-  if (!url) { el.innerHTML = ''; return; }
-  const type = mediaType(url);
-  el.innerHTML = renderMediaBlock(url, 'preview', 'preview', false);
+  const url=document.getElementById('tpl-media').value.trim();
+  document.getElementById('tpl-media-preview').innerHTML=url?renderMediaBlock(url,'p','p',false):'';
 }
-
 function saveTpl() {
-  if (!editingTplKey) return;
-  const tpls = getTpls();
-  tpls[editingTplKey] = {
-    text:  document.getElementById('tpl-text').value,
-    media: document.getElementById('tpl-media').value.trim(),
-  };
-  saveTpls(tpls);
-  closeTplModal();
-  renderTemplates();
-  showToast('Template salvo ✓');
+  if(!editingTplKey) return;
+  const tpls=getTpls();
+  tpls[editingTplKey]={ text:document.getElementById('tpl-text').value, media:document.getElementById('tpl-media').value.trim() };
+  saveTpls(tpls); closeTplModal(); renderTemplates(); showToast('Template salvo ✓');
 }
-
 function closeTplModal(e) {
-  if (!e || e.target === document.getElementById('tpl-overlay')) {
+  if(!e||e.target===document.getElementById('tpl-overlay')) {
     document.getElementById('tpl-overlay').classList.remove('open');
-    editingTplKey = null;
-    document.getElementById('tpl-media-preview').innerHTML = '';
+    editingTplKey=null;
+    document.getElementById('tpl-media-preview').innerHTML='';
   }
 }
 
 // ─── UI helpers ───────────────────────────────────────────────────
 function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  const tabs = ['hoje','clientes','novo','mensagens'];
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  const tabs=['hoje','clientes','novo','mensagens'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
-  document.getElementById('view-' + name).classList.add('active');
+  document.getElementById('view-'+name).classList.add('active');
 }
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2200);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
 }
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.getElementById('f-date').value = today();
+document.getElementById('f-date').value=today();
 render();
 </script>
 </body>
