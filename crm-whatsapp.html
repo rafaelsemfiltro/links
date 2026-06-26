@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>CRM WhatsApp — Rafael Versutti</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0d;
+    --surface: #161616;
+    --surface2: #1e1e1e;
+    --border: #2a2a2a;
+    --border2: #333;
+    --text: #f0f0f0;
+    --text2: #999;
+    --text3: #555;
+    --green: #25D366;
+    --green-dim: #1a9e4a;
+    --yellow: #f5c842;
+    --red: #e05252;
+    --blue: #4a9eff;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding-bottom: 80px;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-title { font-size: 17px; font-weight: 600; }
+  .header-sub { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .wa-badge {
+    background: var(--green);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 61px;
+    z-index: 99;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 8px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text2);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+  }
+  .tab.active { color: var(--green); border-bottom-color: var(--green); }
+  .badge {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 10px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* ── Main Content ── */
+  .view { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
+  .view.active { display: block; }
+
+  /* ── Pending Messages Banner ── */
+  .pending-banner {
+    background: linear-gradient(135deg, #1a3a1a 0%, #0d2b1a 100%);
+    border: 1px solid #2a5a2a;
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .pending-banner h2 { font-size: 15px; font-weight: 600; color: #7dde8a; margin-bottom: 4px; }
+  .pending-banner p { font-size: 13px; color: #5ab866; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text2);
+  }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-state h3 { font-size: 16px; font-weight: 500; margin-bottom: 8px; color: var(--text); }
+  .empty-state p { font-size: 13px; line-height: 1.6; }
+
+  /* ── Message Cards ── */
+  .msg-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .msg-card.urgent { border-left: 3px solid var(--yellow); }
+  .msg-card-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+  .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: var(--surface2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 600; color: var(--text2);
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+  .msg-card-info { flex: 1; min-width: 0; }
+  .msg-card-name { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .msg-card-meta { font-size: 12px; color: var(--text2); margin-top: 2px; }
+  .day-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .day-pill.d1  { background: #2a3a1a; color: #7dde8a; }
+  .day-pill.d7  { background: #2a2a1a; color: #f5c842; }
+  .day-pill.d15 { background: #2a1a1a; color: #f07070; }
+  .day-pill.d30 { background: #1a2a3a; color: #70a0f0; }
+  .day-pill.d60 { background: #2a1a2a; color: #c070f0; }
+
+  .msg-preview {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.5;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    margin-bottom: 10px;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .msg-actions { display: flex; gap: 8px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; font-weight: 600;
+    padding: 9px 14px; border-radius: var(--radius-sm);
+    border: none; cursor: pointer; text-decoration: none;
+    transition: opacity .15s;
+  }
+  .btn:active { opacity: 0.7; }
+  .btn-whatsapp { background: var(--green); color: #fff; flex: 1; justify-content: center; }
+  .btn-skip { background: var(--surface2); color: var(--text2); }
+  .btn-done { background: #1a3a1a; color: #7dde8a; }
+
+  /* ── Customer List ── */
+  .customer-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+  }
+  .customer-card:hover { background: var(--surface2); }
+  .customer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .customer-name { font-size: 15px; font-weight: 600; }
+  .customer-phone { font-size: 12px; color: var(--text2); }
+  .customer-date { font-size: 12px; color: var(--text3); margin-left: auto; }
+
+  .timeline {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .tl-step {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 11px;
+    padding: 3px 7px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+  .tl-step.done   { background: #1a3a1a; color: #7dde8a; }
+  .tl-step.due    { background: #3a2a1a; color: var(--yellow); }
+  .tl-step.future { background: var(--surface2); color: var(--text3); }
+  .tl-step.skipped{ background: #1a1a1a; color: var(--text3); text-decoration: line-through; }
+
+  /* ── Add Customer Form ── */
+  .form-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .field input, .field textarea, .field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-size: 15px;
+    padding: 11px 13px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color .2s;
+  }
+  .field input:focus, .field textarea:focus, .field select:focus {
+    border-color: var(--green);
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+  .field select option { background: #1e1e1e; }
+  .btn-primary {
+    width: 100%; padding: 14px;
+    background: var(--green); color: #fff;
+    border: none; border-radius: var(--radius-sm);
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; font-family: inherit;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity .15s;
+  }
+  .btn-primary:active { opacity: 0.8; }
+
+  /* ── Templates View ── */
+  .template-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .template-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+  }
+  .template-label { font-size: 14px; font-weight: 600; flex: 1; }
+  .template-body {
+    font-size: 13px; color: var(--text2); line-height: 1.6;
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 10px; white-space: pre-wrap;
+  }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 200;
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 20px;
+    width: 100%; max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .modal-handle {
+    width: 36px; height: 4px; border-radius: 2px;
+    background: var(--border2); margin: 0 auto 16px;
+  }
+  .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%);
+    background: #1a3a1a; color: #7dde8a;
+    padding: 10px 20px; border-radius: 20px;
+    font-size: 14px; font-weight: 600;
+    z-index: 300; opacity: 0;
+    transition: opacity .3s;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+
+  /* ── Section Titles ── */
+  .section-title {
+    font-size: 12px; font-weight: 700; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin: 20px 0 10px;
+  }
+  .section-title:first-child { margin-top: 0; }
+
+  /* ── Delete button ── */
+  .btn-danger { background: #3a1a1a; color: var(--red); border: 1px solid #5a2a2a; }
+
+  hr { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .chip {
+    background: var(--surface2); border: 1px solid var(--border2);
+    color: var(--text2); font-size: 12px; font-weight: 500;
+    padding: 4px 10px; border-radius: 20px; cursor: pointer;
+    transition: all .15s;
+  }
+  .chip:hover { border-color: var(--green); color: var(--green); }
+
+  .info-box {
+    background: #1a2a3a; border: 1px solid #2a3a4a;
+    border-radius: var(--radius-sm); padding: 12px 14px;
+    font-size: 13px; color: #6090c0; line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  @media (min-width: 600px) {
+    .view { padding: 20px; }
+    .msg-actions { flex-direction: row; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">CRM WhatsApp</div>
+    <div class="header-sub">Rafael Versutti — Vendas</div>
+  </div>
+  <span class="wa-badge">WhatsApp</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('hoje')">Hoje <span class="badge" id="badge-hoje"></span></div>
+  <div class="tab" onclick="switchTab('clientes')">Clientes</div>
+  <div class="tab" onclick="switchTab('novo')">+ Novo</div>
+  <div class="tab" onclick="switchTab('mensagens')">Templates</div>
+</div>
+
+<!-- ── VIEW: HOJE ── -->
+<div class="view active" id="view-hoje">
+  <div id="today-content"></div>
+</div>
+
+<!-- ── VIEW: CLIENTES ── -->
+<div class="view" id="view-clientes">
+  <div id="clients-content"></div>
+</div>
+
+<!-- ── VIEW: NOVO CLIENTE ── -->
+<div class="view" id="view-novo">
+  <div class="form-card">
+    <div class="form-title">Nova Venda</div>
+    <div class="info-box">
+      Depois de cadastrar o cliente, o sistema vai calcular automaticamente quando enviar as mensagens de follow-up.
+    </div>
+    <div class="field">
+      <label>Nome do Cliente</label>
+      <input type="text" id="f-name" placeholder="Ex: João Silva" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>WhatsApp (com DDD)</label>
+      <input type="tel" id="f-phone" placeholder="Ex: 48999999999" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Data da Venda</label>
+      <input type="date" id="f-date">
+    </div>
+    <div class="field">
+      <label>Produto / Destino</label>
+      <input type="text" id="f-product" placeholder="Ex: Costão do Santinho 3 noites" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Observações (opcional)</label>
+      <textarea id="f-notes" placeholder="Detalhes extras, data da viagem, etc..."></textarea>
+    </div>
+    <button class="btn-primary" onclick="addCustomer()">
+      ✓ Cadastrar Cliente
+    </button>
+  </div>
+</div>
+
+<!-- ── VIEW: TEMPLATES ── -->
+<div class="view" id="view-mensagens">
+  <div class="info-box">
+    Estas são as mensagens automáticas enviadas em cada etapa. Use <strong>{nome}</strong> para o nome do cliente e <strong>{produto}</strong> para o produto/destino. Clique em qualquer template para editar.
+  </div>
+  <div id="templates-content"></div>
+</div>
+
+<!-- ── MODAL: CLIENTE DETALHES ── -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ── MODAL: EDITAR TEMPLATE ── -->
+<div class="modal-overlay" id="tpl-overlay" onclick="closeTplModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="tpl-modal-title"></div>
+    <div class="field">
+      <label>Mensagem</label>
+      <textarea id="tpl-text" style="min-height:140px;"></textarea>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveTpl()">Salvar</button>
+      <button class="btn btn-skip" onclick="closeTplModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── Data Layer ───────────────────────────────────────────────────
+const DB_KEY = 'rv_crm_v2';
+const TPL_KEY = 'rv_tpl_v2';
+let editingTplKey = null;
+
+const STEPS = [
+  { key: 'd1',  label: 'Dia 1',     days: 1  },
+  { key: 'd7',  label: 'Dia 7',     days: 7  },
+  { key: 'd15', label: 'Dia 15',    days: 15 },
+  { key: 'd30', label: 'Dia 30',    days: 30 },
+  { key: 'd60', label: '2 Meses',   days: 60 },
+];
+
+const DEFAULT_TEMPLATES = {
+  d1:  `Olá {nome}! 😊 Aqui é o Rafael Versutti. Muito obrigado pela sua confiança! Sua reserva em {produto} foi confirmada. Se tiver qualquer dúvida sobre a viagem, pode me chamar! 🏖️`,
+  d7:  `Olá {nome}! Tudo certo com os preparativos para {produto}? 🗺️ Passando para saber se posso ajudar com roteiro, dicas ou qualquer informação. Pode contar comigo!`,
+  d15: `Olá {nome}! Faltam poucos dias para a sua viagem a {produto}! 🎒 Aqui vai uma dica: leve protetor solar, documentos originais e bastante animação. Me avisa se precisar de mais alguma coisa!`,
+  d30: `Oi {nome}! 🌟 Espero que a experiência em {produto} tenha sido incrível! Me conta como foi — sua opinião é muito importante pra mim. Se quiser avaliar ou indicar para amigos, fico muito grato! 🙏`,
+  d60: `Oi {nome}! Saudade da última viagem? 😄 Tenho novidades e ofertas especiais esperando por você! Quando quiser planejar a próxima aventura, é só me chamar. ✈️`,
+};
+
+function getDB() {
+  try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; }
+  catch { return []; }
+}
+function saveDB(data) { localStorage.setItem(DB_KEY, JSON.stringify(data)); }
+
+function getTpls() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(TPL_KEY));
+    return saved ? { ...DEFAULT_TEMPLATES, ...saved } : { ...DEFAULT_TEMPLATES };
+  } catch { return { ...DEFAULT_TEMPLATES }; }
+}
+function saveTpls(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+// ─── Date Helpers ─────────────────────────────────────────────────
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function addDays(dateStr, n) {
+  const d = new Date(dateStr + 'T12:00:00');
+  d.setDate(d.getDate() + n);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function daysDiff(a, b) {
+  const da = new Date(a + 'T12:00:00');
+  const db = new Date(b + 'T12:00:00');
+  return Math.round((db - da) / 86400000);
+}
+function fmtDate(dateStr) {
+  const [y,m,d] = dateStr.split('-');
+  return `${d}/${m}/${y}`;
+}
+function initials(name) {
+  return name.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+// ─── Message Builder ──────────────────────────────────────────────
+function buildMessage(tplKey, customer) {
+  const tpls = getTpls();
+  return (tpls[tplKey] || '')
+    .replace(/\{nome\}/gi, customer.name)
+    .replace(/\{produto\}/gi, customer.product || 'sua viagem');
+}
+function waLink(phone, message) {
+  const clean = phone.replace(/\D/g,'');
+  const num = clean.startsWith('55') ? clean : '55' + clean;
+  return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
+}
+
+// ─── Pending Calculation ──────────────────────────────────────────
+function getPending(customer) {
+  const t = today();
+  const sent = customer.sent || {};
+  const skipped = customer.skipped || {};
+  return STEPS.filter(s => {
+    const dueDate = addDays(customer.saleDate, s.days);
+    return dueDate <= t && !sent[s.key] && !skipped[s.key];
+  });
+}
+function getUpcoming(customer) {
+  const t = today();
+  return STEPS.filter(s => {
+    const dueDate = addDays(customer.saleDate, s.days);
+    return dueDate > t;
+  });
+}
+
+// ─── Actions ─────────────────────────────────────────────────────
+function markSent(customerId, stepKey) {
+  const db = getDB();
+  const c = db.find(x => x.id === customerId);
+  if (!c) return;
+  c.sent = c.sent || {};
+  c.sent[stepKey] = today();
+  saveDB(db);
+  render(); showToast('Mensagem marcada como enviada ✓');
+}
+function markSkipped(customerId, stepKey) {
+  const db = getDB();
+  const c = db.find(x => x.id === customerId);
+  if (!c) return;
+  c.skipped = c.skipped || {};
+  c.skipped[stepKey] = today();
+  saveDB(db);
+  render(); showToast('Etapa ignorada');
+}
+function deleteCustomer(id) {
+  if (!confirm('Remover este cliente?')) return;
+  const db = getDB().filter(x => x.id !== id);
+  saveDB(db);
+  closeModal(); render(); showToast('Cliente removido');
+}
+
+function addCustomer() {
+  const name    = document.getElementById('f-name').value.trim();
+  const phone   = document.getElementById('f-phone').value.trim();
+  const date    = document.getElementById('f-date').value;
+  const product = document.getElementById('f-product').value.trim();
+  const notes   = document.getElementById('f-notes').value.trim();
+  if (!name || !phone || !date) { alert('Preencha nome, telefone e data da venda.'); return; }
+  const db = getDB();
+  db.push({ id: uid(), name, phone, saleDate: date, product, notes, sent: {}, skipped: {}, createdAt: today() });
+  saveDB(db);
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-phone').value = '';
+  document.getElementById('f-date').value = today();
+  document.getElementById('f-product').value = '';
+  document.getElementById('f-notes').value = '';
+  showToast('Cliente cadastrado! ✓');
+  switchTab('hoje');
+  render();
+}
+
+// ─── Render ───────────────────────────────────────────────────────
+function render() {
+  renderToday();
+  renderClients();
+  renderTemplates();
+}
+
+function renderToday() {
+  const db = getDB();
+  const allPending = [];
+  db.forEach(c => {
+    getPending(c).forEach(s => {
+      allPending.push({ customer: c, step: s });
+    });
+  });
+
+  const badge = document.getElementById('badge-hoje');
+  badge.textContent = allPending.length || '';
+  badge.style.display = allPending.length ? 'inline-block' : 'none';
+
+  const el = document.getElementById('today-content');
+  if (!allPending.length) {
+    const upcoming = [];
+    db.forEach(c => getUpcoming(c).forEach(s => upcoming.push({ customer: c, step: s })));
+    const nextDue = upcoming.length ? upcoming.sort((a,b) => {
+      return addDays(a.customer.saleDate, a.step.days).localeCompare(addDays(b.customer.saleDate, b.step.days));
+    })[0] : null;
+    el.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">✅</div>
+        <h3>Tudo em dia!</h3>
+        <p>Nenhuma mensagem pendente para hoje.</p>
+        ${nextDue ? `<p style="margin-top:8px;color:var(--text3);">Próxima mensagem: ${nextDue.customer.name} — ${nextDue.step.label} em ${fmtDate(addDays(nextDue.customer.saleDate, nextDue.step.days))}</p>` : ''}
+      </div>
+      ${db.length === 0 ? `<div style="text-align:center;margin-top:0;"><button class="btn-primary" style="max-width:240px;margin:0 auto;" onclick="switchTab('novo')">+ Cadastrar Primeiro Cliente</button></div>` : ''}
+    `;
+    return;
+  }
+
+  el.innerHTML = `
+    <div class="pending-banner">
+      <h2>📨 ${allPending.length} mensagem${allPending.length > 1 ? 's' : ''} para enviar hoje</h2>
+      <p>Clique em "Abrir WhatsApp" para enviar com a mensagem já escrita, depois marque como enviado.</p>
+    </div>
+    ${allPending.map(({ customer, step }) => renderMsgCard(customer, step)).join('')}
+  `;
+}
+
+function renderMsgCard(c, step) {
+  const msg = buildMessage(step.key, c);
+  const link = waLink(c.phone, msg);
+  return `
+    <div class="msg-card urgent">
+      <div class="msg-card-header">
+        <div class="avatar">${initials(c.name)}</div>
+        <div class="msg-card-info">
+          <div class="msg-card-name">${esc(c.name)}</div>
+          <div class="msg-card-meta">${esc(c.phone)}${c.product ? ' · ' + esc(c.product) : ''}</div>
+        </div>
+        <span class="day-pill ${step.key}">${step.label}</span>
+      </div>
+      <div class="msg-preview">${esc(msg)}</div>
+      <div class="msg-actions">
+        <a href="${link}" target="_blank" class="btn btn-whatsapp" onclick="setTimeout(()=>markSent('${c.id}','${step.key}'),2000)">
+          📱 Abrir WhatsApp
+        </a>
+        <button class="btn btn-done" onclick="markSent('${c.id}','${step.key}')">✓</button>
+        <button class="btn btn-skip" onclick="markSkipped('${c.id}','${step.key}')">Ignorar</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderClients() {
+  const db = getDB();
+  const el = document.getElementById('clients-content');
+  if (!db.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">👥</div><h3>Nenhum cliente cadastrado</h3><p>Vá em "Novo" para cadastrar sua primeira venda.</p></div>`;
+    return;
+  }
+  const sorted = [...db].sort((a,b) => b.saleDate.localeCompare(a.saleDate));
+  el.innerHTML = sorted.map(c => renderCustomerCard(c)).join('');
+}
+
+function renderCustomerCard(c) {
+  const sent = c.sent || {};
+  const skipped = c.skipped || {};
+  const t = today();
+  const steps = STEPS.map(s => {
+    const dueDate = addDays(c.saleDate, s.days);
+    let state = 'future';
+    if (sent[s.key]) state = 'done';
+    else if (skipped[s.key]) state = 'skipped';
+    else if (dueDate <= t) state = 'due';
+    const icons = { done: '✓', due: '!', future: '', skipped: '–' };
+    return `<span class="tl-step ${state}" title="${fmtDate(dueDate)}">${icons[state] ? icons[state]+' ' : ''}${s.label}</span>`;
+  }).join('');
+  return `
+    <div class="customer-card" onclick="openCustomer('${c.id}')">
+      <div class="customer-header">
+        <div class="avatar" style="width:32px;height:32px;font-size:13px;">${initials(c.name)}</div>
+        <div>
+          <div class="customer-name">${esc(c.name)}</div>
+          <div class="customer-phone">${esc(c.phone)}</div>
+        </div>
+        <div class="customer-date">${fmtDate(c.saleDate)}</div>
+      </div>
+      <div class="timeline">${steps}</div>
+    </div>
+  `;
+}
+
+function openCustomer(id) {
+  const db = getDB();
+  const c = db.find(x => x.id === id);
+  if (!c) return;
+  const t = today();
+  const sent = c.sent || {};
+  const skipped = c.skipped || {};
+
+  const stepsHtml = STEPS.map(s => {
+    const dueDate = addDays(c.saleDate, s.days);
+    const msg = buildMessage(s.key, c);
+    const link = waLink(c.phone, msg);
+    let state, stateLabel;
+    if (sent[s.key])        { state='done';    stateLabel='Enviado em '+fmtDate(sent[s.key]); }
+    else if (skipped[s.key]){ state='skipped'; stateLabel='Ignorado'; }
+    else if (dueDate <= t)  { state='due';     stateLabel='Pendente desde '+fmtDate(dueDate); }
+    else                     { state='future'; stateLabel='Previsto para '+fmtDate(dueDate); }
+
+    const actions = (state==='done'||state==='skipped') ? `
+      <button class="btn btn-skip" style="font-size:12px;" onclick="undoStep('${id}','${s.key}')">Desfazer</button>
+    ` : state==='due' ? `
+      <a href="${link}" target="_blank" class="btn btn-whatsapp" onclick="setTimeout(()=>markSent('${id}','${s.key}'),2000)" style="flex:1;justify-content:center;">📱 WhatsApp</a>
+      <button class="btn btn-done" onclick="markSent('${id}','${s.key}')">✓</button>
+      <button class="btn btn-skip" onclick="markSkipped('${id}','${s.key}')">Ignorar</button>
+    ` : `<span style="font-size:12px;color:var(--text3);">Aguardando data</span>`;
+
+    return `
+      <div style="background:var(--surface2);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:${state!=='future'?'8px':'0'};">
+          <span class="tl-step ${state}" style="flex-shrink:0;">${s.label}</span>
+          <span style="font-size:12px;color:var(--text2);flex:1;">${stateLabel}</span>
+        </div>
+        ${state!=='future' ? `<div style="display:flex;gap:6px;flex-wrap:wrap;">${actions}</div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('modal-content').innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div class="avatar" style="width:46px;height:46px;font-size:18px;">${initials(c.name)}</div>
+      <div>
+        <div style="font-size:17px;font-weight:600;">${esc(c.name)}</div>
+        <div style="font-size:13px;color:var(--text2);">${esc(c.phone)}</div>
+      </div>
+    </div>
+    <hr>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">
+      <strong style="color:var(--text);">Venda:</strong> ${fmtDate(c.saleDate)}
+      ${c.product ? `<br><strong style="color:var(--text);">Produto:</strong> ${esc(c.product)}` : ''}
+      ${c.notes ? `<br><strong style="color:var(--text);">Obs:</strong> ${esc(c.notes)}` : ''}
+    </div>
+    <hr>
+    <div style="font-size:13px;font-weight:600;margin-bottom:10px;">Follow-up</div>
+    ${stepsHtml}
+    <hr>
+    <button class="btn btn-danger" style="width:100%;justify-content:center;" onclick="deleteCustomer('${id}')">Remover Cliente</button>
+  `;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+
+function undoStep(customerId, stepKey) {
+  const db = getDB();
+  const c = db.find(x => x.id === customerId);
+  if (!c) return;
+  delete (c.sent || {})[stepKey];
+  delete (c.skipped || {})[stepKey];
+  saveDB(db);
+  openCustomer(customerId);
+  render();
+}
+
+function closeModal(e) {
+  if (!e || e.target === document.getElementById('modal-overlay')) {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+}
+
+// ─── Templates ────────────────────────────────────────────────────
+function renderTemplates() {
+  const tpls = getTpls();
+  document.getElementById('templates-content').innerHTML = STEPS.map(s => `
+    <div class="template-card" onclick="editTpl('${s.key}')">
+      <div class="template-header">
+        <span class="day-pill ${s.key}">${s.label}</span>
+        <span class="template-label">${s.key==='d1'?'Mensagem de Boas-vindas':s.key==='d7'?'Acompanhamento':s.key==='d15'?'Pré-viagem':s.key==='d30'?'Pós-viagem':'Fidelização'}</span>
+        <span style="color:var(--text3);font-size:13px;">✏️</span>
+      </div>
+      <div class="template-body">${esc(tpls[s.key])}</div>
+    </div>
+  `).join('');
+}
+
+function editTpl(key) {
+  const tpls = getTpls();
+  editingTplKey = key;
+  const step = STEPS.find(s => s.key === key);
+  document.getElementById('tpl-modal-title').textContent = `Editar — ${step.label}`;
+  document.getElementById('tpl-text').value = tpls[key];
+  document.getElementById('tpl-overlay').classList.add('open');
+}
+function saveTpl() {
+  if (!editingTplKey) return;
+  const tpls = getTpls();
+  tpls[editingTplKey] = document.getElementById('tpl-text').value;
+  saveTpls(tpls);
+  closeTplModal();
+  renderTemplates();
+  showToast('Template salvo ✓');
+}
+function closeTplModal(e) {
+  if (!e || e.target === document.getElementById('tpl-overlay')) {
+    document.getElementById('tpl-overlay').classList.remove('open');
+    editingTplKey = null;
+  }
+}
+
+// ─── UI Helpers ───────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const tabs = ['hoje','clientes','novo','mensagens'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('view-' + name).classList.add('active');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Init ─────────────────────────────────────────────────────────
+document.getElementById('f-date').value = today();
+render();
+</script>
+</body>
+</html>
