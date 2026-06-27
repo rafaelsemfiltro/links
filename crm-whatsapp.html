@@ -44,6 +44,7 @@
   .view { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
   .view.active { display: block; }
 
+  /* ── Group headers ── */
   .step-group { margin-bottom: 20px; }
   .step-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
   .step-group-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -87,8 +88,10 @@
   .btn-edit { background: #1a1a2e; color: var(--purple); }
   .btn-danger { background: #3a1a1a; color: var(--red); border: 1px solid #5a2a2a; }
 
+  /* ── Consolidação badge ── */
   .destino-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; background: #1a1a2e; color: var(--purple); padding: 3px 10px; border-radius: 20px; border: 1px solid #2a2a4a; }
 
+  /* ── Media ── */
   .media-block { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 10px; }
   .media-block-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
   .media-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 8px; }
@@ -97,6 +100,7 @@
   .media-url-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
   .media-actions { display: flex; gap: 6px; }
 
+  /* ── Customers ── */
   .customer-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
   .customer-card:hover { background: var(--surface2); }
   .customer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -110,6 +114,7 @@
   .tl-step.future  { background: var(--surface2); color: var(--text3); }
   .tl-step.skipped { background: var(--surface); color: var(--text3); text-decoration: line-through; }
 
+  /* ── Form ── */
   .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; }
   .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
   .form-section-title { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
@@ -122,6 +127,7 @@
   .btn-primary { width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
   .btn-primary:active { opacity: 0.8; }
 
+  /* ── Templates ── */
   .template-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
   .template-card:hover { background: var(--surface2); }
   .template-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -129,12 +135,14 @@
   .template-body { font-size: 13px; color: var(--text2); line-height: 1.6; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; white-space: pre-wrap; }
   .template-media-badge { font-size: 11px; background: #0d2e2c; color: var(--teal); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
 
+  /* ── Modals ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 20px; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; }
   .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 16px; }
   .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
 
+  /* ── Consolidação card inside modal ── */
   .consol-card { background: var(--surface2); border: 1px solid #2a2a4a; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; }
   .consol-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
   .consol-label { color: var(--text2); font-weight: 600; min-width: 80px; flex-shrink: 0; }
@@ -179,6 +187,7 @@
 <div class="view active" id="view-hoje"><div id="today-content"></div></div>
 <div class="view" id="view-clientes"><div id="clients-content"></div></div>
 
+<!-- ── NOVO CLIENTE ── -->
 <div class="view" id="view-novo">
   <div class="form-card">
     <div class="form-title">Nova Venda</div>
@@ -198,8 +207,10 @@
       <label>Produto / Destino Vendido</label>
       <input type="text" id="f-product" placeholder="Ex: Costão do Santinho 3 noites" autocomplete="off">
     </div>
+
     <div class="form-section-title">📋 Consolidação de Venda</div>
     <div class="info-box" style="margin-bottom:12px;">Escreva a história da venda — quem é o cliente, por que comprou, o que sonha, detalhes da conversa. Isso vai te ajudar a lembrar o contexto na hora de mandar a mensagem.</div>
+
     <div class="field">
       <label>História da Venda</label>
       <textarea id="f-notes" style="min-height:110px;" placeholder="Ex: Família gaúcha, sempre viaja em Balneário Camboriú. Compraram pelo patrimônio e querem visitar quando o resort ficar pronto. Sonham em viajar pro Chile. Casal com filhos pequenos, orçamento ~R$8k..."></textarea>
@@ -228,6 +239,7 @@
   </div>
 </div>
 
+<!-- ── TEMPLATES ── -->
 <div class="view" id="view-mensagens">
   <div class="vars-box">
     <strong>Variáveis disponíveis:</strong><br>
@@ -239,6 +251,7 @@
   <div id="templates-content"></div>
 </div>
 
+<!-- ── CONFIG ── -->
 <div class="view" id="view-config">
   <div class="form-card">
     <div class="form-title">⚙️ Configurações</div>
@@ -259,10 +272,12 @@
   </div>
 </div>
 
+<!-- Modal: Cliente -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal"><div class="modal-handle"></div><div id="modal-content"></div></div>
 </div>
 
+<!-- Modal: Editar Consolidação -->
 <div class="modal-overlay" id="consol-overlay" onclick="closeConsolModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -289,6 +304,7 @@
   </div>
 </div>
 
+<!-- Modal: Editar Template -->
 <div class="modal-overlay" id="tpl-overlay" onclick="closeTplModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -310,6 +326,7 @@
   </div>
 </div>
 
+<!-- Lock Screen -->
 <div id="lock-screen" style="position:fixed;inset:0;background:#09111e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;">
   <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
     <path d="M50 20 C35 28,25 38,30 50 C25 62,35 72,50 80 C65 72,75 62,70 50 C75 38,65 28,50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
@@ -330,6 +347,7 @@
   </div>
 </div>
 
+<!-- Sync indicator -->
 <div id="sync-indicator" style="display:none;position:fixed;bottom:90px;right:16px;background:#0f1c2e;border:1px solid #1e3352;border-radius:20px;padding:6px 12px;font-size:12px;color:#7a9bbf;z-index:150;">⟳ Sincronizando...</div>
 
 <div class="toast" id="toast"></div>
@@ -339,6 +357,7 @@ const DB_KEY  = 'rv_crm_v2';
 const TPL_KEY = 'rv_tpl_v5';
 let editingTplKey = null;
 
+// ─── GitHub Sync ──────────────────────────────────────────────────
 const GH_FILE  = 'crm-clientes.json';
 const CFG_KEY  = 'rv_crm_cfg';
 let ghSha = null;
@@ -396,6 +415,7 @@ function scheduleSave(clients) {
   saveTimer = setTimeout(() => ghSave(clients), 1500);
 }
 
+// ─── Auth ─────────────────────────────────────────────────────────
 const APP_PASS = 'Ittusvr';
 
 function unlock() {
@@ -458,6 +478,7 @@ function getTpls() {
 function saveTpls(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
+// ─── Date helpers ─────────────────────────────────────────────────
 function today() {
   const d = new Date();
   return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
@@ -470,6 +491,7 @@ function addDays(ds, n) {
 function fmtDate(ds) { const [y,m,d]=ds.split('-'); return `${d}/${m}/${y}`; }
 function initials(n) { return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
 
+// ─── Message builder ──────────────────────────────────────────────
 function buildText(key, c, overrideName) {
   const tpls = getTpls();
   return (tpls[key]?.text || '')
@@ -485,6 +507,7 @@ function waLink(phone, message) {
   return `https://wa.me/${num}?text=${encodeURIComponent(message)}`;
 }
 
+// ─── Media helpers ────────────────────────────────────────────────
 function mediaType(url) {
   if (!url) return null;
   const u = url.toLowerCase().split('?')[0];
@@ -509,7 +532,7 @@ function renderMediaBlock(url, cid, key, showCopy) {
         <a href="${esc(url)}" target="_blank" class="btn btn-media" style="font-size:12px;padding:7px 12px;">Abrir</a>
         ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')">Copiar link</button>`:''}
       </div>
-      ${showCopy?`<div style="font-size:11px;color:var(--text3);margin-top:6px;">Envie o texto → depois cole o link acima na mesma conversa.</div>`:''}
+      ${showCopy?`<div style="font-size:11px;color:var(--text3);margin-top:6px;">✅ Link incluído automaticamente na mensagem.</div>`:''}
     </div>`;
 }
 
@@ -521,6 +544,7 @@ function copyMedia(url) {
   });
 }
 
+// ─── Pending / Upcoming ───────────────────────────────────────────
 function getPending(c) {
   const t=today(), sent=c.sent||{}, skip=c.skipped||{};
   return STEPS.filter(s => addDays(c.saleDate,s.days)<=t && !sent[s.key] && !skip[s.key]);
@@ -530,6 +554,7 @@ function getUpcoming(c) {
   return STEPS.filter(s => addDays(c.saleDate,s.days)>t);
 }
 
+// ─── Actions ─────────────────────────────────────────────────────
 function markSent(cid,key) {
   const db=getDB(), c=db.find(x=>x.id===cid); if(!c) return;
   c.sent=c.sent||{}; c.sent[key]=today();
@@ -570,10 +595,12 @@ function addCustomer() {
   switchTab('hoje'); render();
 }
 
+// ─── Render ───────────────────────────────────────────────────────
 function render() { renderToday(); renderClients(); renderTemplates(); }
 
 function renderToday() {
   const db=getDB();
+  // build a map: stepKey -> list of {customer, step}
   const groups = {};
   STEPS.forEach(s => groups[s.key]=[]);
   db.forEach(c => getPending(c).forEach(s => groups[s.key].push({ customer:c, step:s })));
@@ -623,8 +650,8 @@ function renderMsgCard(c, step) {
   const msg1 = buildText(step.key, c);
   const msg2 = c.phone2 ? buildText(step.key, c, c.name2 || c.name) : null;
   const media = getMedia(step.key);
-  const link1 = waLink(c.phone, msg1);
-  const link2 = c.phone2 ? waLink(c.phone2, msg2) : null;
+  const link1 = waLink(c.phone, media ? msg1 + '\n\n' + media : msg1);
+  const link2 = c.phone2 ? waLink(c.phone2, media ? msg2 + '\n\n' + media : msg2) : null;
   const hasDestino = (step.key==='d60' && c.destino) || (step.key==='d90' && (c.destino2||c.destino));
   const hasTwo = !!(c.phone2);
   return `
@@ -698,7 +725,7 @@ function openCustomer(id) {
     const due=addDays(c.saleDate,s.days);
     const msg=buildText(s.key,c);
     const media=getMedia(s.key);
-    const link=waLink(c.phone,msg);
+    const link=waLink(c.phone, media ? msg + '\n\n' + media : msg);
     let state,stateLabel;
     if      (sent[s.key]) { state='done';    stateLabel='Enviado em '+fmtDate(sent[s.key]); }
     else if (skip[s.key]) { state='skipped'; stateLabel='Ignorado'; }
@@ -757,6 +784,7 @@ function closeModal(e) {
     document.getElementById('modal-overlay').classList.remove('open');
 }
 
+// ─── Consolidação ─────────────────────────────────────────────────
 function openConsolModal(id) {
   const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
   document.getElementById('consol-id').value=id;
@@ -782,6 +810,7 @@ function closeConsolModal(e) {
     document.getElementById('consol-overlay').classList.remove('open');
 }
 
+// ─── Templates ────────────────────────────────────────────────────
 const TPL_NAMES={ d1:'Boas-vindas', d7:'Como Funciona', d15:'RCI — Intercâmbio', d30:'Diário de Obras', d60:'Destino dos Sonhos', d90:'Check-in 3 Meses' };
 
 function renderTemplates() {
@@ -830,6 +859,7 @@ function closeTplModal(e) {
   }
 }
 
+// ─── Config ───────────────────────────────────────────────────────
 function saveCfg() {
   const token = document.getElementById('cfg-token').value.trim();
   const repo  = document.getElementById('cfg-repo').value.trim();
@@ -845,6 +875,7 @@ function logout() {
   location.reload();
 }
 
+// ─── UI helpers ───────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
