@@ -393,7 +393,15 @@ async function ghLoad() {
       const data = await res.json();
       ghSha = data.sha;
       const parsed = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));
-      localStorage.setItem(DB_KEY, JSON.stringify(parsed));
+      if (parsed.length > 0) {
+        localStorage.setItem(DB_KEY, JSON.stringify(parsed));
+      } else {
+        const local = getDB();
+        if (local.length > 0) scheduleSave(local);
+      }
+    } else if (res.status === 404) {
+      const local = getDB();
+      if (local.length > 0) scheduleSave(local);
     }
   } catch(e) { console.warn('GitHub load error:', e); }
 }
@@ -439,7 +447,16 @@ async function ghLoadTemplates() {
       const data = await res.json();
       tplsSha = data.sha;
       const parsed = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));
-      localStorage.setItem(TPL_KEY, JSON.stringify(parsed));
+      const hasCustom = Object.keys(parsed).length > 0;
+      if (hasCustom) {
+        localStorage.setItem(TPL_KEY, JSON.stringify(parsed));
+      } else {
+        const local = localStorage.getItem(TPL_KEY);
+        if (local) scheduleTemplateSave(JSON.parse(local));
+      }
+    } else if (res.status === 404) {
+      const local = localStorage.getItem(TPL_KEY);
+      if (local) scheduleTemplateSave(JSON.parse(local));
     }
   } catch(e) { console.warn('GitHub templates load error:', e); }
 }
