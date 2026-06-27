@@ -206,25 +206,21 @@
       <input type="text" id="f-product" placeholder="Ex: Costão do Santinho 3 noites" autocomplete="off">
     </div>
 
-    <div class="form-section-title">🌎 Consolidação do Cliente</div>
-    <div class="info-box" style="margin-bottom:12px;">Informações sobre os interesses do cliente. Use depois dos primeiros contatos para personalizar as mensagens de D+30 e D+60.</div>
+    <div class="form-section-title">📋 Consolidação de Venda</div>
+    <div class="info-box" style="margin-bottom:12px;">Escreva a história da venda — quem é o cliente, por que comprou, o que sonha, detalhes da conversa. Isso vai te ajudar a lembrar o contexto na hora de mandar a mensagem.</div>
 
     <div class="field">
-      <label>Sonho de Viagem / Destino dos Sonhos</label>
-      <input type="text" id="f-destino" placeholder="Ex: Chile, Gramado, Europa, Caribe..." autocomplete="off">
-      <div class="field-hint">Usado automaticamente nas mensagens de longo prazo com {destino}</div>
+      <label>História da Venda</label>
+      <textarea id="f-notes" style="min-height:110px;" placeholder="Ex: Família gaúcha, sempre viaja em Balneário Camboriú. Compraram pelo patrimônio e querem visitar quando o resort ficar pronto. Sonham em viajar pro Chile. Casal com filhos pequenos, orçamento ~R$8k..."></textarea>
     </div>
     <div class="field">
-      <label>Orçamento Estimado</label>
-      <input type="text" id="f-orcamento" placeholder="Ex: R$ 8.000 por pessoa" autocomplete="off">
+      <label>Destino dos Sonhos</label>
+      <input type="text" id="f-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado..." autocomplete="off">
+      <div class="field-hint">Usado automaticamente nas mensagens de D+30 e D+60 com a variável {destino}</div>
     </div>
-    <div class="field">
-      <label>Período / Época Preferida</label>
-      <input type="text" id="f-periodo" placeholder="Ex: Julho 2025, férias de verão..." autocomplete="off">
-    </div>
-    <div class="field">
-      <label>Observações</label>
-      <textarea id="f-notes" placeholder="Família, casal, mochileiro, detalhes da conversa..."></textarea>
+    <div class="field" style="display:none;">
+      <input type="hidden" id="f-orcamento" value="">
+      <input type="hidden" id="f-periodo" value="">
     </div>
     <button class="btn-primary" onclick="addCustomer()">✓ Cadastrar Cliente</button>
   </div>
@@ -252,24 +248,19 @@
 <div class="modal-overlay" id="consol-overlay" onclick="closeConsolModal(event)">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">🌎 Consolidação do Cliente</div>
+    <div class="modal-title">📋 Consolidação de Venda</div>
     <input type="hidden" id="consol-id">
     <div class="field">
-      <label>Sonho de Viagem / Destino dos Sonhos</label>
-      <input type="text" id="c-destino" placeholder="Ex: Chile, Europa, Caribe...">
+      <label>História da Venda</label>
+      <textarea id="c-notes" style="min-height:130px;" placeholder="Ex: Família gaúcha, sempre viaja em Balneário Camboriú. Compraram pelo patrimônio e querem visitar quando o resort ficar pronto. Sonham viajar pro Chile. Casal com filhos pequenos, orçamento ~R$8k..."></textarea>
     </div>
     <div class="field">
-      <label>Orçamento Estimado</label>
-      <input type="text" id="c-orcamento" placeholder="Ex: R$ 8.000 por pessoa">
+      <label>Destino dos Sonhos</label>
+      <input type="text" id="c-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado...">
+      <div class="field-hint">Usado automaticamente nas mensagens de D+30 e D+60</div>
     </div>
-    <div class="field">
-      <label>Período / Época Preferida</label>
-      <input type="text" id="c-periodo" placeholder="Ex: Julho 2025, férias...">
-    </div>
-    <div class="field">
-      <label>Observações / Interesses</label>
-      <textarea id="c-notes" placeholder="Família, casal, interesses específicos..."></textarea>
-    </div>
+    <input type="hidden" id="c-orcamento">
+    <input type="hidden" id="c-periodo">
     <div style="display:flex;gap:8px;">
       <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveConsol()">Salvar</button>
       <button class="btn btn-skip" onclick="closeConsolModal()">Cancelar</button>
@@ -575,14 +566,12 @@ function openCustomer(id) {
   const consolHtml = `
     <div class="consol-card">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
-        <span style="font-size:13px;font-weight:700;color:var(--purple);">🌎 Consolidação</span>
+        <span style="font-size:13px;font-weight:700;color:var(--purple);">📋 Consolidação de Venda</span>
         <button class="btn btn-edit" style="font-size:12px;padding:5px 10px;" onclick="openConsolModal('${id}')">Editar</button>
       </div>
-      ${c.destino  ?`<div class="consol-row"><span class="consol-label">Destino</span><span class="consol-value">${esc(c.destino)}</span></div>`:''}
-      ${c.orcamento?`<div class="consol-row"><span class="consol-label">Orçamento</span><span class="consol-value">${esc(c.orcamento)}</span></div>`:''}
-      ${c.periodo  ?`<div class="consol-row"><span class="consol-label">Período</span><span class="consol-value">${esc(c.periodo)}</span></div>`:''}
-      ${c.notes    ?`<div class="consol-row"><span class="consol-label">Obs</span><span class="consol-value">${esc(c.notes)}</span></div>`:''}
-      ${!c.destino&&!c.orcamento&&!c.periodo&&!c.notes?`<div style="font-size:13px;color:var(--text3);">Nenhuma informação ainda. Clique em Editar para adicionar.</div>`:''}
+      ${c.notes?`<div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:${c.destino?'10px':'0'};">${esc(c.notes)}</div>`:''}
+      ${c.destino?`<div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span class="destino-badge">🌎 ${esc(c.destino)}</span><span style="font-size:11px;color:var(--text3);">usado nos templates</span></div>`:''}
+      ${!c.notes&&!c.destino?`<div style="font-size:13px;color:var(--text3);">Nenhuma consolidação ainda. Clique em <strong>Editar</strong> para descrever a história da venda.</div>`:''}
     </div>`;
 
   const stepsHtml=STEPS.map(s=>{
