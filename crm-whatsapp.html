@@ -364,7 +364,7 @@
 
 <script>
 const DB_KEY  = 'rv_crm_v2';
-const TPL_KEY = 'rv_tpl_v5';
+const TPL_KEY = 'rv_tpl_v6';
 let editingTplKey = null;
 
 // ─── GitHub Sync ──────────────────────────────────────────────────
@@ -525,12 +525,12 @@ const STEPS = [
 ];
 
 const DEFAULT_TEMPLATES = {
-  d1:  { text: `Oi {nome}! Aqui é o Rafael 😄\n\nTudo bem? Como foi o restante do dia depois do passeio? Espero que tenham curtido bastante!\n\nQueria parabenizar vocês mais uma vez — fiquei muito feliz que deu certo! É uma decisão incrível.\n\nEstou aqui à disposição. Sempre que tiver alguma informação nova sobre o {produto}, eu mando aqui pra vocês, tá?\n\nGrande abraço! 🤝`, media: '' },
-  d7:  { text: `Oi {nome}! 😊\n\nVi esse conteúdo aqui e lembrei de vocês na hora!\n\nOlha que projeto incrível esse {produto} 😍 Orgulho de vocês fazerem parte disso.\n\nQualquer dúvida que surgir pode me chamar aqui! Abraço`, media: '' },
-  d15: { text: `Oi {nome}! Tudo bem? 👋\n\nPassando pra dar um oi e mandar uma dica de viagem: já pensaram em Gramado? 😍\n\nÉ um destino incrível, né — e o melhor: tem vários resorts parceiros da RCI por lá! Ou seja, futuramente vocês podem usar os pontos pra se hospedar lá com muito mais vantagem rs 🏔️\n\nSempre que tiver novidade do resort eu mando aqui! Abraço 🤝`, media: '' },
-  d30: { text: `Oi {nome}! Um mês já, passa rápido né rs 😄\n\nOlha, saiu o diário de obras do {produto}! Gravaram um vídeo novo mostrando como tá o andamento da construção — fica a vontade pra assistir 😍🏗️\n\nComo tá tudo? Alguma dúvida surgiu? Tô por aqui! Abraço`, media: '' },
-  d60: { text: `Oi {nome}! Tudo certo? 😊\n\nDois meses já, não parece né?\n\nTe falo, lembrei de vocês essa semana — {destino} ficou gravado na minha memória desde quando a gente conversou 🌎 Deve ser incrível!\n\nQuando chegar nos 13% do contrato a RCI libera e a gente planeja isso junto. Vai ser incrível!\n\nAbraço!`, media: '' },
-  d90: { text: `Oi {nome}! 😄\n\n3 meses! Parece que foi ontem que a gente fechou, juro rs\n\nTudo bem com o contrato? Alguma dúvida que surgiu no caminho?\n\nE olha — além de {destino}, lembrei que {destino2} também tá na lista dos sonhos de vocês 🌍 Quando ativar a RCI, esses dois destinos vão estar ao alcance!\n\nTô sempre aqui. Grande abraço! 🤝`, media: '' },
+  d1:  { text: `Oi {nome}! Aqui é o Rafael 😄\n\nTudo bem? Como foi o restante do dia depois do passeio? Espero que tenham curtido bastante!\n\nQueria parabenizar vocês mais uma vez, é uma decisão incrível.\n\nEstou aqui à disposição. Sempre que tiver alguma informação nova sobre o {produto}, eu mando aqui pra vocês, tá?\n\nGrande abraço! 🤝`, media: 'https://www.instagram.com/reel/DTdmdZTDrws/?igsh=MXU5ZGdweWY0NWFkdg==' },
+  d7:  { text: `Olha que projeto incrível o {produto} 😍 Orgulho de vocês fazerem parte disso.\n\nQualquer dúvida que surgir pode me chamar aqui! Abraço`, media: 'https://www.instagram.com/reel/DVJ2Sp6DGAy/?igsh=MWRiajIwMGgxbHlwaA==' },
+  d15: { text: `Oi {nome}! Tudo bem? 👋\n\nPassando pra dar um oi e mandar uma dica de viagem: já pensaram em Gramado? 😍\n\nÉ um destino incrível, né — e o melhor: tem vários resorts parceiros da RCI por lá! Ou seja, futuramente vocês podem usar os pontos pra se hospedar lá com muito mais vantagem rs 🏔️\n\nSempre que tiver novidade do resort eu mando aqui! Abraço 🤝`, media: 'https://www.instagram.com/p/DZYa1Rrj_eq/?igsh=MXNmaHJ2Zmw5dnpqYg==' },
+  d30: { text: `Olha, saiu o diário de obras do {produto}! Gravaram um vídeo novo mostrando como tá o andamento da construção — fica a vontade pra assistir 😍🏗️\n\nQualquer dúvida, estou por aqui! Abraço.`, media: 'https://www.instagram.com/reel/DaD7Q1EDCvH/?igsh=MTR5NGJqdnB6MWFwbA==' },
+  d60: { text: `Estava dando uma olhada em {destino} e lembrei de vocês! Lugar incrível demais 😍\n\nVocês já estão pensando em quando querem ir?\n\nAbraço!`, media: '' },
+  d90: { text: `Oi {nome}! 😄\n\nJá acessaram a RCI pra ver o que tem em {destino2} e região? 😍 dá uma olhada!\n\nAbraço! 🤝`, media: 'https://www.rci.com/pre-rci/pt/pt/resort-directory/landing' },
 };
 
 function getDB() {
