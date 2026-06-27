@@ -191,7 +191,15 @@
 </div>
 
 <div class="view active" id="view-hoje"><div id="today-content"></div></div>
-<div class="view" id="view-clientes"><div id="clients-content"></div></div>
+<div class="view" id="view-clientes">
+  <div style="margin-bottom:12px;position:relative;">
+    <input type="search" id="search-input" placeholder="Buscar por nome, telefone ou nº contrato..." autocomplete="off"
+      style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:15px;padding:11px 40px 11px 14px;outline:none;font-family:inherit;"
+      oninput="renderClients()">
+    <span style="position:absolute;right:13px;top:50%;transform:translateY(-50%);color:#3a5878;font-size:16px;pointer-events:none;">🔍</span>
+  </div>
+  <div id="clients-content"></div>
+</div>
 
 <!-- ── NOVO CLIENTE ── -->
 <div class="view" id="view-novo">
@@ -676,7 +684,6 @@ function render() { renderToday(); renderClients(); renderTemplates(); }
 
 function renderToday() {
   const db=getDB();
-  // build a map: stepKey -> list of {customer, step}
   const groups = {};
   STEPS.forEach(s => groups[s.key]=[]);
   db.forEach(c => getPending(c).forEach(s => groups[s.key].push({ customer:c, step:s })));
@@ -759,7 +766,20 @@ function renderClients() {
     el.innerHTML=`<div class="empty-state"><div class="icon">👥</div><h3>Nenhum cliente</h3><p>Vá em "+ Novo" para cadastrar sua primeira venda.</p></div>`;
     return;
   }
-  el.innerHTML=[...db].sort((a,b)=>b.saleDate.localeCompare(a.saleDate)).map(c=>{
+  const q=(document.getElementById('search-input')?.value||'').toLowerCase().trim();
+  const filtered=q?db.filter(c=>{
+    return (c.name||'').toLowerCase().includes(q)
+      ||(c.name2||'').toLowerCase().includes(q)
+      ||(c.phone||'').replace(/\D/g,'').includes(q.replace(/\D/g,''))
+      ||(c.phone2||'').replace(/\D/g,'').includes(q.replace(/\D/g,''))
+      ||(c.notes||'').toLowerCase().includes(q)
+      ||(c.product||'').toLowerCase().includes(q);
+  }):db;
+  if (q && !filtered.length) {
+    el.innerHTML=`<div class="empty-state"><div class="icon">🔍</div><h3>Nenhum resultado</h3><p>Nenhum cliente encontrado para "<strong>${esc(q)}</strong>".</p></div>`;
+    return;
+  }
+  el.innerHTML=[...filtered].sort((a,b)=>b.saleDate.localeCompare(a.saleDate)).map(c=>{
     const sent=c.sent||{},skip=c.skipped||{},t=today();
     const steps=STEPS.map(s=>{
       const due=addDays(c.saleDate,s.days);
