@@ -650,8 +650,8 @@ function renderMsgCard(c, step) {
   const msg1 = buildText(step.key, c);
   const msg2 = c.phone2 ? buildText(step.key, c, c.name2 || c.name) : null;
   const media = getMedia(step.key);
-  const link1 = waLink(c.phone, media ? msg1 + '\n\n' + media : msg1);
-  const link2 = c.phone2 ? waLink(c.phone2, media ? msg2 + '\n\n' + media : msg2) : null;
+  const link1 = waLink(c.phone, media ? msg1 + '\n\n👉 Clica aqui: ' + media : msg1);
+  const link2 = c.phone2 ? waLink(c.phone2, media ? msg2 + '\n\n👉 Clica aqui: ' + media : msg2) : null;
   const hasDestino = (step.key==='d60' && c.destino) || (step.key==='d90' && (c.destino2||c.destino));
   const hasTwo = !!(c.phone2);
   return `
@@ -725,7 +725,7 @@ function openCustomer(id) {
     const due=addDays(c.saleDate,s.days);
     const msg=buildText(s.key,c);
     const media=getMedia(s.key);
-    const link=waLink(c.phone, media ? msg + '\n\n' + media : msg);
+    const link=waLink(c.phone, media ? msg + '\n\n👉 Clica aqui: ' + media : msg);
     let state,stateLabel;
     if      (sent[s.key]) { state='done';    stateLabel='Enviado em '+fmtDate(sent[s.key]); }
     else if (skip[s.key]) { state='skipped'; stateLabel='Ignorado'; }
