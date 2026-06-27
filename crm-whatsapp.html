@@ -527,7 +527,7 @@ const STEPS = [
 const DEFAULT_TEMPLATES = {
   d1:  { text: `Oi {nome}! Aqui é o Rafael 😄\n\nTudo bem? Como foi o restante do dia depois do passeio? Espero que tenham curtido bastante!\n\nQueria parabenizar vocês mais uma vez, é uma decisão incrível.\n\nEstou aqui à disposição. Sempre que tiver alguma informação nova sobre o {produto}, eu mando aqui pra vocês, tá?\n\nGrande abraço! 🤝`, media: 'https://www.instagram.com/reel/DTdmdZTDrws/?igsh=MXU5ZGdweWY0NWFkdg==' },
   d7:  { text: `Olha que projeto incrível o {produto} 😍 Orgulho de vocês fazerem parte disso.\n\nQualquer dúvida que surgir pode me chamar aqui! Abraço`, media: 'https://www.instagram.com/reel/DVJ2Sp6DGAy/?igsh=MWRiajIwMGgxbHlwaA==' },
-  d15: { text: `Oi {nome}! Tudo bem? 👋\n\nPassando pra dar um oi e mandar uma dica de viagem: já pensaram em Gramado? 😍\n\nÉ um destino incrível, né — e o melhor: tem vários resorts parceiros da RCI por lá! Ou seja, futuramente vocês podem usar os pontos pra se hospedar lá com muito mais vantagem rs 🏔️\n\nSempre que tiver novidade do resort eu mando aqui! Abraço 🤝`, media: 'https://www.instagram.com/p/DZYa1Rrj_eq/?igsh=MXNmaHJ2Zmw5dnpqYg==' },
+  d15: { text: `Oi {nome}! Tudo bem? 👋\n\nPassando pra dar um oi e mandar uma dica de viagem: já pensaram em Gramado? 😍\n\nÉ um destino incrível, né — e o melhor: tem vários resorts parceiros da RCI por lá! Ou seja, futuramente vocês podem usar pra se hospedar lá com muito mais vantagem rs 🏔️\n\nSempre que tiver novidade do resort eu mando aqui! Abraço 🤝`, media: 'https://www.instagram.com/p/DZYa1Rrj_eq/?igsh=MXNmaHJ2Zmw5dnpqYg==' },
   d30: { text: `Olha, saiu o diário de obras do {produto}! Gravaram um vídeo novo mostrando como tá o andamento da construção — fica a vontade pra assistir 😍🏗️\n\nQualquer dúvida, estou por aqui! Abraço.`, media: 'https://www.instagram.com/reel/DaD7Q1EDCvH/?igsh=MTR5NGJqdnB6MWFwbA==' },
   d60: { text: `Estava dando uma olhada em {destino} e lembrei de vocês! Lugar incrível demais 😍\n\nVocês já estão pensando em quando querem ir?\n\nAbraço!`, media: '' },
   d90: { text: `Oi {nome}! 😄\n\nJá acessaram a RCI pra ver o que tem em {destino2} e região? 😍 dá uma olhada!\n\nAbraço! 🤝`, media: 'https://www.rci.com/pre-rci/pt/pt/resort-directory/landing' },
@@ -603,11 +603,10 @@ function renderMediaBlock(url, cid, key, showCopy) {
   return `
     <div class="media-block">
       <div class="media-block-label">${mediaIcon(t)} ${mediaLabel(t)}</div>
-      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}
-      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
+      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}\n      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
       <div class="media-actions">
         <a href="${esc(url)}" target="_blank" class="btn btn-media" style="font-size:12px;padding:7px 12px;">Abrir</a>
-        ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')">Copiar link</button>`:''}
+        ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')" >Copiar link</button>`:''}
       </div>
       ${showCopy?`<div style="font-size:11px;color:var(--text3);margin-top:6px;">✅ Link incluído automaticamente na mensagem.</div>`:''}
     </div>`;
