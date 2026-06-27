@@ -10,6 +10,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="CRM Costão">
 <link rel="apple-touch-icon" href="icon.svg">
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -50,7 +53,6 @@
   .view { display: none; padding: 16px; max-width: 600px; margin: 0 auto; }
   .view.active { display: block; }
 
-  /* ── Group headers ── */
   .step-group { margin-bottom: 20px; }
   .step-group-header { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
   .step-group-title { font-size: 13px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -94,10 +96,8 @@
   .btn-edit { background: #1a1a2e; color: var(--purple); }
   .btn-danger { background: #3a1a1a; color: var(--red); border: 1px solid #5a2a2a; }
 
-  /* ── Consolidação badge ── */
   .destino-badge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; background: #1a1a2e; color: var(--purple); padding: 3px 10px; border-radius: 20px; border: 1px solid #2a2a4a; }
 
-  /* ── Media ── */
   .media-block { background: var(--surface2); border: 1px solid var(--border2); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 10px; }
   .media-block-label { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
   .media-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 6px; display: block; margin-bottom: 8px; }
@@ -106,7 +106,6 @@
   .media-url-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
   .media-actions { display: flex; gap: 6px; }
 
-  /* ── Customers ── */
   .customer-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
   .customer-card:hover { background: var(--surface2); }
   .customer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -120,7 +119,6 @@
   .tl-step.future  { background: var(--surface2); color: var(--text3); }
   .tl-step.skipped { background: var(--surface); color: var(--text3); text-decoration: line-through; }
 
-  /* ── Form ── */
   .form-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; }
   .form-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
   .form-section-title { font-size: 11px; font-weight: 700; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 10px; padding-top: 16px; border-top: 1px solid var(--border); }
@@ -133,7 +131,6 @@
   .btn-primary { width: 100%; padding: 14px; background: var(--teal); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity .15s; }
   .btn-primary:active { opacity: 0.8; }
 
-  /* ── Templates ── */
   .template-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; cursor: pointer; }
   .template-card:hover { background: var(--surface2); }
   .template-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
@@ -141,14 +138,12 @@
   .template-body { font-size: 13px; color: var(--text2); line-height: 1.6; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; white-space: pre-wrap; }
   .template-media-badge { font-size: 11px; background: #0d2e2c; color: var(--teal); padding: 2px 8px; border-radius: 20px; font-weight: 600; }
 
-  /* ── Modals ── */
   .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
   .modal { background: var(--surface); border-radius: var(--radius) var(--radius) 0 0; padding: 20px; width: 100%; max-width: 600px; max-height: 88vh; overflow-y: auto; }
   .modal-handle { width: 36px; height: 4px; border-radius: 2px; background: var(--border2); margin: 0 auto 16px; }
   .modal-title { font-size: 16px; font-weight: 600; margin-bottom: 16px; }
 
-  /* ── Consolidação card inside modal ── */
   .consol-card { background: var(--surface2); border: 1px solid #2a2a4a; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 12px; }
   .consol-row { display: flex; gap: 8px; margin-bottom: 6px; font-size: 13px; }
   .consol-label { color: var(--text2); font-weight: 600; min-width: 80px; flex-shrink: 0; }
@@ -176,7 +171,7 @@
     </svg>
     <div>
       <div class="header-title">Costão Estaleirinho</div>
-      <div class="header-sub">CRM de Vendas — Rafael Versutti</div>
+      <div class="header-sub">CRM de Vendas</div>
     </div>
   </div>
   <span class="wa-badge">WhatsApp</span>
@@ -269,24 +264,17 @@
 <div class="view" id="view-config">
   <div class="form-card">
     <div class="form-title">⚙️ Configurações</div>
-    <div class="info-box">Configure a sincronização com o GitHub para salvar seus dados na nuvem e acessar de qualquer dispositivo.</div>
-    <div class="field">
-      <label>GitHub Token</label>
-      <input type="password" id="cfg-token" placeholder="ghp_..." autocomplete="off">
-      <div class="field-hint">Personal access token com permissão de escrita no repositório. Fica salvo só neste navegador.</div>
+    <div style="background:#0d2e2c;border:1px solid #1a5a55;border-radius:10px;padding:14px;margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--teal-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Conta conectada</div>
+      <div id="cfg-user-email" style="font-size:15px;color:var(--teal);font-weight:600;"></div>
     </div>
-    <div class="field">
-      <label>Repositório (usuario/repo)</label>
-      <input type="text" id="cfg-repo" placeholder="rafaelsemfiltro/CRM---data" autocomplete="off">
-    </div>
-    <button class="btn-primary" onclick="saveCfg()">Salvar configuração</button>
-    <div id="cfg-status" style="margin-top:12px;font-size:13px;text-align:center;"></div>
-    <hr>
     <div id="pwa-install-section" style="display:none;margin-bottom:12px;">
       <button class="btn-primary" onclick="installPWA()">📲 Instalar App no Celular</button>
       <div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center;">Instale para receber lembretes quando tiver mensagens para enviar.</div>
     </div>
-    <button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:4px;" onclick="logout()">Sair (bloquear app)</button>
+    <button class="btn btn-danger" style="width:100%;justify-content:center;" onclick="logout()">Sair da conta</button>
+    <hr>
+    <div style="font-size:11px;color:var(--text3);text-align:center;">Projeto: <span id="cfg-fb-project"></span></div>
   </div>
 </div>
 
@@ -344,7 +332,7 @@
   </div>
 </div>
 
-<!-- Lock Screen -->
+<!-- Tela de login -->
 <div id="lock-screen" style="position:fixed;inset:0;background:#09111e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;">
   <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
     <path d="M50 20 C35 28,25 38,30 50 C25 62,35 72,50 80 C65 72,75 62,70 50 C75 38,65 28,50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
@@ -357,11 +345,41 @@
     <div style="font-size:13px;color:#7a9bbf;margin-top:4px;">CRM de Vendas</div>
   </div>
   <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px;">
+    <input type="email" id="lock-email" placeholder="Email" autocomplete="email"
+      style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:16px;padding:14px 16px;outline:none;text-align:center;font-family:inherit;"
+      onkeydown="if(event.key==='Enter')document.getElementById('lock-input').focus()">
     <input type="password" id="lock-input" placeholder="Senha" autocomplete="current-password"
       style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:16px;padding:14px 16px;outline:none;text-align:center;letter-spacing:4px;font-family:inherit;"
       onkeydown="if(event.key==='Enter')unlock()">
-    <button onclick="unlock()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Entrar</button>
-    <div id="lock-error" style="text-align:center;font-size:13px;color:#e05252;display:none;">Senha incorreta</div>
+    <button id="lock-btn" onclick="unlock()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Entrar</button>
+    <div id="lock-error" style="text-align:center;font-size:13px;color:#e05252;display:none;"></div>
+  </div>
+</div>
+
+<!-- Tela de configuração inicial (Firebase) -->
+<div id="setup-screen" style="display:none;position:fixed;inset:0;background:#09111e;z-index:10000;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px;overflow-y:auto;">
+  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" style="margin-bottom:16px;flex-shrink:0;">
+    <path d="M50 20 C35 28,25 38,30 50 C25 62,35 72,50 80 C65 72,75 62,70 50 C75 38,65 28,50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M50 12 C28 23,13 36,20 50 C13 64,28 77,50 88 C72 77,87 64,80 50 C87 36,72 23,50 12Z" stroke="#4CC5B9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
+  </svg>
+  <div style="text-align:center;margin-bottom:24px;">
+    <div style="font-size:18px;font-weight:700;color:#eef2f7;">Configuração Inicial</div>
+    <div style="font-size:13px;color:#7a9bbf;margin-top:4px;">Cole o JSON do Firebase para ativar o app</div>
+  </div>
+  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:12px;">
+    <div style="background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;padding:14px;font-size:13px;color:#7a9bbf;line-height:1.8;">
+      <strong style="color:#eef2f7;">Como obter o JSON:</strong><br>
+      1. Acesse <strong style="color:#4CC5B9;">console.firebase.google.com</strong><br>
+      2. Abra seu projeto → ⚙️ Configurações do projeto<br>
+      3. Em "Seus apps" → clique no app web<br>
+      4. Copie o objeto <code style="color:#a070f0;">firebaseConfig</code><br>
+      5. Cole abaixo <strong style="color:#eef2f7;">apenas o JSON</strong> (sem const, sem ;)
+    </div>
+    <textarea id="setup-json"
+      placeholder='{"apiKey":"AIzaSy...","authDomain":"meu-projeto.firebaseapp.com","projectId":"meu-projeto","storageBucket":"meu-projeto.appspot.com","messagingSenderId":"123456","appId":"1:123:web:abc"}'
+      style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:12px;padding:14px;outline:none;font-family:monospace;min-height:130px;resize:vertical;"></textarea>
+    <button onclick="confirmSetup()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Confirmar e Entrar</button>
+    <div id="setup-error" style="text-align:center;font-size:13px;color:#e05252;display:none;"></div>
   </div>
 </div>
 
@@ -371,158 +389,160 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const DB_KEY  = 'rv_crm_v2';
-const TPL_KEY = 'rv_tpl_v6';
+// ─── Constants ────────────────────────────────────────────────────
+const DB_KEY     = 'rv_crm_v2';
+const TPL_KEY    = 'rv_tpl_v6';
+const FB_CFG_KEY = 'rv_fb_cfg';
 let editingTplKey = null;
+let currentUser   = null;
+let firestoreDb   = null;
+let fbAuth        = null;
+let saveTimer     = null;
+let tplsTimer     = null;
 
-// ─── GitHub Sync ──────────────────────────────────────────────────
-const GH_FILE   = 'crm-clientes.json';
-const TPLS_FILE = 'crm-templates.json';
-const CFG_KEY   = 'rv_crm_cfg';
-let ghSha = null;
-let tplsSha = null;
-let saveTimer = null;
-let tplsTimer = null;
-
-function getCfg() {
-  try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; }
+// ─── Firebase Setup ───────────────────────────────────────────────
+function getFbCfg() {
+  try { return JSON.parse(localStorage.getItem(FB_CFG_KEY)); } catch { return null; }
 }
-function getToken() { return getCfg().token || ''; }
-function getRepo()  { return getCfg().repo  || ''; }
 
-async function ghLoad() {
-  const token = getToken(), repo = getRepo();
-  if (!token || !repo) return;
+function initFirebase() {
+  const cfg = getFbCfg();
+  if (!cfg || !cfg.apiKey) return false;
+  if (!firebase.apps.length) firebase.initializeApp(cfg);
+  fbAuth      = firebase.auth();
+  firestoreDb = firebase.firestore();
+  return true;
+}
+
+function confirmSetup() {
+  const raw   = document.getElementById('setup-json').value.trim();
+  const errEl = document.getElementById('setup-error');
+  errEl.style.display = 'none';
   try {
-    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${GH_FILE}`, {
-      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      ghSha = data.sha;
-      const parsed = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));
-      if (parsed.length > 0) {
-        localStorage.setItem(DB_KEY, JSON.stringify(parsed));
-      } else {
-        const local = getDB();
-        if (local.length > 0) scheduleSave(local);
-      }
-    } else if (res.status === 404) {
-      const local = getDB();
-      if (local.length > 0) scheduleSave(local);
-    }
-  } catch(e) { console.warn('GitHub load error:', e); }
+    const cfg = JSON.parse(raw);
+    if (!cfg.apiKey || !cfg.projectId) throw new Error('inválido');
+    localStorage.setItem(FB_CFG_KEY, JSON.stringify(cfg));
+    location.reload();
+  } catch(e) {
+    errEl.textContent = 'JSON inválido. Verifique e tente novamente.';
+    errEl.style.display = 'block';
+  }
 }
 
-async function ghSave(clients) {
-  const token = getToken(), repo = getRepo();
-  if (!token || !repo) return;
+// ─── Firestore ────────────────────────────────────────────────────
+function userDocRef() {
+  return firestoreDb.collection('users').doc(currentUser.uid);
+}
+
+async function firestoreLoad() {
+  if (!currentUser || !firestoreDb) return;
   try {
     document.getElementById('sync-indicator').style.display = 'block';
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(clients, null, 2))));
-    const body = { message: 'CRM sync', content };
-    if (ghSha) body.sha = ghSha;
-    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${GH_FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify(body)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      ghSha = data.content.sha;
+    const snap = await userDocRef().get();
+    if (snap.exists) {
+      const data = snap.data();
+      if (Array.isArray(data.clients) && data.clients.length > 0)
+        localStorage.setItem(DB_KEY, JSON.stringify(data.clients));
+      if (data.templates && Object.keys(data.templates).length > 0)
+        localStorage.setItem(TPL_KEY, JSON.stringify(data.templates));
     }
-  } catch(e) { console.warn('GitHub save error:', e); }
+  } catch(e) { console.warn('Firestore load:', e); }
   finally { document.getElementById('sync-indicator').style.display = 'none'; }
+}
+
+async function firestoreSaveClients(clients) {
+  if (!currentUser || !firestoreDb) return;
+  try {
+    document.getElementById('sync-indicator').style.display = 'block';
+    await userDocRef().set({ clients }, { merge: true });
+  } catch(e) { console.warn('Firestore save:', e); }
+  finally { document.getElementById('sync-indicator').style.display = 'none'; }
+}
+
+async function firestoreSaveTemplates(tpls) {
+  if (!currentUser || !firestoreDb) return;
+  try {
+    await userDocRef().set({ templates: tpls }, { merge: true });
+  } catch(e) { console.warn('Firestore tpl save:', e); }
 }
 
 function scheduleSave(clients) {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => ghSave(clients), 1500);
-}
-
-async function ghLoadTemplates() {
-  const token = getToken(), repo = getRepo();
-  if (!token || !repo) return;
-  try {
-    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${TPLS_FILE}`, {
-      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (res.ok) {
-      const data = await res.json();
-      tplsSha = data.sha;
-      const parsed = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));
-      const hasCustom = Object.keys(parsed).length > 0;
-      if (hasCustom) {
-        localStorage.setItem(TPL_KEY, JSON.stringify(parsed));
-      } else {
-        const local = localStorage.getItem(TPL_KEY);
-        if (local) scheduleTemplateSave(JSON.parse(local));
-      }
-    } else if (res.status === 404) {
-      const local = localStorage.getItem(TPL_KEY);
-      if (local) scheduleTemplateSave(JSON.parse(local));
-    }
-  } catch(e) { console.warn('GitHub templates load error:', e); }
-}
-
-async function ghSaveTemplates(tpls) {
-  const token = getToken(), repo = getRepo();
-  if (!token || !repo) return;
-  try {
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(tpls, null, 2))));
-    const body = { message: 'CRM templates sync', content };
-    if (tplsSha) body.sha = tplsSha;
-    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${TPLS_FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.github.v3+json'
-      },
-      body: JSON.stringify(body)
-    });
-    if (res.ok) {
-      const data = await res.json();
-      tplsSha = data.content.sha;
-    }
-  } catch(e) { console.warn('GitHub templates save error:', e); }
+  saveTimer = setTimeout(() => firestoreSaveClients(clients), 1500);
 }
 
 function scheduleTemplateSave(tpls) {
   clearTimeout(tplsTimer);
-  tplsTimer = setTimeout(() => ghSaveTemplates(tpls), 1500);
+  tplsTimer = setTimeout(() => firestoreSaveTemplates(tpls), 1500);
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────
-const APP_PASS = 'Ittusvr';
-
-function unlock() {
-  const val = document.getElementById('lock-input').value;
-  if (val === APP_PASS) {
-    sessionStorage.setItem('crm_auth', '1');
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('lock-error').style.display = 'none';
-    initApp();
-  } else {
-    document.getElementById('lock-error').style.display = 'block';
+async function unlock() {
+  const email = document.getElementById('lock-email').value.trim();
+  const pass  = document.getElementById('lock-input').value;
+  const errEl = document.getElementById('lock-error');
+  const btn   = document.getElementById('lock-btn');
+  errEl.style.display = 'none';
+  if (!email || !pass) {
+    errEl.textContent = 'Preencha email e senha';
+    errEl.style.display = 'block';
+    return;
+  }
+  btn.textContent = 'Entrando...';
+  btn.disabled = true;
+  try {
+    await fbAuth.signInWithEmailAndPassword(email, pass);
+  } catch(e) {
+    errEl.textContent = 'Email ou senha incorretos';
+    errEl.style.display = 'block';
+    btn.textContent = 'Entrar';
+    btn.disabled = false;
     document.getElementById('lock-input').value = '';
   }
 }
 
 async function initApp() {
   showToast('Carregando dados...');
-  await Promise.all([ghLoad(), ghLoadTemplates()]);
+  await firestoreLoad();
   document.getElementById('f-date').value = today();
   render();
   idbSave(getDB());
   updateBadge();
   setupPWA();
+  const emailEl = document.getElementById('cfg-user-email');
+  if (emailEl) emailEl.textContent = currentUser.email;
+  const projEl = document.getElementById('cfg-fb-project');
+  if (projEl) { const cfg = getFbCfg(); projEl.textContent = cfg ? cfg.projectId : ''; }
 }
 
+async function logout() {
+  if (!confirm('Sair da conta?')) return;
+  await fbAuth.signOut();
+  localStorage.removeItem(DB_KEY);
+  localStorage.removeItem(TPL_KEY);
+  location.reload();
+}
+
+// ─── Boot ─────────────────────────────────────────────────────────
+(function boot() {
+  const ready = initFirebase();
+  if (!ready) {
+    document.getElementById('setup-screen').style.display = 'flex';
+    document.getElementById('lock-screen').style.display = 'none';
+    return;
+  }
+  fbAuth.onAuthStateChanged(user => {
+    if (user) {
+      currentUser = user;
+      document.getElementById('lock-screen').style.display = 'none';
+      initApp();
+    } else {
+      document.getElementById('lock-screen').style.display = 'flex';
+    }
+  });
+})();
+
+// ─── Steps & Templates ────────────────────────────────────────────
 const STEPS = [
   { key: 'd1',  label: 'Dia 1',   days: 1,  color: '#7dde8a' },
   { key: 'd7',  label: 'Dia 8',   days: 8,  color: '#f5c842' },
@@ -611,10 +631,11 @@ function renderMediaBlock(url, cid, key, showCopy) {
   return `
     <div class="media-block">
       <div class="media-block-label">${mediaIcon(t)} ${mediaLabel(t)}</div>
-      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}\n      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
+      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}
+      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
       <div class="media-actions">
         <a href="${esc(url)}" target="_blank" class="btn btn-media" style="font-size:12px;padding:7px 12px;">Abrir</a>
-        ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')" >Copiar link</button>`:''}
+        ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')">Copiar link</button>`:''}
       </div>
       ${showCopy?`<div style="font-size:11px;color:var(--text3);margin-top:6px;">✅ Link incluído automaticamente na mensagem.</div>`:''}
     </div>`;
@@ -955,22 +976,6 @@ function closeTplModal(e) {
   }
 }
 
-// ─── Config ───────────────────────────────────────────────────────
-function saveCfg() {
-  const token = document.getElementById('cfg-token').value.trim();
-  const repo  = document.getElementById('cfg-repo').value.trim();
-  localStorage.setItem(CFG_KEY, JSON.stringify({ token, repo }));
-  ghSha = null; tplsSha = null;
-  const st = document.getElementById('cfg-status');
-  st.style.color = 'var(--teal)';
-  st.textContent = 'Salvo! Sincronizando...';
-  Promise.all([ghLoad(), ghLoadTemplates()]).then(()=>{ render(); st.textContent = 'Sincronizado com GitHub ✓'; });
-}
-function logout() {
-  sessionStorage.removeItem('crm_auth');
-  location.reload();
-}
-
 // ─── UI helpers ───────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
@@ -978,11 +983,6 @@ function switchTab(name) {
   const tabs=['hoje','clientes','novo','mensagens','config'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
   document.getElementById('view-'+name).classList.add('active');
-  if (name==='config') {
-    const cfg=getCfg();
-    document.getElementById('cfg-token').value=cfg.token||'';
-    document.getElementById('cfg-repo').value=cfg.repo||'';
-  }
 }
 function showToast(msg) {
   const t=document.getElementById('toast');
@@ -1071,11 +1071,6 @@ async function setupPWA() {
       }
     }
   } catch(e) {}
-}
-
-if (sessionStorage.getItem('crm_auth')) {
-  document.getElementById('lock-screen').style.display = 'none';
-  initApp();
 }
 </script>
 </body>
