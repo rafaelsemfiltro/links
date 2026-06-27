@@ -181,6 +181,7 @@
   <div class="tab" onclick="switchTab('clientes')">Clientes</div>
   <div class="tab" onclick="switchTab('novo')">+ Novo</div>
   <div class="tab" onclick="switchTab('mensagens')">Templates</div>
+  <div class="tab" onclick="switchTab('config')">⚙️</div>
 </div>
 
 <div class="view active" id="view-hoje"><div id="today-content"></div></div>
@@ -250,6 +251,27 @@
   <div id="templates-content"></div>
 </div>
 
+<!-- ── CONFIG ── -->
+<div class="view" id="view-config">
+  <div class="form-card">
+    <div class="form-title">⚙️ Configurações</div>
+    <div class="info-box">Configure a sincronização com o GitHub para salvar seus dados na nuvem e acessar de qualquer dispositivo.</div>
+    <div class="field">
+      <label>GitHub Token</label>
+      <input type="password" id="cfg-token" placeholder="ghp_..." autocomplete="off">
+      <div class="field-hint">Personal access token com permissão de escrita no repositório. Fica salvo só neste navegador.</div>
+    </div>
+    <div class="field">
+      <label>Repositório (usuario/repo)</label>
+      <input type="text" id="cfg-repo" placeholder="rafaelsemfiltro/CRM---data" autocomplete="off">
+    </div>
+    <button class="btn-primary" onclick="saveCfg()">Salvar configuração</button>
+    <div id="cfg-status" style="margin-top:12px;font-size:13px;text-align:center;"></div>
+    <hr>
+    <button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:4px;" onclick="logout()">Sair (bloquear app)</button>
+  </div>
+</div>
+
 <!-- Modal: Cliente -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
   <div class="modal"><div class="modal-handle"></div><div id="modal-content"></div></div>
@@ -304,12 +326,117 @@
   </div>
 </div>
 
+<!-- Lock Screen -->
+<div id="lock-screen" style="position:fixed;inset:0;background:#09111e;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:32px;">
+  <svg width="48" height="48" viewBox="0 0 100 100" fill="none">
+    <path d="M50 20 C35 28,25 38,30 50 C25 62,35 72,50 80 C65 72,75 62,70 50 C75 38,65 28,50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M50 12 C28 23,13 36,20 50 C13 64,28 77,50 88 C72 77,87 64,80 50 C87 36,72 23,50 12Z" stroke="#4CC5B9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
+    <line x1="30" y1="50" x2="8"  y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="70" y1="50" x2="92" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+  <div style="text-align:center;">
+    <div style="font-size:20px;font-weight:700;color:#eef2f7;">Costão Estaleirinho</div>
+    <div style="font-size:13px;color:#7a9bbf;margin-top:4px;">CRM de Vendas</div>
+  </div>
+  <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px;">
+    <input type="password" id="lock-input" placeholder="Senha" autocomplete="current-password"
+      style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:16px;padding:14px 16px;outline:none;text-align:center;letter-spacing:4px;font-family:inherit;"
+      onkeydown="if(event.key==='Enter')unlock()">
+    <button onclick="unlock()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Entrar</button>
+    <div id="lock-error" style="text-align:center;font-size:13px;color:#e05252;display:none;">Senha incorreta</div>
+  </div>
+</div>
+
+<!-- Sync indicator -->
+<div id="sync-indicator" style="display:none;position:fixed;bottom:90px;right:16px;background:#0f1c2e;border:1px solid #1e3352;border-radius:20px;padding:6px 12px;font-size:12px;color:#7a9bbf;z-index:150;">⟳ Sincronizando...</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 const DB_KEY  = 'rv_crm_v2';
 const TPL_KEY = 'rv_tpl_v5';
 let editingTplKey = null;
+
+// ─── GitHub Sync ──────────────────────────────────────────────────
+const GH_FILE  = 'crm-clientes.json';
+const CFG_KEY  = 'rv_crm_cfg';
+let ghSha = null;
+let saveTimer = null;
+
+function getCfg() {
+  try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; }
+}
+function getToken() { return getCfg().token || ''; }
+function getRepo()  { return getCfg().repo  || ''; }
+
+async function ghLoad() {
+  const token = getToken(), repo = getRepo();
+  if (!token || !repo) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${GH_FILE}`, {
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      ghSha = data.sha;
+      const parsed = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));
+      localStorage.setItem(DB_KEY, JSON.stringify(parsed));
+    }
+  } catch(e) { console.warn('GitHub load error:', e); }
+}
+
+async function ghSave(clients) {
+  const token = getToken(), repo = getRepo();
+  if (!token || !repo) return;
+  try {
+    document.getElementById('sync-indicator').style.display = 'block';
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(clients, null, 2))));
+    const body = { message: 'CRM sync', content };
+    if (ghSha) body.sha = ghSha;
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${GH_FILE}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      ghSha = data.content.sha;
+    }
+  } catch(e) { console.warn('GitHub save error:', e); }
+  finally { document.getElementById('sync-indicator').style.display = 'none'; }
+}
+
+function scheduleSave(clients) {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => ghSave(clients), 1500);
+}
+
+// ─── Auth ─────────────────────────────────────────────────────────
+const APP_PASS = 'Ittusvr';
+
+function unlock() {
+  const val = document.getElementById('lock-input').value;
+  if (val === APP_PASS) {
+    sessionStorage.setItem('crm_auth', '1');
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('lock-error').style.display = 'none';
+    initApp();
+  } else {
+    document.getElementById('lock-error').style.display = 'block';
+    document.getElementById('lock-input').value = '';
+  }
+}
+
+async function initApp() {
+  showToast('Carregando dados...');
+  await ghLoad();
+  document.getElementById('f-date').value = today();
+  render();
+}
 
 const STEPS = [
   { key: 'd1',  label: 'Dia 1',   days: 1,  color: '#7dde8a' },
@@ -333,7 +460,7 @@ function getDB() {
   try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; }
   catch { return []; }
 }
-function saveDB(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+function saveDB(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); scheduleSave(d); }
 
 function getTpls() {
   try {
@@ -732,13 +859,34 @@ function closeTplModal(e) {
   }
 }
 
+// ─── Config ───────────────────────────────────────────────────────
+function saveCfg() {
+  const token = document.getElementById('cfg-token').value.trim();
+  const repo  = document.getElementById('cfg-repo').value.trim();
+  localStorage.setItem(CFG_KEY, JSON.stringify({ token, repo }));
+  ghSha = null;
+  const st = document.getElementById('cfg-status');
+  st.style.color = 'var(--teal)';
+  st.textContent = 'Salvo! Sincronizando...';
+  ghLoad().then(()=>{ render(); st.textContent = 'Sincronizado com GitHub ✓'; });
+}
+function logout() {
+  sessionStorage.removeItem('crm_auth');
+  location.reload();
+}
+
 // ─── UI helpers ───────────────────────────────────────────────────
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  const tabs=['hoje','clientes','novo','mensagens'];
+  const tabs=['hoje','clientes','novo','mensagens','config'];
   document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
   document.getElementById('view-'+name).classList.add('active');
+  if (name==='config') {
+    const cfg=getCfg();
+    document.getElementById('cfg-token').value=cfg.token||'';
+    document.getElementById('cfg-repo').value=cfg.repo||'';
+  }
 }
 function showToast(msg) {
   const t=document.getElementById('toast');
@@ -749,8 +897,10 @@ function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-document.getElementById('f-date').value=today();
-render();
+if (sessionStorage.getItem('crm_auth')) {
+  document.getElementById('lock-screen').style.display = 'none';
+  initApp();
+}
 </script>
 </body>
 </html>
