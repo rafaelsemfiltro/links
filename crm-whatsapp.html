@@ -218,9 +218,15 @@
       <input type="text" id="f-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado..." autocomplete="off">
       <div class="field-hint">Usado automaticamente nas mensagens de D+30 e D+60 com a variável {destino}</div>
     </div>
-    <div class="field" style="display:none;">
-      <input type="hidden" id="f-orcamento" value="">
-      <input type="hidden" id="f-periodo" value="">
+    <div class="form-section-title">👥 Segundo Contato (opcional)</div>
+    <div class="info-box" style="margin-bottom:12px;">Para casais ou famílias — adicione o segundo nome e telefone para enviar as mesmas mensagens para os dois.</div>
+    <div class="field">
+      <label>Nome do 2º Contato</label>
+      <input type="text" id="f-name2" placeholder="Ex: Maria Silva" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>WhatsApp do 2º Contato</label>
+      <input type="tel" id="f-phone2" placeholder="Ex: 48988888888" autocomplete="off">
     </div>
     <button class="btn-primary" onclick="addCustomer()">✓ Cadastrar Cliente</button>
   </div>
@@ -230,11 +236,9 @@
 <div class="view" id="view-mensagens">
   <div class="vars-box">
     <strong>Variáveis disponíveis:</strong><br>
-    <code>{nome}</code> — Nome do cliente<br>
+    <code>{nome}</code> — Nome do cliente (ou do 2º contato)<br>
     <code>{produto}</code> — Produto/destino vendido<br>
-    <code>{destino}</code> — Sonho de viagem do cliente<br>
-    <code>{orcamento}</code> — Orçamento do cliente<br>
-    <code>{periodo}</code> — Período preferido
+    <code>{destino}</code> — Sonho de viagem do cliente
   </div>
   <div id="templates-content"></div>
 </div>
@@ -259,8 +263,6 @@
       <input type="text" id="c-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado...">
       <div class="field-hint">Usado automaticamente nas mensagens de D+30 e D+60</div>
     </div>
-    <input type="hidden" id="c-orcamento">
-    <input type="hidden" id="c-periodo">
     <div style="display:flex;gap:8px;">
       <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveConsol()">Salvar</button>
       <button class="btn btn-skip" onclick="closeConsolModal()">Cancelar</button>
@@ -349,14 +351,12 @@ function fmtDate(ds) { const [y,m,d]=ds.split('-'); return `${d}/${m}/${y}`; }
 function initials(n) { return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase(); }
 
 // ─── Message builder ──────────────────────────────────────────────
-function buildText(key, c) {
+function buildText(key, c, overrideName) {
   const tpls = getTpls();
   return (tpls[key]?.text || '')
-    .replace(/\{nome\}/gi,      c.name)
-    .replace(/\{produto\}/gi,   c.product  || 'sua viagem')
-    .replace(/\{destino\}/gi,   c.destino  || 'sua próxima viagem')
-    .replace(/\{orcamento\}/gi, c.orcamento|| '')
-    .replace(/\{periodo\}/gi,   c.periodo  || 'em breve');
+    .replace(/\{nome\}/gi,    overrideName || c.name)
+    .replace(/\{produto\}/gi, c.product  || 'sua viagem')
+    .replace(/\{destino\}/gi, c.destino  || 'sua próxima viagem');
 }
 function getMedia(key) { return getTpls()[key]?.media || ''; }
 function waLink(phone, message) {
@@ -439,14 +439,14 @@ function addCustomer() {
   const date     = document.getElementById('f-date').value;
   const product  = document.getElementById('f-product').value.trim();
   const destino  = document.getElementById('f-destino').value.trim();
-  const orcamento= document.getElementById('f-orcamento').value.trim();
-  const periodo  = document.getElementById('f-periodo').value.trim();
   const notes    = document.getElementById('f-notes').value.trim();
+  const name2    = document.getElementById('f-name2').value.trim();
+  const phone2   = document.getElementById('f-phone2').value.trim();
   if(!name||!phone||!date){ alert('Preencha nome, telefone e data da venda.'); return; }
   const db=getDB();
-  db.push({ id:uid(), name, phone, saleDate:date, product, destino, orcamento, periodo, notes, sent:{}, skipped:{}, createdAt:today() });
+  db.push({ id:uid(), name, phone, saleDate:date, product, destino, notes, name2, phone2, sent:{}, skipped:{}, createdAt:today() });
   saveDB(db);
-  ['f-name','f-phone','f-product','f-destino','f-orcamento','f-periodo','f-notes'].forEach(id=>document.getElementById(id).value='');
+  ['f-name','f-phone','f-product','f-destino','f-notes','f-name2','f-phone2'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-date').value=today();
   showToast('Cliente cadastrado! ✓');
   switchTab('hoje'); render();
@@ -504,25 +504,29 @@ function renderToday() {
 }
 
 function renderMsgCard(c, step) {
-  const msg  =buildText(step.key,c);
-  const media=getMedia(step.key);
-  const link =waLink(c.phone,msg);
+  const msg1 = buildText(step.key, c);
+  const msg2 = c.phone2 ? buildText(step.key, c, c.name2 || c.name) : null;
+  const media = getMedia(step.key);
+  const link1 = waLink(c.phone, msg1);
+  const link2 = c.phone2 ? waLink(c.phone2, msg2) : null;
   const hasDestino = c.destino && (step.key==='d30'||step.key==='d60');
+  const hasTwo = !!(c.phone2);
   return `
     <div class="msg-card urgent">
       <div class="msg-card-header">
         <div class="avatar">${initials(c.name)}</div>
         <div class="msg-card-info">
-          <div class="msg-card-name">${esc(c.name)}</div>
+          <div class="msg-card-name">${esc(c.name)}${hasTwo ? ` <span style="color:var(--text2);font-weight:400;">& ${esc(c.name2||'2º contato')}</span>` : ''}</div>
           <div class="msg-card-meta">${esc(c.phone)}${c.product?' · '+esc(c.product):''}</div>
         </div>
         <span class="day-pill ${step.key}">${step.label}</span>
       </div>
       ${hasDestino?`<div style="margin-bottom:8px;"><span class="destino-badge">🌎 ${esc(c.destino)}</span></div>`:''}
-      <div class="msg-preview">${esc(msg)}</div>
+      <div class="msg-preview">${esc(msg1)}</div>
       ${renderMediaBlock(media,c.id,step.key,true)}
       <div class="msg-actions">
-        <a href="${link}" target="_blank" class="btn btn-whatsapp" onclick="setTimeout(()=>markSent('${c.id}','${step.key}'),2500)">📱 Abrir WhatsApp</a>
+        <a href="${link1}" target="_blank" class="btn btn-whatsapp" onclick="setTimeout(()=>markSent('${c.id}','${step.key}'),2500)">📱 ${esc(c.name.split(' ')[0])}</a>
+        ${hasTwo ? `<a href="${link2}" target="_blank" class="btn btn-whatsapp" style="background:#1a9e4a;" onclick="setTimeout(()=>markSent('${c.id}','${step.key}'),2500)">📱 ${esc((c.name2||'2º').split(' ')[0])}</a>` : ''}
         <button class="btn btn-done" onclick="markSent('${c.id}','${step.key}')">✓</button>
         <button class="btn btn-skip" onclick="markSkipped('${c.id}','${step.key}')">Ignorar</button>
       </div>
@@ -604,13 +608,20 @@ function openCustomer(id) {
   }).join('');
 
   document.getElementById('modal-content').innerHTML=`
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
       <div class="avatar" style="width:46px;height:46px;font-size:18px;">${initials(c.name)}</div>
-      <div>
+      <div style="flex:1;">
         <div style="font-size:17px;font-weight:600;">${esc(c.name)}</div>
         <div style="font-size:13px;color:var(--text2);">${esc(c.phone)}</div>
       </div>
     </div>
+    ${c.phone2?`<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <div class="avatar" style="width:46px;height:46px;font-size:18px;">${initials(c.name2||'2')}</div>
+      <div style="flex:1;">
+        <div style="font-size:15px;font-weight:500;">${esc(c.name2||'2º Contato')}</div>
+        <div style="font-size:13px;color:var(--text2);">${esc(c.phone2)}</div>
+      </div>
+    </div>`:''}
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">
       <strong style="color:var(--text);">Venda:</strong> ${fmtDate(c.saleDate)}
       ${c.product?`&nbsp;·&nbsp;<strong style="color:var(--text);">Produto:</strong> ${esc(c.product)}`:''}
@@ -643,10 +654,8 @@ function openConsolModal(id) {
 function saveConsol() {
   const id=document.getElementById('consol-id').value;
   const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
-  c.destino  =document.getElementById('c-destino').value.trim();
-  c.orcamento=document.getElementById('c-orcamento').value.trim();
-  c.periodo  =document.getElementById('c-periodo').value.trim();
-  c.notes    =document.getElementById('c-notes').value.trim();
+  c.destino =document.getElementById('c-destino').value.trim();
+  c.notes   =document.getElementById('c-notes').value.trim();
   saveDB(db);
   closeConsolModal();
   openCustomer(id);
