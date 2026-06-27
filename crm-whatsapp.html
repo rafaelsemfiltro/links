@@ -73,6 +73,7 @@
   .day-pill.d15 { background: #2a1a1a; color: #f07070; }
   .day-pill.d30 { background: #1a2a3a; color: #70a0f0; }
   .day-pill.d60 { background: #2a1a2a; color: #c070f0; }
+  .day-pill.d90 { background: #1a2a20; color: #4CC5B9; }
 
   .msg-preview { font-size: 13px; color: var(--text2); line-height: 1.5; background: var(--surface2); border-radius: var(--radius-sm); padding: 10px; margin-bottom: 10px; white-space: pre-wrap; word-break: break-word; }
   .msg-actions { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -216,7 +217,7 @@
     <div class="field">
       <label>Destino dos Sonhos</label>
       <input type="text" id="f-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado..." autocomplete="off">
-      <div class="field-hint">Usado automaticamente nas mensagens de D+30 e D+60 com a variável {destino}</div>
+      <div class="field-hint">Usado automaticamente nas mensagens de D+60 e D+90 com a variável {destino}</div>
     </div>
     <div class="form-section-title">👥 Segundo Contato (opcional)</div>
     <div class="info-box" style="margin-bottom:12px;">Para casais ou famílias — adicione o segundo nome e telefone para enviar as mesmas mensagens para os dois.</div>
@@ -261,7 +262,7 @@
     <div class="field">
       <label>Destino dos Sonhos</label>
       <input type="text" id="c-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado...">
-      <div class="field-hint">Usado automaticamente nas mensagens de D+30 e D+60</div>
+      <div class="field-hint">Usado automaticamente nas mensagens de D+60 e D+90</div>
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveConsol()">Salvar</button>
@@ -296,7 +297,7 @@
 
 <script>
 const DB_KEY  = 'rv_crm_v2';
-const TPL_KEY = 'rv_tpl_v3';
+const TPL_KEY = 'rv_tpl_v4';
 let editingTplKey = null;
 
 const STEPS = [
@@ -305,14 +306,16 @@ const STEPS = [
   { key: 'd15', label: 'Dia 15',  days: 15, color: '#f07070' },
   { key: 'd30', label: 'Dia 30',  days: 30, color: '#70a0f0' },
   { key: 'd60', label: '2 Meses', days: 60, color: '#c070f0' },
+  { key: 'd90', label: '3 Meses', days: 90, color: '#4CC5B9' },
 ];
 
 const DEFAULT_TEMPLATES = {
-  d1:  { text: `Olá {nome}! 😊 Aqui é o Rafael Versutti. Muito obrigado pela sua confiança! Sua reserva em {produto} foi confirmada. Se tiver qualquer dúvida sobre a viagem, pode me chamar! 🏖️`, media: '' },
-  d7:  { text: `Olá {nome}! Tudo certo com os preparativos para {produto}? 🗺️ Passando para saber se posso ajudar com roteiro, dicas ou qualquer informação. Pode contar comigo!`, media: '' },
-  d15: { text: `Olá {nome}! Faltam poucos dias para a sua viagem a {produto}! 🎒 Leve protetor solar, documentos originais e bastante animação. Me avisa se precisar de algo!`, media: '' },
-  d30: { text: `Oi {nome}! 🌟 Espero que a experiência em {produto} tenha sido incrível!\n\nMe conta como foi — sua opinião é muito importante pra mim. 🙏\n\nE já pensando na próxima aventura... vi algumas opções incríveis para {destino} que combinam muito com você! Quer que eu te mande algumas sugestões e valores?`, media: '' },
-  d60: { text: `Oi {nome}! Saudade de {produto}? 😄\n\nEstou com novidades especiais para {destino} — exatamente o que você me falou que sonhava! Tenho pacotes com ótima relação custo-benefício para {periodo}.\n\nPosso te mandar os detalhes? ✈️`, media: '' },
+  d1:  { text: `Olá {nome}! 🤝\n\nAqui é o Rafael Versutti, do Costão Estaleirinho.\n\nQuero te parabenizar pela decisão! Você acabou de garantir uma fração no resort mais bonito de Balneário Camboriú — o *Costão Estaleirinho*. 🏖️\n\nIsso não é só uma viagem, é um patrimônio que vai te dar *duas semanas de férias por ano* pelo resto da vida.\n\nEstou aqui pra te acompanhar em toda essa jornada. Qualquer dúvida que surgir, pode me chamar! 🙌`, media: '' },
+  d7:  { text: `Oi {nome}! 😊\n\nPassando pra reforçar o que você conquistou com a gente. 💎\n\nO *{produto}* é um sistema de multipropriedade: você adquiriu a *propriedade de uma fração* do resort, com direito a 2 semanas por ano de hospedagem — pra sempre.\n\nEnquanto o resort fica pronto (previsão: *janeiro de 2029*), você vai poder viajar pelo mundo através da *RCI* — a maior rede de intercâmbio de resorts do planeta, com mais de 4.000 destinos em 100 países! 🌍\n\nO melhor investimento é aquele que te dá experiências incríveis. E você fez exatamente isso. 🏆`, media: '' },
+  d15: { text: `Olá {nome}! Como está sendo essa semana? 😊\n\nQuero te contar um pouco mais sobre a *RCI*, que vai ser a sua porta de entrada para viagens incríveis enquanto o {produto} fica pronto.\n\nCom a RCI, você troca suas semanas no resort por hospedagem em mais de 4.000 resorts pelo mundo — praias, montanhas, cidades históricas, parques temáticos...\n\nPara ativar o acesso à RCI, você precisará atingir *13% do contrato* quitados. Quando chegar nessa marca, o mundo de oportunidades começa a se abrir pra você! 🗝️\n\nQualquer dúvida, estou por aqui. 🙌`, media: '' },
+  d30: { text: `Oi {nome}! 🏗️\n\nPassando pra te compartilhar novidades do *{produto}*!\n\nO projeto avança com tudo em Balneário Camboriú — 180 apartamentos, localização privilegiada ao lado do Multiparque, e um investimento de R$ 110 milhões que vai transformar a região. 🌟\n\nÉ um orgulho fazer parte disso. *E você já é proprietário!*\n\nQualquer dúvida ou novidade que aparecer no seu contrato, pode me chamar diretamente aqui. Estou sempre aqui pra te apoiar nessa jornada. 🤝`, media: '' },
+  d60: { text: `Olá {nome}! 😊\n\nDois meses de proprietário do {produto} — como você está se sentindo em relação à compra?\n\nQueria te lembrar que, ao atingir *13% do contrato*, você desbloqueia o acesso à *RCI* e começa a planejar viagens de verdade.\n\nE sabe qual destino ficou gravado na minha memória quando a gente conversou? *{destino}*! 🌎\n\nQuando você ativar a RCI, esse sonho pode se tornar realidade — a rede tem resorts incríveis em {destino} com condições bem melhores do que qualquer pacote turístico comum.\n\nQualquer dúvida, pode contar comigo! 🙌`, media: '' },
+  d90: { text: `Oi {nome}! São *3 meses de proprietário* do {produto}. 🎉\n\nComo você está? Quero saber se está tudo bem com o contrato e se teve alguma dúvida ao longo desse tempo.\n\nLembra que você me falou sobre *{destino}*? Continuo pensando nisso — quando você chegar nos *13% do contrato*, vamos juntos planejar essa viagem pela *RCI*.\n\nO resort fica pronto em *janeiro de 2029*, mas não precisa esperar: a RCI já permite viajar muito antes disso! ✈️\n\nObrigado pela confiança. É uma honra te acompanhar nessa jornada. 🤝`, media: '' },
 };
 
 function getDB() {
@@ -509,7 +512,7 @@ function renderMsgCard(c, step) {
   const media = getMedia(step.key);
   const link1 = waLink(c.phone, msg1);
   const link2 = c.phone2 ? waLink(c.phone2, msg2) : null;
-  const hasDestino = c.destino && (step.key==='d30'||step.key==='d60');
+  const hasDestino = c.destino && (step.key==='d60'||step.key==='d90');
   const hasTwo = !!(c.phone2);
   return `
     <div class="msg-card urgent">
@@ -646,8 +649,6 @@ function openConsolModal(id) {
   const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
   document.getElementById('consol-id').value=id;
   document.getElementById('c-destino').value=c.destino||'';
-  document.getElementById('c-orcamento').value=c.orcamento||'';
-  document.getElementById('c-periodo').value=c.periodo||'';
   document.getElementById('c-notes').value=c.notes||'';
   document.getElementById('consol-overlay').classList.add('open');
 }
@@ -668,7 +669,7 @@ function closeConsolModal(e) {
 }
 
 // ─── Templates ────────────────────────────────────────────────────
-const TPL_NAMES={ d1:'Boas-vindas', d7:'Acompanhamento', d15:'Pré-viagem', d30:'Pós-venda + Sonho', d60:'Fidelização' };
+const TPL_NAMES={ d1:'Boas-vindas', d7:'Como Funciona', d15:'RCI — Intercâmbio', d30:'Novidades do Resort', d60:'Destino dos Sonhos', d90:'Check-in 3 Meses' };
 
 function renderTemplates() {
   const tpls=getTpls();
