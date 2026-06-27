@@ -368,10 +368,13 @@ const TPL_KEY = 'rv_tpl_v5';
 let editingTplKey = null;
 
 // ─── GitHub Sync ──────────────────────────────────────────────────
-const GH_FILE  = 'crm-clientes.json';
-const CFG_KEY  = 'rv_crm_cfg';
+const GH_FILE   = 'crm-clientes.json';
+const TPLS_FILE = 'crm-templates.json';
+const CFG_KEY   = 'rv_crm_cfg';
 let ghSha = null;
+let tplsSha = null;
 let saveTimer = null;
+let tplsTimer = null;
 
 function getCfg() {
   try { return JSON.parse(localStorage.getItem(CFG_KEY)) || {}; } catch { return {}; }
@@ -425,6 +428,50 @@ function scheduleSave(clients) {
   saveTimer = setTimeout(() => ghSave(clients), 1500);
 }
 
+async function ghLoadTemplates() {
+  const token = getToken(), repo = getRepo();
+  if (!token || !repo) return;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${TPLS_FILE}`, {
+      headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      tplsSha = data.sha;
+      const parsed = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\n/g,'')))));
+      localStorage.setItem(TPL_KEY, JSON.stringify(parsed));
+    }
+  } catch(e) { console.warn('GitHub templates load error:', e); }
+}
+
+async function ghSaveTemplates(tpls) {
+  const token = getToken(), repo = getRepo();
+  if (!token || !repo) return;
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(tpls, null, 2))));
+    const body = { message: 'CRM templates sync', content };
+    if (tplsSha) body.sha = tplsSha;
+    const res = await fetch(`https://api.github.com/repos/${repo}/contents/${TPLS_FILE}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) {
+      const data = await res.json();
+      tplsSha = data.content.sha;
+    }
+  } catch(e) { console.warn('GitHub templates save error:', e); }
+}
+
+function scheduleTemplateSave(tpls) {
+  clearTimeout(tplsTimer);
+  tplsTimer = setTimeout(() => ghSaveTemplates(tpls), 1500);
+}
+
 // ─── Auth ─────────────────────────────────────────────────────────
 const APP_PASS = 'Ittusvr';
 
@@ -443,7 +490,7 @@ function unlock() {
 
 async function initApp() {
   showToast('Carregando dados...');
-  await ghLoad();
+  await Promise.all([ghLoad(), ghLoadTemplates()]);
   document.getElementById('f-date').value = today();
   render();
   idbSave(getDB());
@@ -488,7 +535,7 @@ function getTpls() {
     return merged;
   } catch { return JSON.parse(JSON.stringify(DEFAULT_TEMPLATES)); }
 }
-function saveTpls(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); }
+function saveTpls(t) { localStorage.setItem(TPL_KEY, JSON.stringify(t)); scheduleTemplateSave(t); }
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
 
 // ─── Date helpers ─────────────────────────────────────────────────
@@ -877,11 +924,11 @@ function saveCfg() {
   const token = document.getElementById('cfg-token').value.trim();
   const repo  = document.getElementById('cfg-repo').value.trim();
   localStorage.setItem(CFG_KEY, JSON.stringify({ token, repo }));
-  ghSha = null;
+  ghSha = null; tplsSha = null;
   const st = document.getElementById('cfg-status');
   st.style.color = 'var(--teal)';
   st.textContent = 'Salvo! Sincronizando...';
-  ghLoad().then(()=>{ render(); st.textContent = 'Sincronizado com GitHub ✓'; });
+  Promise.all([ghLoad(), ghLoadTemplates()]).then(()=>{ render(); st.textContent = 'Sincronizado com GitHub ✓'; });
 }
 function logout() {
   sessionStorage.removeItem('crm_auth');
