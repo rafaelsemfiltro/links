@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>CRM — Costão Estaleirinho</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#4CC5B9">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CRM Costão">
+<link rel="apple-touch-icon" href="icon.svg">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -268,6 +274,10 @@
     <button class="btn-primary" onclick="saveCfg()">Salvar configuração</button>
     <div id="cfg-status" style="margin-top:12px;font-size:13px;text-align:center;"></div>
     <hr>
+    <div id="pwa-install-section" style="display:none;margin-bottom:12px;">
+      <button class="btn-primary" onclick="installPWA()">📲 Instalar App no Celular</button>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center;">Instale para receber lembretes quando tiver mensagens para enviar.</div>
+    </div>
     <button class="btn btn-danger" style="width:100%;justify-content:center;margin-top:4px;" onclick="logout()">Sair (bloquear app)</button>
   </div>
 </div>
@@ -436,6 +446,9 @@ async function initApp() {
   await ghLoad();
   document.getElementById('f-date').value = today();
   render();
+  idbSave(getDB());
+  updateBadge();
+  setupPWA();
 }
 
 const STEPS = [
@@ -460,7 +473,7 @@ function getDB() {
   try { return JSON.parse(localStorage.getItem(DB_KEY)) || []; }
   catch { return []; }
 }
-function saveDB(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); scheduleSave(d); }
+function saveDB(d) { localStorage.setItem(DB_KEY, JSON.stringify(d)); scheduleSave(d); idbSave(d); updateBadge(); }
 
 function getTpls() {
   try {
@@ -895,6 +908,86 @@ function showToast(msg) {
 }
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── IndexedDB (shared with Service Worker) ───────────────────────
+const IDB_NAME = 'crm-idb-v1';
+async function openIDB() {
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(IDB_NAME, 1);
+    r.onupgradeneeded = e => e.target.result.createObjectStore('store');
+    r.onsuccess = e => res(e.target.result);
+    r.onerror = rej;
+  });
+}
+async function idbSave(clients) {
+  try {
+    const db = await openIDB();
+    await new Promise((res, rej) => {
+      const tx = db.transaction('store', 'readwrite');
+      tx.objectStore('store').put(clients, 'clients');
+      tx.oncomplete = res; tx.onerror = rej;
+    });
+  } catch(e) {}
+}
+
+// ─── App badge ────────────────────────────────────────────────────
+function updateBadge() {
+  const db = getDB(), t = today();
+  let count = 0;
+  db.forEach(c => STEPS.forEach(s => {
+    if (addDays(c.saleDate, s.days) <= t && !(c.sent||{})[s.key] && !(c.skipped||{})[s.key]) count++;
+  }));
+  if ('setAppBadge' in navigator) count > 0 ? navigator.setAppBadge(count) : navigator.clearAppBadge();
+}
+
+// ─── PWA install ──────────────────────────────────────────────────
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  document.getElementById('pwa-install-section').style.display = 'block';
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+  document.getElementById('pwa-install-section').style.display = 'none';
+  showToast('App instalado! 📲');
+});
+async function installPWA() {
+  if (!deferredInstallPrompt) return;
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+}
+
+// ─── Service Worker + notifications ──────────────────────────────
+async function setupPWA() {
+  if (!('serviceWorker' in navigator)) return;
+  try {
+    const reg = await navigator.serviceWorker.register('./sw.js');
+    if (Notification.permission === 'default') await Notification.requestPermission();
+    if ('periodicSync' in reg && Notification.permission === 'granted') {
+      try { await reg.periodicSync.register('check-crm', { minInterval: 12 * 60 * 60 * 1000 }); } catch(e) {}
+    }
+    if (Notification.permission === 'granted') {
+      const t = today();
+      if (localStorage.getItem('crm_notif_date') !== t) {
+        const db = getDB(); let count = 0;
+        db.forEach(c => STEPS.forEach(s => {
+          if (addDays(c.saleDate, s.days) <= t && !(c.sent||{})[s.key] && !(c.skipped||{})[s.key]) count++;
+        }));
+        if (count > 0) {
+          localStorage.setItem('crm_notif_date', t);
+          reg.showNotification('CRM Costão Estaleirinho', {
+            body: `${count} mensagem${count > 1 ? 's' : ''} para enviar hoje 📱`,
+            icon: './icon.svg',
+            tag: 'crm-pending',
+            data: { url: './crm-whatsapp.html' }
+          });
+        }
+      }
+    }
+  } catch(e) {}
 }
 
 if (sessionStorage.getItem('crm_auth')) {
