@@ -215,9 +215,14 @@
       <textarea id="f-notes" style="min-height:110px;" placeholder="Ex: Família gaúcha, sempre viaja em Balneário Camboriú. Compraram pelo patrimônio e querem visitar quando o resort ficar pronto. Sonham em viajar pro Chile. Casal com filhos pequenos, orçamento ~R$8k..."></textarea>
     </div>
     <div class="field">
-      <label>Destino dos Sonhos</label>
+      <label>1º Destino dos Sonhos</label>
       <input type="text" id="f-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado..." autocomplete="off">
-      <div class="field-hint">Usado automaticamente nas mensagens de D+60 e D+90 com a variável {destino}</div>
+      <div class="field-hint">Usado na mensagem de D+60 com a variável {destino}</div>
+    </div>
+    <div class="field">
+      <label>2º Destino dos Sonhos</label>
+      <input type="text" id="f-destino2" placeholder="Ex: Patagônia, Japão, Orlando..." autocomplete="off">
+      <div class="field-hint">Usado na mensagem de D+90 com a variável {destino2}</div>
     </div>
     <div class="form-section-title">👥 Segundo Contato (opcional)</div>
     <div class="info-box" style="margin-bottom:12px;">Para casais ou famílias — adicione o segundo nome e telefone para enviar as mesmas mensagens para os dois.</div>
@@ -239,7 +244,8 @@
     <strong>Variáveis disponíveis:</strong><br>
     <code>{nome}</code> — Nome do cliente (ou do 2º contato)<br>
     <code>{produto}</code> — Produto/destino vendido<br>
-    <code>{destino}</code> — Sonho de viagem do cliente
+    <code>{destino}</code> — 1º sonho de viagem (D+60)<br>
+    <code>{destino2}</code> — 2º sonho de viagem (D+90)
   </div>
   <div id="templates-content"></div>
 </div>
@@ -260,9 +266,14 @@
       <textarea id="c-notes" style="min-height:130px;" placeholder="Ex: Família gaúcha, sempre viaja em Balneário Camboriú. Compraram pelo patrimônio e querem visitar quando o resort ficar pronto. Sonham viajar pro Chile. Casal com filhos pequenos, orçamento ~R$8k..."></textarea>
     </div>
     <div class="field">
-      <label>Destino dos Sonhos</label>
+      <label>1º Destino dos Sonhos</label>
       <input type="text" id="c-destino" placeholder="Ex: Chile, Europa, Caribe, Gramado...">
-      <div class="field-hint">Usado automaticamente nas mensagens de D+60 e D+90</div>
+      <div class="field-hint">Usado na mensagem de D+60</div>
+    </div>
+    <div class="field">
+      <label>2º Destino dos Sonhos</label>
+      <input type="text" id="c-destino2" placeholder="Ex: Patagônia, Japão, Orlando...">
+      <div class="field-hint">Usado na mensagem de D+90</div>
     </div>
     <div style="display:flex;gap:8px;">
       <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveConsol()">Salvar</button>
@@ -297,7 +308,7 @@
 
 <script>
 const DB_KEY  = 'rv_crm_v2';
-const TPL_KEY = 'rv_tpl_v4';
+const TPL_KEY = 'rv_tpl_v5';
 let editingTplKey = null;
 
 const STEPS = [
@@ -310,12 +321,12 @@ const STEPS = [
 ];
 
 const DEFAULT_TEMPLATES = {
-  d1:  { text: `Oi {nome}! 😄\n\nSou eu, Rafael! Ainda com aquela energia boa de hoje rs\n\nQueria te dizer pessoalmente: foi muito bom fechar com vocês, fiquei feliz demais. Tenho certeza que foi a melhor decisão.\n\nQualquer dúvida que aparecer — sobre o contrato, o {produto}, qualquer coisa — me chama aqui direto, tô à disposição! 🤝`, media: '' },
-  d7:  { text: `Oi {nome}! Tudo bem? 😊\n\nPassando pra dar um oi e saber como vocês tão.\n\nVocê sabia que enquanto o resort fica pronto você já pode começar a viajar pela RCI? São mais de 4 mil resorts no mundo pra trocar suas semanas — praia, montanha, Europa, América do Sul... é muita coisa! 🌍\n\nSe quiser bater um papo sobre como funciona, me chama que eu explico!`, media: '' },
-  d15: { text: `Oi {nome}! 👋\n\nLembrei de vocês aqui e vim dar um oi.\n\nUma coisa importante que às vezes passa batido: pra ativar a RCI e começar a viajar antes de 2029, você vai precisar chegar nos *13% do contrato* quitados. Não precisa correr, mas é bom ter isso em mente!\n\nChegando nessa marca você me chama e a gente vê os destinos juntos 😄`, media: '' },
-  d30: { text: `Oi {nome}! Um mês já! Passa rápido né rs 😄\n\nVi umas novidades da obra do {produto} aqui e lembrei de vocês. Tá ficando cada vez mais bonito — janeiro de 2029 vai chegar num piscar de olhos.\n\nComo tá sendo? Alguma dúvida surgiu? Pode me chamar aqui à vontade!`, media: '' },
-  d60: { text: `Oi {nome}! Tudo certo? 😊\n\nDois meses já, não parece né?\n\nTe falo, lembrei de vocês essa semana porque vi um conteúdo sobre *{destino}* e falei "é exatamente o lugar que eles querem conhecer!" 🌎\n\nQuando você chegar nos 13% do contrato, a RCI tá liberada e a gente planeja essa viagem junto. Vai ser incrível!`, media: '' },
-  d90: { text: `Oi {nome}! 🎉\n\n3 meses! Juro que parece que foi ontem que a gente fechou rs\n\nPassando pra saber como tá tudo, se o contrato tá correndo bem, se surgiu alguma dúvida no caminho.\n\nE não esqueci não — quando chegar a hora de ir pra *{destino}* pela RCI, é só me chamar que a gente planeja juntos. ✈️\n\nAbraço!`, media: '' },
+  d1:  { text: `Oi {nome}! Aqui é o Rafael 😄\n\nTudo bem? Como foi o restante do dia depois do passeio? Espero que tenham curtido bastante!\n\nQueria parabenizar vocês mais uma vez — fiquei muito feliz que deu certo! É uma decisão incrível.\n\nEstou aqui à disposição. Sempre que tiver alguma informação nova sobre o {produto}, eu mando aqui pra vocês, tá?\n\nGrande abraço! 🤝`, media: '' },
+  d7:  { text: `Oi {nome}! 😊\n\nVi esse conteúdo aqui e lembrei de vocês na hora!\n\nOlha que projeto incrível esse {produto} 😍 Orgulho de vocês fazerem parte disso.\n\nQualquer dúvida que surgir pode me chamar aqui! Abraço`, media: '' },
+  d15: { text: `Oi {nome}! Tudo bem? 👋\n\nPassando pra dar um oi e mandar uma dica de viagem: você conhece Bonito, no Mato Grosso do Sul? 😍\n\nUma das naturezas mais lindas do Brasil — aquelas águas cristalinas são de outro mundo! Fica a dica pro próximo roteiro de vocês rs 🌊\n\nSempre que tiver novidade do resort eu mando aqui! Abraço 🤝`, media: '' },
+  d30: { text: `Oi {nome}! Um mês já, passa rápido né rs 😄\n\nPensando em viagem... já pensaram em conhecer a Patagônia? Aquelas paisagens são de outro planeta 😍🏔️\n\nÉ o tipo de lugar que o {produto} vai permitir vocês explorarem futuramente pela RCI!\n\nComo tá tudo? Alguma dúvida surgiu? Tô por aqui! Abraço`, media: '' },
+  d60: { text: `Oi {nome}! Tudo certo? 😊\n\nDois meses já, não parece né?\n\nTe falo, lembrei de vocês essa semana — {destino} ficou gravado na minha memória desde quando a gente conversou 🌎 Deve ser incrível!\n\nQuando chegar nos 13% do contrato a RCI libera e a gente planeja isso junto. Vai ser incrível!\n\nAbraço!`, media: '' },
+  d90: { text: `Oi {nome}! 😄\n\n3 meses! Parece que foi ontem que a gente fechou, juro rs\n\nTudo bem com o contrato? Alguma dúvida que surgiu no caminho?\n\nE olha — além de {destino}, lembrei que {destino2} também tá na lista dos sonhos de vocês 🌍 Quando ativar a RCI, esses dois destinos vão estar ao alcance!\n\nTô sempre aqui. Grande abraço! 🤝`, media: '' },
 };
 
 function getDB() {
@@ -357,9 +368,10 @@ function initials(n) { return n.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join
 function buildText(key, c, overrideName) {
   const tpls = getTpls();
   return (tpls[key]?.text || '')
-    .replace(/\{nome\}/gi,    overrideName || c.name)
-    .replace(/\{produto\}/gi, c.product  || 'sua viagem')
-    .replace(/\{destino\}/gi, c.destino  || 'sua próxima viagem');
+    .replace(/\{nome\}/gi,     overrideName || c.name)
+    .replace(/\{produto\}/gi,  c.product   || 'sua viagem')
+    .replace(/\{destino2\}/gi, c.destino2  || c.destino || 'seu próximo destino')
+    .replace(/\{destino\}/gi,  c.destino   || 'seu destino dos sonhos');
 }
 function getMedia(key) { return getTpls()[key]?.media || ''; }
 function waLink(phone, message) {
@@ -442,14 +454,15 @@ function addCustomer() {
   const date     = document.getElementById('f-date').value;
   const product  = document.getElementById('f-product').value.trim();
   const destino  = document.getElementById('f-destino').value.trim();
+  const destino2 = document.getElementById('f-destino2').value.trim();
   const notes    = document.getElementById('f-notes').value.trim();
   const name2    = document.getElementById('f-name2').value.trim();
   const phone2   = document.getElementById('f-phone2').value.trim();
   if(!name||!phone||!date){ alert('Preencha nome, telefone e data da venda.'); return; }
   const db=getDB();
-  db.push({ id:uid(), name, phone, saleDate:date, product, destino, notes, name2, phone2, sent:{}, skipped:{}, createdAt:today() });
+  db.push({ id:uid(), name, phone, saleDate:date, product, destino, destino2, notes, name2, phone2, sent:{}, skipped:{}, createdAt:today() });
   saveDB(db);
-  ['f-name','f-phone','f-product','f-destino','f-notes','f-name2','f-phone2'].forEach(id=>document.getElementById(id).value='');
+  ['f-name','f-phone','f-product','f-destino','f-destino2','f-notes','f-name2','f-phone2'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-date').value=today();
   showToast('Cliente cadastrado! ✓');
   switchTab('hoje'); render();
@@ -512,7 +525,7 @@ function renderMsgCard(c, step) {
   const media = getMedia(step.key);
   const link1 = waLink(c.phone, msg1);
   const link2 = c.phone2 ? waLink(c.phone2, msg2) : null;
-  const hasDestino = c.destino && (step.key==='d60'||step.key==='d90');
+  const hasDestino = (step.key==='d60' && c.destino) || (step.key==='d90' && (c.destino2||c.destino));
   const hasTwo = !!(c.phone2);
   return `
     <div class="msg-card urgent">
@@ -557,7 +570,7 @@ function renderClients() {
           <div class="avatar" style="width:32px;height:32px;font-size:13px;">${initials(c.name)}</div>
           <div style="flex:1;min-width:0;">
             <div class="customer-name">${esc(c.name)}</div>
-            <div class="customer-phone">${esc(c.phone)}${c.destino?` · 🌎 ${esc(c.destino)}`:''}</div>
+            <div class="customer-phone">${esc(c.phone)}${c.destino?` · 🌎 ${esc(c.destino)}${c.destino2?' / '+esc(c.destino2):''}`:''}</div>
           </div>
           <div class="customer-date">${fmtDate(c.saleDate)}</div>
         </div>
@@ -577,8 +590,8 @@ function openCustomer(id) {
         <button class="btn btn-edit" style="font-size:12px;padding:5px 10px;" onclick="openConsolModal('${id}')">Editar</button>
       </div>
       ${c.notes?`<div style="font-size:13px;color:var(--text);line-height:1.6;margin-bottom:${c.destino?'10px':'0'};">${esc(c.notes)}</div>`:''}
-      ${c.destino?`<div style="display:flex;align-items:center;gap:6px;margin-top:4px;"><span class="destino-badge">🌎 ${esc(c.destino)}</span><span style="font-size:11px;color:var(--text3);">usado nos templates</span></div>`:''}
-      ${!c.notes&&!c.destino?`<div style="font-size:13px;color:var(--text3);">Nenhuma consolidação ainda. Clique em <strong>Editar</strong> para descrever a história da venda.</div>`:''}
+      ${c.destino||c.destino2?`<div style="display:flex;align-items:center;gap:6px;margin-top:4px;flex-wrap:wrap;">${c.destino?`<span class="destino-badge">🌎 ${esc(c.destino)}</span>`:''}${c.destino2?`<span class="destino-badge">🌍 ${esc(c.destino2)}</span>`:''}<span style="font-size:11px;color:var(--text3);">usado nos templates</span></div>`:''}
+      ${!c.notes&&!c.destino&&!c.destino2?`<div style="font-size:13px;color:var(--text3);">Nenhuma consolidação ainda. Clique em <strong>Editar</strong> para descrever a história da venda.</div>`:''}
     </div>`;
 
   const stepsHtml=STEPS.map(s=>{
@@ -649,14 +662,16 @@ function openConsolModal(id) {
   const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
   document.getElementById('consol-id').value=id;
   document.getElementById('c-destino').value=c.destino||'';
+  document.getElementById('c-destino2').value=c.destino2||'';
   document.getElementById('c-notes').value=c.notes||'';
   document.getElementById('consol-overlay').classList.add('open');
 }
 function saveConsol() {
   const id=document.getElementById('consol-id').value;
   const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
-  c.destino =document.getElementById('c-destino').value.trim();
-  c.notes   =document.getElementById('c-notes').value.trim();
+  c.destino  = document.getElementById('c-destino').value.trim();
+  c.destino2 = document.getElementById('c-destino2').value.trim();
+  c.notes    = document.getElementById('c-notes').value.trim();
   saveDB(db);
   closeConsolModal();
   openCustomer(id);
