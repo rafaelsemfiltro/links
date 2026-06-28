@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>CRM — Costão Estaleirinho</title>
+<title>CRM de Vendas</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#4CC5B9">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="CRM Costão">
+<meta name="apple-mobile-web-app-title" content="CRM">
 <link rel="apple-touch-icon" href="icon.svg">
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -170,7 +170,7 @@
       <line x1="70" y1="50" x2="92" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
     </svg>
     <div>
-      <div class="header-title">Costão Estaleirinho</div>
+      <div class="header-title" id="header-brand">CRM</div>
       <div class="header-sub">CRM de Vendas</div>
     </div>
   </div>
@@ -268,6 +268,15 @@
       <div style="font-size:12px;color:var(--teal-dim);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:4px;">Conta conectada</div>
       <div id="cfg-user-email" style="font-size:15px;color:var(--teal);font-weight:600;"></div>
     </div>
+    <div class="field" style="margin-bottom:16px;">
+      <label style="font-size:12px;color:var(--text2);font-weight:600;text-transform:uppercase;letter-spacing:0.4px;">Seu nome (aparece no app)</label>
+      <div style="display:flex;gap:8px;margin-top:6px;">
+        <input type="text" id="cfg-display-name" placeholder="Ex: Rafael, Priscila..." autocomplete="off"
+          style="flex:1;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:15px;padding:12px 14px;outline:none;font-family:inherit;">
+        <button onclick="saveName()" style="padding:12px 16px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">Salvar</button>
+      </div>
+      <div id="cfg-name-msg" style="font-size:12px;color:var(--teal);margin-top:6px;display:none;"></div>
+    </div>
     <div id="pwa-install-section" style="display:none;margin-bottom:12px;">
       <button class="btn-primary" onclick="installPWA()">📲 Instalar App no Celular</button>
       <div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center;">Instale para receber lembretes quando tiver mensagens para enviar.</div>
@@ -341,8 +350,8 @@
     <line x1="70" y1="50" x2="92" y2="50" stroke="#4CC5B9" stroke-width="2.5" stroke-linecap="round"/>
   </svg>
   <div style="text-align:center;">
-    <div style="font-size:20px;font-weight:700;color:#eef2f7;">Costão Estaleirinho</div>
-    <div style="font-size:13px;color:#7a9bbf;margin-top:4px;">CRM de Vendas</div>
+    <div style="font-size:20px;font-weight:700;color:#eef2f7;">CRM de Vendas</div>
+    <div style="font-size:13px;color:#7a9bbf;margin-top:4px;">Faça login para continuar</div>
   </div>
   <div style="width:100%;max-width:300px;display:flex;flex-direction:column;gap:10px;">
     <input type="email" id="lock-email" placeholder="Email" autocomplete="email"
@@ -353,6 +362,8 @@
       onkeydown="if(event.key==='Enter')unlock()">
     <button id="lock-btn" onclick="unlock()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Entrar</button>
     <div id="lock-error" style="text-align:center;font-size:13px;color:#e05252;display:none;"></div>
+    <div id="lock-success" style="text-align:center;font-size:13px;color:#4CC5B9;display:none;"></div>
+    <button onclick="forgotPassword()" style="background:none;border:none;color:#7a9bbf;font-size:13px;cursor:pointer;font-family:inherit;padding:4px;text-decoration:underline;">Esqueci minha senha</button>
   </div>
 </div>
 
@@ -501,6 +512,11 @@ async function unlock() {
   }
 }
 
+function getDisplayName() {
+  if (currentUser.displayName) return currentUser.displayName;
+  return currentUser.email.split('@')[0].replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
 async function initApp() {
   showToast('Carregando dados...');
   await firestoreLoad();
@@ -509,10 +525,52 @@ async function initApp() {
   idbSave(getDB());
   updateBadge();
   setupPWA();
+  const name = getDisplayName();
+  const brandEl = document.getElementById('header-brand');
+  if (brandEl) brandEl.textContent = name;
   const emailEl = document.getElementById('cfg-user-email');
   if (emailEl) emailEl.textContent = currentUser.email;
+  const nameEl = document.getElementById('cfg-display-name');
+  if (nameEl) nameEl.value = currentUser.displayName || '';
   const projEl = document.getElementById('cfg-fb-project');
   if (projEl) { const cfg = getFbCfg(); projEl.textContent = cfg ? cfg.projectId : ''; }
+}
+
+async function saveName() {
+  const nameEl = document.getElementById('cfg-display-name');
+  const msgEl  = document.getElementById('cfg-name-msg');
+  const name   = nameEl.value.trim();
+  if (!name) return;
+  try {
+    await fbAuth.currentUser.updateProfile({ displayName: name });
+    currentUser = fbAuth.currentUser;
+    const brandEl = document.getElementById('header-brand');
+    if (brandEl) brandEl.textContent = name;
+    msgEl.textContent = 'Nome salvo!';
+    msgEl.style.display = 'block';
+    setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
+  } catch(e) { console.warn('saveName:', e); }
+}
+
+async function forgotPassword() {
+  const email  = document.getElementById('lock-email').value.trim();
+  const errEl  = document.getElementById('lock-error');
+  const succEl = document.getElementById('lock-success');
+  errEl.style.display = 'none';
+  succEl.style.display = 'none';
+  if (!email) {
+    errEl.textContent = 'Digite seu email primeiro';
+    errEl.style.display = 'block';
+    return;
+  }
+  try {
+    await fbAuth.sendPasswordResetEmail(email);
+    succEl.textContent = 'Email enviado! Verifique sua caixa de entrada.';
+    succEl.style.display = 'block';
+  } catch(e) {
+    errEl.textContent = 'Email não encontrado';
+    errEl.style.display = 'block';
+  }
 }
 
 async function logout() {
@@ -1061,7 +1119,7 @@ async function setupPWA() {
         }));
         if (count > 0) {
           localStorage.setItem('crm_notif_date', t);
-          reg.showNotification('CRM Costão Estaleirinho', {
+          reg.showNotification('CRM de Vendas', {
             body: `${count} mensagem${count > 1 ? 's' : ''} para enviar hoje 📱`,
             icon: './icon.svg',
             tag: 'crm-pending',
