@@ -253,6 +253,7 @@
   <div class="vars-box">
     <strong>Variáveis disponíveis:</strong><br>
     <code>{nome}</code> — Nome do cliente (ou do 2º contato)<br>
+    <code>{vendedor}</code> — Seu nome (quem está logado)<br>
     <code>{produto}</code> — Produto/destino vendido<br>
     <code>{destino}</code> — 1º sonho de viagem (D+60)<br>
     <code>{destino2}</code> — 2º sonho de viagem (D+90)
@@ -565,7 +566,7 @@ const STEPS = [
 ];
 
 const DEFAULT_TEMPLATES = {
-  d1:  { text: `Oi {nome}! Aqui é o Rafael 😄\n\nTudo bem? Como foi o restante do dia depois do passeio? Espero que tenham curtido bastante!\n\nQueria parabenizar vocês mais uma vez, é uma decisão incrível.\n\nEstou aqui à disposição. Sempre que tiver alguma informação nova sobre o {produto}, eu mando aqui pra vocês, tá?\n\nGrande abraço! 🤝`, media: 'https://www.instagram.com/reel/DTdmdZTDrws/?igsh=MXU5ZGdweWY0NWFkdg==' },
+  d1:  { text: `Oi {nome}! Aqui é o {vendedor} 😄\n\nTudo bem? Como foi o restante do dia depois do passeio? Espero que tenham curtido bastante!\n\nQueria parabenizar vocês mais uma vez, é uma decisão incrível.\n\nEstou aqui à disposição. Sempre que tiver alguma informação nova sobre o {produto}, eu mando aqui pra vocês, tá?\n\nGrande abraço! 🤝`, media: 'https://www.instagram.com/reel/DTdmdZTDrws/?igsh=MXU5ZGdweWY0NWFkdg==' },
   d7:  { text: `Olha que projeto incrível o {produto} 😍 Orgulho de vocês fazerem parte disso.\n\nQualquer dúvida que surgir pode me chamar aqui! Abraço`, media: 'https://www.instagram.com/reel/DVJ2Sp6DGAy/?igsh=MWRiajIwMGgxbHlwaA==' },
   d15: { text: `Oi {nome}! Tudo bem? 👋\n\nPassando pra dar um oi e mandar uma dica de viagem: já pensaram em Gramado? 😍\n\nÉ um destino incrível, né — e o melhor: tem vários resorts parceiros da RCI por lá! Ou seja, futuramente vocês podem usar pra se hospedar lá com muito mais vantagem rs 🏔️\n\nSempre que tiver novidade do resort eu mando aqui! Abraço 🤝`, media: 'https://www.instagram.com/p/DZYa1Rrj_eq/?igsh=MXNmaHJ2Zmw5dnpqYg==' },
   d30: { text: `Olha, saiu o diário de obras do {produto}! Gravaram um vídeo novo mostrando como tá o andamento da construção — fica a vontade pra assistir 😍🏗️\n\nQualquer dúvida, estou por aqui! Abraço.`, media: 'https://www.instagram.com/reel/DaD7Q1EDCvH/?igsh=MTR5NGJqdnB6MWFwbA==' },
@@ -613,6 +614,7 @@ function buildText(key, c, overrideName) {
   const tpls = getTpls();
   return (tpls[key]?.text || '')
     .replace(/\{nome\}/gi,     overrideName || c.name)
+    .replace(/\{vendedor\}/gi, getDisplayName())
     .replace(/\{produto\}/gi,  c.product   || 'sua viagem')
     .replace(/\{destino2\}/gi, c.destino2  || c.destino || 'seu próximo destino')
     .replace(/\{destino\}/gi,  c.destino   || 'seu destino dos sonhos');
