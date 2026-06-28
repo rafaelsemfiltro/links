@@ -282,6 +282,7 @@
       <button class="btn-primary" onclick="installPWA()">📲 Instalar App no Celular</button>
       <div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:center;">Instale para receber lembretes quando tiver mensagens para enviar.</div>
     </div>
+    <button class="btn btn-done" style="width:100%;justify-content:center;margin-bottom:10px;" onclick="exportCSV()">📥 Exportar Clientes (.csv)</button>
     <button class="btn btn-danger" style="width:100%;justify-content:center;" onclick="logout()">Sair da conta</button>
     <hr>
     <div style="font-size:11px;color:var(--text3);text-align:center;">Projeto: <span id="cfg-fb-project"></span></div>
@@ -1055,6 +1056,32 @@ async function installPWA() {
   deferredInstallPrompt.prompt();
   await deferredInstallPrompt.userChoice;
   deferredInstallPrompt = null;
+}
+
+// ─── Export CSV ───────────────────────────────────────────────────
+function exportCSV() {
+  const db = getDB();
+  if (!db.length) { showToast('Nenhum cliente para exportar'); return; }
+  const headers = ['Nome','Telefone','Nome 2º Contato','Tel 2º Contato','Data da Venda','Produto','Destino 1','Destino 2','História da Venda','D+1','D+8','D+15','D+30','D+60','D+90'];
+  const stepKeys = ['d1','d7','d15','d30','d60','d90'];
+  const rows = db.map(c => {
+    const sent = c.sent || {}, skip = c.skipped || {}, t = today();
+    const stepStatus = stepKeys.map(k => {
+      if (sent[k]) return 'Enviado ' + fmtDate(sent[k]);
+      if (skip[k]) return 'Ignorado';
+      if (addDays(c.saleDate, STEPS.find(s=>s.key===k).days) <= t) return 'Pendente';
+      return 'Futuro';
+    });
+    return [c.name, c.phone, c.name2||'', c.phone2||'', fmtDate(c.saleDate), c.product||'', c.destino||'', c.destino2||'', (c.notes||'').replace(/\n/g,' '), ...stepStatus];
+  });
+  const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `clientes-${today()}.csv`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  showToast('Exportado! ✓');
 }
 
 // ─── Service Worker + notifications ──────────────────────────────
