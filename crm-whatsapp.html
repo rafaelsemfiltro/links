@@ -367,33 +367,6 @@
   </div>
 </div>
 
-<!-- Tela de configuração inicial (Firebase) -->
-<div id="setup-screen" style="display:none;position:fixed;inset:0;background:#09111e;z-index:10000;flex-direction:column;align-items:center;justify-content:flex-start;padding:40px 24px;overflow-y:auto;">
-  <svg width="40" height="40" viewBox="0 0 100 100" fill="none" style="margin-bottom:16px;flex-shrink:0;">
-    <path d="M50 20 C35 28,25 38,30 50 C25 62,35 72,50 80 C65 72,75 62,70 50 C75 38,65 28,50 20Z" stroke="#4CC5B9" stroke-width="3.5" fill="none" stroke-linecap="round"/>
-    <path d="M50 12 C28 23,13 36,20 50 C13 64,28 77,50 88 C72 77,87 64,80 50 C87 36,72 23,50 12Z" stroke="#4CC5B9" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
-  </svg>
-  <div style="text-align:center;margin-bottom:24px;">
-    <div style="font-size:18px;font-weight:700;color:#eef2f7;">Configuração Inicial</div>
-    <div style="font-size:13px;color:#7a9bbf;margin-top:4px;">Cole o JSON do Firebase para ativar o app</div>
-  </div>
-  <div style="width:100%;max-width:420px;display:flex;flex-direction:column;gap:12px;">
-    <div style="background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;padding:14px;font-size:13px;color:#7a9bbf;line-height:1.8;">
-      <strong style="color:#eef2f7;">Como obter o JSON:</strong><br>
-      1. Acesse <strong style="color:#4CC5B9;">console.firebase.google.com</strong><br>
-      2. Abra seu projeto → ⚙️ Configurações do projeto<br>
-      3. Em "Seus apps" → clique no app web<br>
-      4. Copie o objeto <code style="color:#a070f0;">firebaseConfig</code><br>
-      5. Cole abaixo <strong style="color:#eef2f7;">apenas o JSON</strong> (sem const, sem ;)
-    </div>
-    <textarea id="setup-json"
-      placeholder='{"apiKey":"AIzaSy...","authDomain":"meu-projeto.firebaseapp.com","projectId":"meu-projeto","storageBucket":"meu-projeto.appspot.com","messagingSenderId":"123456","appId":"1:123:web:abc"}'
-      style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:12px;padding:14px;outline:none;font-family:monospace;min-height:130px;resize:vertical;"></textarea>
-    <button onclick="confirmSetup()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Confirmar e Entrar</button>
-    <div id="setup-error" style="text-align:center;font-size:13px;color:#e05252;display:none;"></div>
-  </div>
-</div>
-
 <!-- Sync indicator -->
 <div id="sync-indicator" style="display:none;position:fixed;bottom:90px;right:16px;background:#0f1c2e;border:1px solid #1e3352;border-radius:20px;padding:6px 12px;font-size:12px;color:#7a9bbf;z-index:150;">⟳ Sincronizando...</div>
 
@@ -401,9 +374,8 @@
 
 <script>
 // ─── Constants ────────────────────────────────────────────────────
-const DB_KEY     = 'rv_crm_v2';
-const TPL_KEY    = 'rv_tpl_v6';
-const FB_CFG_KEY = 'rv_fb_cfg';
+const DB_KEY = 'rv_crm_v2';
+const TPL_KEY = 'rv_tpl_v6';
 let editingTplKey = null;
 let currentUser   = null;
 let firestoreDb   = null;
@@ -412,32 +384,19 @@ let saveTimer     = null;
 let tplsTimer     = null;
 
 // ─── Firebase Setup ───────────────────────────────────────────────
-function getFbCfg() {
-  try { return JSON.parse(localStorage.getItem(FB_CFG_KEY)); } catch { return null; }
-}
+const FB_CONFIG = {
+  apiKey:            "AIzaSyBGSf94odnS8307MEgCiiNzuk8zzQXd4MI",
+  authDomain:        "meu-crm-4f832.firebaseapp.com",
+  projectId:         "meu-crm-4f832",
+  storageBucket:     "meu-crm-4f832.firebasestorage.app",
+  messagingSenderId: "396030774693",
+  appId:             "1:396030774693:web:e344fda8296720a4396c4c"
+};
 
 function initFirebase() {
-  const cfg = getFbCfg();
-  if (!cfg || !cfg.apiKey) return false;
-  if (!firebase.apps.length) firebase.initializeApp(cfg);
+  if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
   fbAuth      = firebase.auth();
   firestoreDb = firebase.firestore();
-  return true;
-}
-
-function confirmSetup() {
-  const raw   = document.getElementById('setup-json').value.trim();
-  const errEl = document.getElementById('setup-error');
-  errEl.style.display = 'none';
-  try {
-    const cfg = JSON.parse(raw);
-    if (!cfg.apiKey || !cfg.projectId) throw new Error('inválido');
-    localStorage.setItem(FB_CFG_KEY, JSON.stringify(cfg));
-    location.reload();
-  } catch(e) {
-    errEl.textContent = 'JSON inválido. Verifique e tente novamente.';
-    errEl.style.display = 'block';
-  }
 }
 
 // ─── Firestore ────────────────────────────────────────────────────
@@ -533,7 +492,7 @@ async function initApp() {
   const nameEl = document.getElementById('cfg-display-name');
   if (nameEl) nameEl.value = currentUser.displayName || '';
   const projEl = document.getElementById('cfg-fb-project');
-  if (projEl) { const cfg = getFbCfg(); projEl.textContent = cfg ? cfg.projectId : ''; }
+  if (projEl) projEl.textContent = FB_CONFIG.projectId;
 }
 
 async function saveName() {
@@ -583,12 +542,7 @@ async function logout() {
 
 // ─── Boot ─────────────────────────────────────────────────────────
 (function boot() {
-  const ready = initFirebase();
-  if (!ready) {
-    document.getElementById('setup-screen').style.display = 'flex';
-    document.getElementById('lock-screen').style.display = 'none';
-    return;
-  }
+  initFirebase();
   fbAuth.onAuthStateChanged(user => {
     if (user) {
       currentUser = user;
