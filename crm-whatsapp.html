@@ -213,7 +213,7 @@
       <input type="date" id="f-date">
     </div>
     <div class="field">
-      <label>Produto / Destino Vendido</label>
+      <label>Empreendimento Vendido</label>
       <input type="text" id="f-product" placeholder="Ex: Costão do Santinho 3 noites" autocomplete="off">
     </div>
 
@@ -254,7 +254,7 @@
     <strong>Variáveis disponíveis:</strong><br>
     <code>{nome}</code> — Nome do cliente (ou do 2º contato)<br>
     <code>{vendedor}</code> — Seu nome (quem está logado)<br>
-    <code>{produto}</code> — Produto/destino vendido<br>
+    <code>{produto}</code> — Empreendimento vendido<br>
     <code>{destino}</code> — 1º sonho de viagem (D+60)<br>
     <code>{destino2}</code> — 2º sonho de viagem (D+90)
   </div>
@@ -899,7 +899,7 @@ function openCustomer(id) {
     </div>`:''}
     <div style="font-size:12px;color:var(--text2);margin-bottom:12px;">
       <strong style="color:var(--text);">Venda:</strong> ${fmtDate(c.saleDate)}
-      ${c.product?`&nbsp;·&nbsp;<strong style="color:var(--text);">Produto:</strong> ${esc(c.product)}`:''}
+      ${c.product?`&nbsp;·&nbsp;<strong style="color:var(--text);">Empreendimento:</strong> ${esc(c.product)}`:''}
     </div>
     ${consolHtml}
     <hr>
@@ -1062,7 +1062,7 @@ async function installPWA() {
 function exportCSV() {
   const db = getDB();
   if (!db.length) { showToast('Nenhum cliente para exportar'); return; }
-  const headers = ['Nome','Telefone','Nome 2º Contato','Tel 2º Contato','Data da Venda','Produto','Destino 1','Destino 2','História da Venda','D+1','D+8','D+15','D+30','D+60','D+90'];
+  const headers = ['Nome','Telefone','Nome 2º Contato','Tel 2º Contato','Data da Venda','Empreendimento','Destino 1','Destino 2','História da Venda','D+1','D+8','D+15','D+30','D+60','D+90'];
   const stepKeys = ['d1','d7','d15','d30','d60','d90'];
   const rows = db.map(c => {
     const sent = c.sent || {}, skip = c.skipped || {}, t = today();
