@@ -1,4 +1,4 @@
-const CACHE = 'crm-v2';
+const CACHE = 'crm-v3';
 const ASSETS = ['./crm-whatsapp.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
@@ -88,7 +88,7 @@ self.addEventListener('periodicsync', e => {
 async function checkAndNotify() {
   const count = await countPending();
   if (count > 0) {
-    await self.registration.showNotification('CRM Costão Estaleirinho', {
+    await self.registration.showNotification('CRM de Vendas', {
       body: `${count} mensagem${count > 1 ? 's' : ''} para enviar hoje 📱`,
       icon: './icon.svg',
       tag: 'crm-pending',
