@@ -24,7 +24,7 @@ self.addEventListener('fetch', e => {
   );
 });
 
-// ─── IndexedDB helpers ────────────────────────────────────────────────
+// ─── IndexedDB helpers ────────────────────────────────────────────
 const IDB_NAME = 'crm-idb-v1';
 
 function openIDB() {
@@ -48,7 +48,7 @@ async function getClients() {
   } catch { return []; }
 }
 
-// ─── Date helpers (mirrored from main app) ────────────────────────────
+// ─── Date helpers (mirrored from main app) ────────────────────────
 function pad(n) { return String(n).padStart(2, '0'); }
 function today() {
   const d = new Date();
@@ -78,7 +78,7 @@ async function countPending() {
   return count;
 }
 
-// ─── Periodic background sync ───────────────────────────────────────────
+// ─── Periodic background sync ─────────────────────────────────────
 self.addEventListener('periodicsync', e => {
   if (e.tag === 'check-crm') {
     e.waitUntil(checkAndNotify());
@@ -98,7 +98,7 @@ async function checkAndNotify() {
   }
 }
 
-// ─── Notification click ─────────────────────────────────────────────────
+// ─── Notification click ───────────────────────────────────────────
 self.addEventListener('notificationclick', e => {
   e.notification.close();
   const url = e.notification.data?.url || './crm-whatsapp.html';
