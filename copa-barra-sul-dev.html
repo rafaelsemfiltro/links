@@ -163,6 +163,28 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1a4a00;border:1.5px solid var(--green);color:#fff;padding:12px 22px;border-radius:30px;font-size:14px;font-weight:bold;z-index:300;transition:transform .3s;max-width:90vw;text-align:center;pointer-events:none}
 .toast.show{transform:translateX(-50%) translateY(0)}
+/* TIMES */
+.times-open-btn{width:100%;padding:12px;background:linear-gradient(135deg,#1a3a6c,#2980b9);border:none;color:#fff;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:14px;letter-spacing:.5px}
+#timesView{padding:14px;display:none}
+.times-head{text-align:center;margin-bottom:18px}
+.times-head h2{color:var(--gold);font-size:20px}
+.times-head p{color:var(--muted);font-size:13px;margin-top:4px}
+.time-card{background:var(--card);border:2px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden}
+.time-card.pos1{border-color:#FFD700}
+.time-card.pos2{border-color:#C0C0C0}
+.time-card.pos3{border-color:#CD7F32}
+.time-row{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.time-row:active{opacity:.8}
+.time-medal{font-size:26px;width:32px;text-align:center;flex-shrink:0}
+.time-nome{flex:1;font-size:17px;font-weight:bold}
+.time-score{font-size:22px;font-weight:bold;color:var(--gold);flex-shrink:0}
+.time-detail{border-top:1px solid var(--border);padding:12px;display:none}
+.time-members-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.time-member{display:flex;flex-direction:column;align-items:center;gap:5px;background:var(--bg2);border-radius:10px;padding:8px 4px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.time-member:active{opacity:.8}
+.time-member-foto{width:46px;height:46px;border-radius:50%;background-size:cover;background-position:center top;background-color:#0a2005;border:2px solid var(--border)}
+.time-member-nome{font-size:11px;color:var(--text);text-align:center;font-weight:bold;line-height:1.2}
+.time-member-gols{font-size:12px;color:var(--gold);font-weight:bold}
 </style>
 </head>
 <body>
@@ -174,11 +196,13 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
 <div id="homeView">
   <div class="home-title">&#127942; COPA BARRA SUL</div>
   <button class="rank-open-btn" onclick="openRanking()">&#127942; Ranking Goleadores</button>
+  <button class="times-open-btn" onclick="openTimes()">&#9917; Ranking por Times</button>
   <div id="grid"></div>
 </div>
 <div id="albumView"></div>
 <div id="managerView"></div>
 <div id="rankingView" style="display:none"></div>
+<div id="timesView" style="display:none"></div>
 <!-- Password modal -->
 <div id="pwModal" class="modal">
   <div class="modal-box">
@@ -290,6 +314,14 @@ const PUNICOES=[
   {id:"amarelo",nome:"Cartão Amarelo",gols:-2,emoji:"🟡",desc:"Chegou atrasado ao treino"},
   {id:"nao_comp",nome:"Não Compareceu",gols:-5,emoji:"🔴",desc:"Não compareceu ao estádio"}
 ];
+const TIMES=[
+  {id:"bc",nome:"BC",cor:"#e74c3c",members:["kaic","milena","rafaela","lion","daniel","simone"]},
+  {id:"costao",nome:"Costão",cor:"#3498db",members:["samuel","brenda","ariana","edu","daniel_bbk","jayme","jonas"]},
+  {id:"estaleirinho",nome:"Estaleirinho",cor:"#27ae60",members:["priscila","gabriel","helenice","isabella","moatez","taylor"]},
+  {id:"multiparque",nome:"Multiparque",cor:"#f39c12",members:["luciana","rafael","bianca","ed","joana","raquel","ricardo"]},
+];
+const TIMES_INI='2026-07-01T00:00:00';
+const TIMES_FIM='2026-07-31T23:59:59';
 const KEY="copa_barra_sul_dev";
 const PASS="copa2024";
 const GIST_ID="57730e0e84c2e99a25f4a8a8bdeff934";
@@ -402,14 +434,17 @@ function showView(v){
   document.getElementById('albumView').style.display=v==='album'?'block':'none';
   document.getElementById('managerView').style.display=v==='manager'?'block':'none';
   document.getElementById('rankingView').style.display=v==='ranking'?'block':'none';
+  document.getElementById('timesView').style.display=v==='times'?'block':'none';
   const back=document.getElementById('backBtn');
   if(v==='home') back.classList.remove('visible'); else back.classList.add('visible');
 }
 function goBack(){
   const rv=document.getElementById('rankingView');
   const av=document.getElementById('albumView');
+  const tv=document.getElementById('timesView');
   if(rv&&rv.style.display!=='none'){showView('home');return;}
   if(av&&av.style.display!=='none'){showView('home');return;}
+  if(tv&&tv.style.display!=='none'){showView('home');return;}
   showView('home');
 }
 
@@ -827,6 +862,61 @@ function renderRankingView(){
     `<div class="rank-head"><h2>🏆 Ranking Goleadores</h2><p>${sub}</p></div>`+
     `<div class="rank-tabs">${tabs}</div>`+listHtml;
   showView('ranking');
+}
+
+// === TIMES ===
+function getTimesData(){
+  const ini=new Date(TIMES_INI);
+  const fim=new Date(TIMES_FIM);
+  return TIMES.map(time=>{
+    let totalGols=0;
+    const membersData=[];
+    for(const memberId of time.members){
+      const col=getCol(memberId);
+      const sd=getSeed(memberId);
+      if(!col||!sd) continue;
+      const figs=col.fig.filter(f=>{const d=new Date(f.dt);return d>=ini&&d<=fim;});
+      const gF=figs.reduce((s,f)=>{const st=STICKERS.find(x=>x.id===f.sid);return s+(st?st.gols:0);},0);
+      const gP=col.pun.filter(p=>{const d=new Date(p.dt);return d>=ini&&d<=fim;}).reduce((s,p)=>{const pu=PUNICOES.find(x=>x.id===p.pid);return s+(pu?pu.gols:0);},0);
+      const gols=gF+gP;
+      totalGols+=gols;
+      membersData.push({id:memberId,nome:sd.nome,fk:sd.fk,gols});
+    }
+    return{...time,totalGols,membersData};
+  }).sort((a,b)=>b.totalGols-a.totalGols);
+}
+function openTimes(){renderTimesView();}
+function toggleTimeDetail(id){
+  const el=document.getElementById('tdetail-'+id);
+  if(el) el.style.display=el.style.display==='none'?'block':'none';
+}
+function renderTimesView(){
+  const data=getTimesData();
+  let html=`<div class="times-head"><h2>⚽ Ranking por Times</h2><p>01/07 a 31/07</p></div>`;
+  data.forEach((time,i)=>{
+    const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
+    const cls=i===0?'pos1':i===1?'pos2':i===2?'pos3':'';
+    const sortedMembers=[...time.membersData].sort((a,b)=>b.gols-a.gols);
+    html+=`<div class="time-card ${cls}">`;
+    html+=`<div class="time-row" onclick="toggleTimeDetail('${time.id}')">`;
+    html+=`<div class="time-medal">${medal}</div>`;
+    html+=`<div class="time-nome" style="color:${time.cor}">${time.nome}</div>`;
+    html+=`<div class="time-score">${time.totalGols} ⚽</div>`;
+    html+=`</div>`;
+    html+=`<div class="time-detail" id="tdetail-${time.id}">`;
+    html+=`<div class="time-members-grid">`;
+    for(const m of sortedMembers){
+      const foto=IMGS[m.fk]||'';
+      html+=`<div class="time-member" onclick="openAlbum('${m.id}')">`;
+      html+=`<div class="time-member-foto" style="background-image:url('${foto}')"></div>`;
+      html+=`<div class="time-member-nome">${m.nome}</div>`;
+      html+=`<div class="time-member-gols">${m.gols} ⚽</div>`;
+      html+=`</div>`;
+    }
+    html+=`</div></div></div>`;
+  });
+  document.getElementById('timesView').innerHTML=html;
+  showView('times');
 }
 
 // INIT
