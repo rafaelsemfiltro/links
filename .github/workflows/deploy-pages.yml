@@ -22,10 +22,21 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
+      - name: Prepare minimal pages output
+        run: |
+          mkdir _pages_out
+          cp copa-barra-sul-dev.html _pages_out/
+          cp copa-barra-sul.html _pages_out/
+          cp .nojekyll _pages_out/
+          cp index.html _pages_out/ 2>/dev/null || true
+          cp crm-whatsapp.html _pages_out/ 2>/dev/null || true
+          cp manifest.json _pages_out/ 2>/dev/null || true
+          cp icon.svg _pages_out/ 2>/dev/null || true
+          cp sw.js _pages_out/ 2>/dev/null || true
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: '_pages_out'
 
   deploy:
     environment:
