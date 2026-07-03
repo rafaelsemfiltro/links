@@ -124,6 +124,11 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
 .corr-gols.minus{color:var(--red)}
 .corr-del{background:#3a0000;border:1px solid #7a0000;color:#ff6b6b;width:28px;height:28px;border-radius:6px;font-size:14px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:bold}
 .corr-del:active{background:#5a0000}
+.corr-edit{background:#003a2a;border:1px solid #007a55;color:#4fc3a1;width:28px;height:28px;border-radius:6px;font-size:13px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.corr-edit:active{background:#005a3a}
+.date-edit-input{flex:1;background:var(--bg2);border:1px solid #27ae60;border-radius:6px;color:var(--text);font-size:12px;padding:4px 6px;min-width:0}
+.corr-save{background:#003a00;border:1px solid #007a00;color:#4fc34f;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;flex-shrink:0}
+.corr-cancel{background:#3a0000;border:1px solid #7a0000;color:#ff6b6b;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;flex-shrink:0}
 .corr-empty{color:var(--muted);font-size:13px;text-align:center;padding:16px;font-style:italic}
 
 /* CARTA PICKER */
@@ -659,7 +664,7 @@ function renderManager(){
     `<button class="btn-d" onclick="aplicarPun()">🚨 Aplicar Punição</button></div>`+
     `<div class="mgr-card"><h3>🏅 Ranking Geral</h3><div id="rankDiv"></div></div>`+
     `<div class="mgr-card mgr-card-danger"><h3>🗑️ Corrigir Erro</h3>`+
-    `<p class="corr-hint">Selecione o colaborador para ver e remover itens lançados por engano.</p>`+
+    `<p class="corr-hint">Selecione o colaborador para ver, corrigir a data (✏️) ou remover (✕) itens lançados por engano.</p>`+
     `<select id="mc3" onchange="renderCorrection()">${coOpts}</select>`+
     `<div id="corrList"></div></div>`+
     `<div class="mgr-card"><h3>💾 Backup Manual</h3>`+
@@ -704,15 +709,17 @@ function renderCorrection(){
       const gSign='+'+ev.gols;
       h+=`<div class="corr-item">`;
       h+=`<div class="corr-dot" style="background:${ev.cor}"></div>`;
-      h+=`<div class="corr-info"><span class="corr-label">📌 ${ev.label}</span><span class="corr-date">${dateStr}</span></div>`;
+      h+=`<div class="corr-info"><span class="corr-label">📌 ${ev.label}</span><span class="corr-date" id="corr-date-fig-${ev.idx}">${dateStr}</span></div>`;
       h+=`<span class="corr-gols plus">+${ev.gols}</span>`;
+      h+=`<button class="corr-edit" onclick="editDate('fig',${ev.idx},'${colId}')">✏️</button>`;
       h+=`<button class="corr-del" onclick="confirmRemove('fig',${ev.idx},'${colId}','${ev.label}')">✕</button>`;
       h+=`</div>`;
     } else {
       h+=`<div class="corr-item corr-item-pun">`;
       h+=`<div class="corr-dot" style="background:#c0392b"></div>`;
-      h+=`<div class="corr-info"><span class="corr-label">${ev.emoji} ${ev.label}</span><span class="corr-date">${dateStr}</span></div>`;
+      h+=`<div class="corr-info"><span class="corr-label">${ev.emoji} ${ev.label}</span><span class="corr-date" id="corr-date-pun-${ev.idx}">${dateStr}</span></div>`;
       h+=`<span class="corr-gols minus">${ev.gols}</span>`;
+      h+=`<button class="corr-edit" onclick="editDate('pun',${ev.idx},'${colId}')">✏️</button>`;
       h+=`<button class="corr-del" onclick="confirmRemove('pun',${ev.idx},'${colId}','${ev.label}')">✕</button>`;
       h+=`</div>`;
     }
@@ -731,6 +738,32 @@ async function confirmRemove(tipo,idx,colId,label){
   else col.pun.splice(idx,1);
   await save();
   toast(`🗑️ Item removido do álbum de ${sd?sd.nome:colId}`);
+  renderCorrection();
+  renderRanking();
+}
+
+function editDate(tipo,idx,colId){
+  const dateSpan=document.getElementById(`corr-date-${tipo}-${idx}`);
+  if(!dateSpan) return;
+  const col=getCol(colId);
+  if(!col) return;
+  const item=tipo==='fig'?col.fig[idx]:col.pun[idx];
+  if(!item) return;
+  const currentDate=item.dt?item.dt.substring(0,10):new Date().toISOString().substring(0,10);
+  const today=new Date().toISOString().substring(0,10);
+  dateSpan.outerHTML=`<input type="date" id="date-edit-${tipo}-${idx}" class="date-edit-input" value="${currentDate}" max="${today}"><button class="corr-save" onclick="saveDate('${tipo}',${idx},'${colId}')">✓</button><button class="corr-cancel" onclick="renderCorrection()">✗</button>`;
+}
+
+async function saveDate(tipo,idx,colId){
+  const inputEl=document.getElementById(`date-edit-${tipo}-${idx}`);
+  if(!inputEl||!inputEl.value){toast('⚠️ Selecione uma data');return;}
+  const col=getCol(colId);
+  if(!col) return;
+  const item=tipo==='fig'?col.fig[idx]:col.pun[idx];
+  if(!item) return;
+  item.dt=inputEl.value+'T12:00:00';
+  await save();
+  toast('✅ Data corrigida!');
   renderCorrection();
   renderRanking();
 }
