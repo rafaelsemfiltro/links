@@ -38,7 +38,7 @@ jobs:
           with urllib.request.urlopen(req) as resp:
               data = json.load(resp)
 
-          content = data['files']['copa-barra-sul.json']['content']
+          content = data['files']['copa-barra-sul-dev.json']['content']
           parsed = json.loads(content)
 
           # Salva backup formatado
