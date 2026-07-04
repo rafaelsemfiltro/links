@@ -321,6 +321,43 @@
   </div>
 </div>
 
+<!-- Modal: Editar Cliente -->
+<div class="modal-overlay" id="edit-client-overlay" onclick="closeEditClientModal(event)">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✏️ Editar Cliente</div>
+    <input type="hidden" id="ec-id">
+    <div class="field">
+      <label>Nome do Cliente</label>
+      <input type="text" id="ec-name" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>WhatsApp (com DDD)</label>
+      <input type="tel" id="ec-phone" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Data da Venda</label>
+      <input type="date" id="ec-date">
+    </div>
+    <div class="field">
+      <label>Empreendimento Vendido</label>
+      <input type="text" id="ec-product" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Nome do 2º Contato</label>
+      <input type="text" id="ec-name2" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>WhatsApp do 2º Contato</label>
+      <input type="tel" id="ec-phone2" autocomplete="off">
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-done" style="flex:1;justify-content:center;" onclick="saveEditClient()">Salvar</button>
+      <button class="btn btn-skip" onclick="closeEditClientModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- Modal: Editar Template -->
 <div class="modal-overlay" id="tpl-overlay" onclick="closeTplModal(event)">
   <div class="modal">
@@ -646,14 +683,13 @@ function renderMediaBlock(url, cid, key, showCopy) {
   return `
     <div class="media-block">
       <div class="media-block-label">${mediaIcon(t)} ${mediaLabel(t)}</div>
-      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}
-      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
+      ${t==='image'?`<img class="media-img" src="${esc(url)}" onerror="this.style.display='none'" alt="mídia">`:''}      <div class="media-link-row"><span class="media-icon">${mediaIcon(t)}</span><span class="media-url-text">${esc(url)}</span></div>
       <div class="media-actions">
         <a href="${esc(url)}" target="_blank" class="btn btn-media" style="font-size:12px;padding:7px 12px;">Abrir</a>
         ${showCopy?`<button class="btn btn-copy" style="font-size:12px;padding:7px 12px;" onclick="copyMedia('${esc(url)}')">Copiar link</button>`:''}
       </div>
       ${showCopy?`<div style="font-size:11px;color:var(--text3);margin-top:6px;">✅ Link incluído automaticamente na mensagem.</div>`:''}
-    </div>`;
+    </div>`;  
 }
 
 function copyMedia(url) {
@@ -889,6 +925,7 @@ function openCustomer(id) {
         <div style="font-size:17px;font-weight:600;">${esc(c.name)}</div>
         <div style="font-size:13px;color:var(--text2);">${esc(c.phone)}</div>
       </div>
+      <button class="btn btn-edit" style="font-size:12px;padding:5px 10px;" onclick="openEditClientModal('${id}')">✏️ Editar</button>
     </div>
     ${c.phone2?`<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
       <div class="avatar" style="width:46px;height:46px;font-size:18px;">${initials(c.name2||'2')}</div>
@@ -914,6 +951,41 @@ function openCustomer(id) {
 function closeModal(e) {
   if(!e||e.target===document.getElementById('modal-overlay'))
     document.getElementById('modal-overlay').classList.remove('open');
+}
+
+// ─── Editar Cliente ───────────────────────────────────────────────
+function openEditClientModal(id) {
+  const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
+  document.getElementById('ec-id').value=id;
+  document.getElementById('ec-name').value=c.name||'';
+  document.getElementById('ec-phone').value=c.phone||'';
+  document.getElementById('ec-date').value=c.saleDate||'';
+  document.getElementById('ec-product').value=c.product||'';
+  document.getElementById('ec-name2').value=c.name2||'';
+  document.getElementById('ec-phone2').value=c.phone2||'';
+  document.getElementById('edit-client-overlay').classList.add('open');
+}
+function saveEditClient() {
+  const id=document.getElementById('ec-id').value;
+  const db=getDB(), c=db.find(x=>x.id===id); if(!c) return;
+  const name=document.getElementById('ec-name').value.trim();
+  const phone=document.getElementById('ec-phone').value.trim();
+  if(!name||!phone){ alert('Nome e telefone são obrigatórios.'); return; }
+  c.name    = name;
+  c.phone   = phone;
+  c.saleDate= document.getElementById('ec-date').value||c.saleDate;
+  c.product = document.getElementById('ec-product').value.trim();
+  c.name2   = document.getElementById('ec-name2').value.trim();
+  c.phone2  = document.getElementById('ec-phone2').value.trim();
+  saveDB(db);
+  closeEditClientModal();
+  openCustomer(id);
+  render();
+  showToast('Dados atualizados ✓');
+}
+function closeEditClientModal(e) {
+  if(!e||e.target===document.getElementById('edit-client-overlay'))
+    document.getElementById('edit-client-overlay').classList.remove('open');
 }
 
 // ─── Consolidação ─────────────────────────────────────────────────
