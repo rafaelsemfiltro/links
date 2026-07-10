@@ -174,6 +174,7 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
 .toast.show{transform:translateX(-50%) translateY(0)}
 /* TIMES */
 .times-open-btn{width:100%;padding:12px;background:linear-gradient(135deg,#1a3a6c,#2980b9);border:none;color:#fff;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:14px;letter-spacing:.5px}
+.vgv-open-btn{width:100%;padding:12px;background:linear-gradient(135deg,#5c3a00,#b8860b);border:none;color:#fff;border-radius:10px;font-size:15px;font-weight:bold;cursor:pointer;margin-bottom:14px;letter-spacing:.5px}
 #timesView{padding:14px;display:none}
 .times-head{text-align:center;margin-bottom:18px}
 .times-head h2{color:var(--gold);font-size:20px}
@@ -206,12 +207,14 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
   <div class="home-title">&#127942; COPA BARRA SUL</div>
   <button class="rank-open-btn" onclick="openRanking()">&#127942; Ranking Goleadores</button>
   <button class="times-open-btn" onclick="openTimes()">&#9917; Ranking por Times</button>
+  <button class="vgv-open-btn" onclick="openVGV()">&#128176; Ranking VGV</button>
   <div id="grid"></div>
 </div>
 <div id="albumView"></div>
 <div id="managerView"></div>
 <div id="rankingView" style="display:none"></div>
 <div id="timesView" style="display:none"></div>
+<div id="vgvView" style="display:none"></div>
 <!-- Password modal -->
 <div id="pwModal" class="modal">
   <div class="modal-box">
@@ -443,6 +446,7 @@ function showView(v){
   document.getElementById('managerView').style.display=v==='manager'?'block':'none';
   document.getElementById('rankingView').style.display=v==='ranking'?'block':'none';
   document.getElementById('timesView').style.display=v==='times'?'block':'none';
+  document.getElementById('vgvView').style.display=v==='vgv'?'block':'none';
   const back=document.getElementById('backBtn');
   if(v==='home') back.classList.remove('visible'); else back.classList.add('visible');
 }
@@ -450,9 +454,11 @@ function goBack(){
   const rv=document.getElementById('rankingView');
   const av=document.getElementById('albumView');
   const tv=document.getElementById('timesView');
+  const vv=document.getElementById('vgvView');
   if(rv&&rv.style.display!=='none'){showView('home');return;}
   if(av&&av.style.display!=='none'){showView('home');return;}
   if(tv&&tv.style.display!=='none'){showView('home');return;}
+  if(vv&&vv.style.display!=='none'){showView('home');return;}
   showView('home');
 }
 
@@ -891,56 +897,31 @@ function getRankingData(period){
 }
 function renderRankingView(){
   const now=new Date();
-  const periods=[{id:'dia',label:'Hoje'},{id:'artilheiro',label:'Artilheiro'},{id:'mes',label:'Mês'},{id:'vgv',label:'VGV 💰'}];
+  const periods=[{id:'dia',label:'Hoje'},{id:'artilheiro',label:'Artilheiro'},{id:'mes',label:'Mês'}];
   const tabs=periods.map(p=>`<button class="rank-tab${rankPeriod===p.id?' active':''}" onclick="setRankPeriod('${p.id}')">${p.label}</button>`).join('');
   let sub='';
   if(rankPeriod==='dia') sub=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
   else if(rankPeriod==='artilheiro') sub='06/07 a 12/07';
-  else if(rankPeriod==='vgv') sub='Ranking de Valor de Vendas';
   else sub=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
+  const data=getRankingData(rankPeriod);
+  const vis=data.filter(r=>r.gols>0);
   let listHtml='';
-  if(rankPeriod==='vgv'){
-    const vgvData=STATE.cols.map(col=>{
-      const sd=getSeed(col.id);
-      return{id:col.id,nome:sd?sd.nome:col.id,fk:sd?sd.fk:'',total:totalVGV(col)};
-    }).sort((a,b)=>b.total-a.total).filter(r=>r.total>0);
-    if(!vgvData.length){
-      listHtml='<div class="rank-zero">Nenhum VGV lançado ainda</div>';
-    }else{
-      listHtml='<div class="rank-list">';
-      vgvData.forEach((r,i)=>{
-        const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
-        const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
-        const foto=IMGS[r.fk]||'';
-        listHtml+=`<div class="rank-row ${cls}">`;
-        listHtml+=`<div class="rank-medal">${medal}</div>`;
-        listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
-        listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
-        listHtml+=`<div class="rank-info-sub">R$ ${formatVGV(r.total)}</div></div>`;
-        listHtml+=`<div class="rank-score rank-score-vgv">R$ ${formatVGV(r.total)}</div></div>`;
-      });
-      listHtml+='</div>';
-    }
+  if(!vis.length){
+    listHtml='<div class="rank-zero">Nenhum gol registrado neste período</div>';
   }else{
-    const data=getRankingData(rankPeriod);
-    const vis=data.filter(r=>r.gols>0);
-    if(!vis.length){
-      listHtml='<div class="rank-zero">Nenhum gol registrado neste período</div>';
-    }else{
-      listHtml='<div class="rank-list">';
-      vis.forEach((r,i)=>{
-        const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
-        const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
-        const foto=IMGS[r.fk]||'';
-        listHtml+=`<div class="rank-row ${cls}" onclick="openAlbum('${r.id}')">`;
-        listHtml+=`<div class="rank-medal">${medal}</div>`;
-        listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
-        listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
-        listHtml+=`<div class="rank-info-sub">${r.figCount} figurinha${r.figCount!==1?'s':''}</div></div>`;
-        listHtml+=`<div class="rank-score">${r.gols}⚽</div></div>`;
-      });
-      listHtml+='</div>';
-    }
+    listHtml='<div class="rank-list">';
+    vis.forEach((r,i)=>{
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
+      const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+      const foto=IMGS[r.fk]||'';
+      listHtml+=`<div class="rank-row ${cls}" onclick="openAlbum('${r.id}')">`;
+      listHtml+=`<div class="rank-medal">${medal}</div>`;
+      listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
+      listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
+      listHtml+=`<div class="rank-info-sub">${r.figCount} figurinha${r.figCount!==1?'s':''}</div></div>`;
+      listHtml+=`<div class="rank-score">${r.gols}⚽</div></div>`;
+    });
+    listHtml+='</div>';
   }
   document.getElementById('rankingView').innerHTML=
     `<div class="rank-head"><h2>🏆 Ranking Goleadores</h2><p>${sub}</p></div>`+
@@ -968,6 +949,34 @@ function getTimesData(){
     }
     return{...time,totalGols,membersData};
   }).sort((a,b)=>b.totalGols-a.totalGols);
+}
+function openVGV(){renderVGVView();}
+function renderVGVView(){
+  const vgvData=STATE.cols.map(col=>{
+    const sd=getSeed(col.id);
+    return{id:col.id,nome:sd?sd.nome:col.id,fk:sd?sd.fk:'',total:totalVGV(col)};
+  }).sort((a,b)=>b.total-a.total).filter(r=>r.total>0);
+  let listHtml='';
+  if(!vgvData.length){
+    listHtml='<div class="rank-zero">Nenhum VGV lançado ainda</div>';
+  }else{
+    listHtml='<div class="rank-list">';
+    vgvData.forEach((r,i)=>{
+      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
+      const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+      const foto=IMGS[r.fk]||'';
+      listHtml+=`<div class="rank-row ${cls}">`;
+      listHtml+=`<div class="rank-medal">${medal}</div>`;
+      listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
+      listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
+      listHtml+=`<div class="rank-info-sub">acumulado</div></div>`;
+      listHtml+=`<div class="rank-score" style="font-size:12px;line-height:1.3">R$<br>${formatVGV(r.total)}</div></div>`;
+    });
+    listHtml+='</div>';
+  }
+  document.getElementById('vgvView').innerHTML=
+    `<div class="rank-head"><h2>💰 Ranking VGV</h2><p>Valor Geral de Vendas acumulado</p></div>`+listHtml;
+  showView('vgv');
 }
 function openTimes(){renderTimesView();}
 function toggleTimeDetail(id){
