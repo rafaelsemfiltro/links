@@ -130,6 +130,10 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
 .corr-save{background:#003a00;border:1px solid #007a00;color:#4fc34f;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;flex-shrink:0}
 .corr-cancel{background:#3a0000;border:1px solid #7a0000;color:#ff6b6b;width:28px;height:28px;border-radius:6px;font-size:16px;cursor:pointer;flex-shrink:0}
 .corr-empty{color:var(--muted);font-size:13px;text-align:center;padding:16px;font-style:italic}
+.vgv-input-wrap{display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin:10px 0}
+.vgv-prefix{color:var(--green);font-weight:bold;font-size:15px;flex-shrink:0}
+.vgv-input{flex:1;background:transparent;border:none;color:var(--text);font-size:16px;outline:none}
+.rank-score-vgv{font-size:12px;color:var(--green);text-align:right;line-height:1.2}
 
 /* CARTA PICKER */
 .carta-picker{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;max-height:360px;overflow-y:auto;padding:2px}
@@ -363,7 +367,8 @@ async function loadState(){
         const s=JSON.parse(raw);
         if(s&&Array.isArray(s.cols)&&s.cols.length){
           const ids=new Set(s.cols.map(c=>c.id));
-          for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[]});}
+          for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]});}
+          for(const c of s.cols){if(!c.vgv)c.vgv=[];}
           STATE=s;
           try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}
           hideLoader();
@@ -374,7 +379,7 @@ async function loadState(){
     }
   }catch(e){console.warn('Gist load failed:',e);}
   // 3. Fallback — fresh start from seed
-  STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[]}))};
+  STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]}))};
   hideLoader();
   startAutoRefresh();
 }
@@ -400,7 +405,7 @@ async function _refreshFromGist(){
     const s=JSON.parse(raw);
     if(!(s&&Array.isArray(s.cols)&&s.cols.length)) return;
     const ids=new Set(s.cols.map(c=>c.id));
-    for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[]});}
+    for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]});}
     STATE=s;
     try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}
     if(_curAlbumId&&document.getElementById('albumView').style.display!=='none') openAlbum(_curAlbumId);
@@ -413,6 +418,8 @@ function startAutoRefresh(){
   document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!loggedIn) _refreshFromGist();});
 }
 function getCol(id){return STATE.cols.find(c=>c.id===id);}
+function totalVGV(col){return(col.vgv||[]).reduce((s,v)=>s+v.valor,0);}
+function formatVGV(v){return v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});}
 function getSeed(id){return SEED.find(s=>s.id===id);}
 function totalGols(col){
   const g1=col.fig.reduce((s,f)=>{const st=STICKERS.find(x=>x.id===f.sid);return s+(st?st.gols:0);},0);
@@ -656,7 +663,7 @@ function renderManager(){
     `<select id="mc2">${coOpts}</select>`+
     `<select id="mp1">${puOpts}</select>`+
     `<button class="btn-d" onclick="aplicarPun()">🚨 Aplicar Punição</button></div>`+
-    `<div class="mgr-card"><h3>🏅 Ranking Geral</h3><div id="rankDiv"></div></div>`+
+    `<div class="mgr-card"><h3>💰 Lançar VGV</h3>`+`<p class="corr-hint">Selecione o colaborador e informe o valor da venda (R$).</p>`+`<select id="mc4">${coOpts}</select>`+`<div class="vgv-input-wrap"><span class="vgv-prefix">R$</span>`+`<input type="number" id="vgvVal" placeholder="0.00" min="0" step="0.01" class="vgv-input"></div>`+`<button class="btn-p" onclick="lancarVGV()">💰 Lançar VGV</button></div>`+`<div class="mgr-card"><h3>🏅 Ranking Geral</h3><div id="rankDiv"></div></div>`+
     `<div class="mgr-card mgr-card-danger"><h3>🗑️ Corrigir Erro</h3>`+
     `<p class="corr-hint">Selecione o colaborador para ver, corrigir a data (✏️) ou remover (✕) itens lançados por engano.</p>`+
     `<select id="mc3" onchange="renderCorrection()">${coOpts}</select>`+
@@ -775,6 +782,20 @@ function renderRanking(){
     `<span class="rank-gols">${r.gols} ⚽</span></div>`).join('');
 }
 
+async function lancarVGV(){
+  const colId=document.getElementById('mc4').value;
+  const val=parseFloat(document.getElementById('vgvVal').value);
+  if(!val||val<=0){toast('⚠️ Informe um valor válido');return;}
+  const col=getCol(colId);
+  if(!col){return;}
+  if(!col.vgv)col.vgv=[];
+  col.vgv.push({valor:val,dt:new Date().toISOString()});
+  await save();
+  const sd=getSeed(colId);
+  toast('✅ VGV R$ '+formatVGV(val)+' lançado para '+(sd?sd.nome:colId)+'!');
+  document.getElementById('vgvVal').value='';
+  renderRanking();
+}
 async function liberarFig(){
   const selected=[...document.querySelectorAll('.collab-chip.selected')].map(el=>el.dataset.id);
   if(!selected.length){toast('⚠️ Selecione ao menos um colaborador');return;}
@@ -870,31 +891,56 @@ function getRankingData(period){
 }
 function renderRankingView(){
   const now=new Date();
-  const periods=[{id:'dia',label:'Hoje'},{id:'artilheiro',label:'Artilheiro'},{id:'mes',label:'Mês'}];
+  const periods=[{id:'dia',label:'Hoje'},{id:'artilheiro',label:'Artilheiro'},{id:'mes',label:'Mês'},{id:'vgv',label:'VGV 💰'}];
   const tabs=periods.map(p=>`<button class="rank-tab${rankPeriod===p.id?' active':''}" onclick="setRankPeriod('${p.id}')">${p.label}</button>`).join('');
   let sub='';
   if(rankPeriod==='dia') sub=now.toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'});
   else if(rankPeriod==='artilheiro') sub='06/07 a 12/07';
+  else if(rankPeriod==='vgv') sub='Ranking de Valor de Vendas';
   else sub=now.toLocaleDateString('pt-BR',{month:'long',year:'numeric'});
-  const data=getRankingData(rankPeriod);
-  const vis=data.filter(r=>r.gols>0);
   let listHtml='';
-  if(!vis.length){
-    listHtml='<div class="rank-zero">Nenhum gol registrado neste período</div>';
+  if(rankPeriod==='vgv'){
+    const vgvData=STATE.cols.map(col=>{
+      const sd=getSeed(col.id);
+      return{id:col.id,nome:sd?sd.nome:col.id,fk:sd?sd.fk:'',total:totalVGV(col)};
+    }).sort((a,b)=>b.total-a.total).filter(r=>r.total>0);
+    if(!vgvData.length){
+      listHtml='<div class="rank-zero">Nenhum VGV lançado ainda</div>';
+    }else{
+      listHtml='<div class="rank-list">';
+      vgvData.forEach((r,i)=>{
+        const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
+        const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+        const foto=IMGS[r.fk]||'';
+        listHtml+=`<div class="rank-row ${cls}">`;
+        listHtml+=`<div class="rank-medal">${medal}</div>`;
+        listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
+        listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
+        listHtml+=`<div class="rank-info-sub">R$ ${formatVGV(r.total)}</div></div>`;
+        listHtml+=`<div class="rank-score rank-score-vgv">R$ ${formatVGV(r.total)}</div></div>`;
+      });
+      listHtml+='</div>';
+    }
   }else{
-    listHtml='<div class="rank-list">';
-    vis.forEach((r,i)=>{
-      const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
-      const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
-      const foto=IMGS[r.fk]||'';
-      listHtml+=`<div class="rank-row ${cls}" onclick="openAlbum('${r.id}')">`;
-      listHtml+=`<div class="rank-medal">${medal}</div>`;
-      listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
-      listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
-      listHtml+=`<div class="rank-info-sub">${r.figCount} figurinha${r.figCount!==1?'s':''}</div></div>`;
-      listHtml+=`<div class="rank-score">${r.gols}⚽</div></div>`;
-    });
-    listHtml+='</div>';
+    const data=getRankingData(rankPeriod);
+    const vis=data.filter(r=>r.gols>0);
+    if(!vis.length){
+      listHtml='<div class="rank-zero">Nenhum gol registrado neste período</div>';
+    }else{
+      listHtml='<div class="rank-list">';
+      vis.forEach((r,i)=>{
+        const medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}º`;
+        const cls=i===0?'top1':i===1?'top2':i===2?'top3':'';
+        const foto=IMGS[r.fk]||'';
+        listHtml+=`<div class="rank-row ${cls}" onclick="openAlbum('${r.id}')">`;
+        listHtml+=`<div class="rank-medal">${medal}</div>`;
+        listHtml+=`<div class="rank-avatar" style="background-image:url('${foto}')"></div>`;
+        listHtml+=`<div class="rank-info"><div class="rank-info-nome">${r.nome}</div>`;
+        listHtml+=`<div class="rank-info-sub">${r.figCount} figurinha${r.figCount!==1?'s':''}</div></div>`;
+        listHtml+=`<div class="rank-score">${r.gols}⚽</div></div>`;
+      });
+      listHtml+='</div>';
+    }
   }
   document.getElementById('rankingView').innerHTML=
     `<div class="rank-head"><h2>🏆 Ranking Goleadores</h2><p>${sub}</p></div>`+
@@ -962,7 +1008,7 @@ window.addEventListener('load',async()=>{
   const logoEl=document.getElementById('headerLogo');
   if(IMGS.logo){logoEl.src=IMGS.logo;const ll=document.getElementById('loaderLogoImg');if(ll)ll.src=IMGS.logo;}
   try{await loadState();}catch(e){
-    if(!STATE) STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[]}))};
+    if(!STATE) STATE={cols:SEED.map(sd=>({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]}))};
     hideLoader();
   }
   renderHome();
