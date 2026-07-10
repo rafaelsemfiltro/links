@@ -1,4 +1,4 @@
-const CACHE = 'crm-v5';
+const CACHE = 'crm-v6';
 const ASSETS = ['./crm-whatsapp.html', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {
