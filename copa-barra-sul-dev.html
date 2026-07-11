@@ -372,7 +372,7 @@ async function loadState(){
   }catch(e){}
   // 2. No local data — fetch from Gist (first-time collaborators)
   try{
-    const resp=await fetch(GIST_URL,{headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
+    const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
     if(resp.ok){
       const data=await resp.json();
       const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
@@ -410,7 +410,7 @@ async function save(){
 
 async function _refreshFromGist(){
   try{
-    const resp=await fetch(GIST_URL,{headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
+    const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
     if(!resp.ok) return;
     const data=await resp.json();
     const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
@@ -425,7 +425,7 @@ async function _refreshFromGist(){
     if(_curAlbumId&&document.getElementById('albumView').style.display!=='none') openAlbum(_curAlbumId);
     else if(document.getElementById('homeView').style.display!=='none') renderHome();
     _updateSyncBar();
-  }catch(e){}
+  }catch(e){_updateSyncBar();}
 }
 
 function _updateSyncBar(){
