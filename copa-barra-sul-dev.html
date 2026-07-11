@@ -428,6 +428,23 @@ async function _refreshFromGist(){
   }catch(e){}
 }
 
+function _updateSyncBar(){
+var el=document.getElementById('syncBar');
+if(!el)return;
+if(!_lastSync){
+el.textContent=(STATE&&STATE.cols&&STATE.cols.length)?'✓ Cache local · toque para atualizar':'↻ Verificando...';
+return;
+}
+var h=_lastSync.getHours().toString().padStart(2,'0');
+var m=_lastSync.getMinutes().toString().padStart(2,'0');
+el.textContent='✓ Atualizado às '+h+':'+m+' · toque para atualizar';
+}
+async function manualRefresh(){
+var el=document.getElementById('syncBar');
+if(el)el.textContent='↻ Atualizando...';
+await _refreshFromGist();
+if(!_lastSync)_updateSyncBar();
+}
 function startAutoRefresh(){
   setInterval(()=>{if(!loggedIn) _refreshFromGist();},60000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden) _refreshFromGist();});
