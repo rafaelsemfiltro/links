@@ -1054,6 +1054,14 @@ function renderTimesView(){
 
 // INIT
 window.addEventListener('load',async()=>{
+// Remove qualquer Service Worker que possa bloquear chamadas de API
+if('serviceWorker' in navigator){
+  const regs=await navigator.serviceWorker.getRegistrations();
+  if(regs.length){
+    await Promise.all(regs.map(r=>r.unregister()));
+    location.reload(); return;
+  }
+}
   const logoEl=document.getElementById('headerLogo');
   if(IMGS.logo){logoEl.src=IMGS.logo;const ll=document.getElementById('loaderLogoImg');if(ll)ll.src=IMGS.logo;}
   try{await loadState();}catch(e){
