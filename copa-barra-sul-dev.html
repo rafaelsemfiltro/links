@@ -411,7 +411,7 @@ async function save(){
 async function _refreshFromGist(){
   var sb=document.getElementById('syncBar');
   try{
-    const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'reload',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json','Cache-Control':'no-cache'}});
+    const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
     if(!resp.ok){if(sb)sb.textContent='⚠️ Erro HTTP '+resp.status+' · toque para tentar';return;}
     const data=await resp.json();
     const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
