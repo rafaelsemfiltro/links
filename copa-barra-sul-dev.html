@@ -409,14 +409,15 @@ async function save(){
 }
 
 async function _refreshFromGist(){
+  var sb=document.getElementById('syncBar');
   try{
-    const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
-    if(!resp.ok) return;
+    const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'reload',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json','Cache-Control':'no-cache'}});
+    if(!resp.ok){if(sb)sb.textContent='⚠️ Erro HTTP '+resp.status+' · toque para tentar';return;}
     const data=await resp.json();
     const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
-    if(!raw||raw.length<=10) return;
+    if(!raw||raw.length<=10){if(sb)sb.textContent='⚠️ Conteúdo vazio · toque para tentar';return;}
     const s=JSON.parse(raw);
-    if(!(s&&Array.isArray(s.cols)&&s.cols.length)) return;
+    if(!(s&&Array.isArray(s.cols)&&s.cols.length)){if(sb)sb.textContent='⚠️ Dados inválidos';return;}
     const ids=new Set(s.cols.map(c=>c.id));
     for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]});}
     STATE=s;
@@ -425,7 +426,7 @@ async function _refreshFromGist(){
     if(_curAlbumId&&document.getElementById('albumView').style.display!=='none') openAlbum(_curAlbumId);
     else if(document.getElementById('homeView').style.display!=='none') renderHome();
     _updateSyncBar();
-  }catch(e){_updateSyncBar();}
+  }catch(e){if(sb)sb.textContent='⚠️ Erro: '+e.message;}
 }
 
 function _updateSyncBar(){
