@@ -213,6 +213,7 @@ select{width:100%;padding:12px;background:#0d2508;border:1px solid var(--border)
   <button class="rank-open-btn" onclick="openRanking()">&#127942; Ranking Goleadores</button>
   <button class="times-open-btn" onclick="openTimes()">&#9917; Ranking por Times</button>
   <button class="vgv-open-btn" onclick="openVGV()">&#128176; Ranking VGV</button>
+  <div id="syncBar" onclick="manualRefresh()" style="text-align:center;font-size:12px;color:var(--muted);padding:4px 0 10px;cursor:pointer;user-select:none">&#8635; Verificando...</div>
   <div id="grid"></div>
 </div>
 <div id="albumView"></div>
@@ -342,7 +343,7 @@ const GIST_TOKEN=atob("Z2hwXzNQMllja3BiSGJuVDE4OEM=")+atob("d0pnemQ4NklMRm1rZTQx
 const GIST_FILE="copa-barra-sul-dev.json";
 const GIST_URL="https://api.github.com/gists/"+GIST_ID;
 
-let STATE=null,loggedIn=false,_curAlbumId=null;
+let STATE=null,loggedIn=false,_curAlbumId=null,_lastSync=null;
 
 function showLoader(msg){
   document.getElementById('loader').style.display='flex';
@@ -361,6 +362,7 @@ async function loadState(){
         STATE=s;
         hideLoader();
         startAutoRefresh();
+        _refreshFromGist();
         return;
       }
     }
@@ -415,15 +417,17 @@ async function _refreshFromGist(){
     const ids=new Set(s.cols.map(c=>c.id));
     for(const sd of SEED){if(!ids.has(sd.id)) s.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]});}
     STATE=s;
+    _lastSync=new Date();
     try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}
     if(_curAlbumId&&document.getElementById('albumView').style.display!=='none') openAlbum(_curAlbumId);
     else if(document.getElementById('homeView').style.display!=='none') renderHome();
+    _updateSyncBar();
   }catch(e){}
 }
 
 function startAutoRefresh(){
-  setInterval(()=>{if(!loggedIn) _refreshFromGist();},30000);
-  document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!loggedIn) _refreshFromGist();});
+  setInterval(()=>{if(!loggedIn) _refreshFromGist();},60000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden) _refreshFromGist();});
 }
 function getCol(id){return STATE.cols.find(c=>c.id===id);}
 function totalVGV(col){return(col.vgv||[]).reduce((s,v)=>s+v.valor,0);}
