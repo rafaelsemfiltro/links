@@ -412,7 +412,16 @@ async function _refreshFromGist(){
   var sb=document.getElementById('syncBar');
   try{
     const resp=await fetch(GIST_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+GIST_TOKEN,'Accept':'application/vnd.github+json'}});
-    if(!resp.ok){if(sb)sb.textContent='⚠️ Erro HTTP '+resp.status+' · toque para tentar';return;}
+    if(!resp.ok){
+      if(resp.status===401){
+        // Token expirado — tenta ler sem autenticação (gists são legíveis por ID)
+        try{
+          const r2=await fetch(GIST_URL+'?t='+Date.now(),{cache:'no-store',headers:{'Accept':'application/vnd.github+json'}});
+          if(r2.ok){const d2=await r2.json();var raw2=d2.files&&d2.files[GIST_FILE]&&d2.files[GIST_FILE].content;if(raw2&&raw2.length>10){const s2=JSON.parse(raw2);if(s2&&Array.isArray(s2.cols)&&s2.cols.length){const ids2=new Set(s2.cols.map(c=>c.id));for(const sd of SEED){if(!ids2.has(sd.id))s2.cols.push({id:sd.id,nome:sd.nome,fig:[],pun:[],vgv:[]});}STATE=s2;_lastSync=new Date();try{localStorage.setItem(KEY,JSON.stringify(STATE));}catch(e){}if(_curAlbumId&&document.getElementById('albumView').style.display!=='none')openAlbum(_curAlbumId);else if(document.getElementById('homeView').style.display!=='none')renderHome();if(sb)sb.textContent='⚠️ Token expirado — dados lidos sem auth';return;}}}
+        }catch(e2){}
+      }
+      if(sb)sb.textContent='⚠️ Erro HTTP '+resp.status+' · toque para tentar';return;
+    }
     const data=await resp.json();
     const raw=data.files&&data.files[GIST_FILE]&&data.files[GIST_FILE].content;
     if(!raw||raw.length<=10){if(sb)sb.textContent='⚠️ Conteúdo vazio · toque para tentar';return;}
