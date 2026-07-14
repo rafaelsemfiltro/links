@@ -1,0 +1,1236 @@
+{
+  "cols": [
+    {
+      "id": "luciana",
+      "nome": "Luciana",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-29T12:00:00"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-29T12:00:00"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-29T12:00:00"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-29T12:00:00"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-06-29T12:00:00"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-04T21:19:41.774Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-07-06T19:25:33.474Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-09T21:39:33.054Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-09T21:39:39.471Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-11T17:27:58.261Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-14T16:23:00.038Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 240000,
+          "dt": "2026-07-10T14:01:37.631Z"
+        },
+        {
+          "valor": 340000,
+          "dt": "2026-07-12T13:31:31.376Z"
+        }
+      ]
+    },
+    {
+      "id": "jeison",
+      "nome": "Jeison",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:06:34.143Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:08:23.937Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:12:20.668Z"
+        }
+      ],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "carol",
+      "nome": "Carol",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:12:20.668Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:14:24.200Z"
+        }
+      ],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "ed",
+      "nome": "Ed",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-26T15:35:01.606Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-03T20:41:39.208Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-04T21:19:41.774Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "nao_comp",
+          "dt": "2026-07-11T16:16:21.971Z"
+        }
+      ],
+      "vgv": []
+    },
+    {
+      "id": "rafael",
+      "nome": "Rafael",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:08:11.835Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:12:55.305Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-11T14:16:26.698Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-13T14:49:54.383Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-22T16:18:19.384Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-10T16:36:10.883Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-13T16:01:04.345Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-07-14T15:50:42.033Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 75000,
+          "dt": "2026-07-12T13:32:41.392Z"
+        }
+      ]
+    },
+    {
+      "id": "samuel",
+      "nome": "Samuel",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:11:26.250Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-11T14:13:12.854Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:13:36.720Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-12T17:50:44.992Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-13T16:44:00.475Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-13T18:52:02.413Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-19T16:51:53.820Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-25T17:00:09.806Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-26T16:42:45.525Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-26T17:41:30.544Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-26T17:41:38.160Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-28T20:46:20.752Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-05T16:39:55.579Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-07T21:29:44.691Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-14T16:25:07.836Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-14T18:05:54.752Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 175000,
+          "dt": "2026-07-10T14:02:48.284Z"
+        }
+      ]
+    },
+    {
+      "id": "priscila",
+      "nome": "Priscila",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:07:47.197Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:13:26.669Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-11T17:01:43.438Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-21T16:23:33.376Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-27T17:19:15.929Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-27T17:19:18.626Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-27T17:19:21.440Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-30T18:15:50.247Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-09T16:45:30.819Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-12T16:17:53.615Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-14T16:45:16.295Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-14T16:45:34.726Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-03T12:56:09.419Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 72000,
+          "dt": "2026-07-10T14:05:33.481Z"
+        }
+      ]
+    },
+    {
+      "id": "jonas",
+      "nome": "Jonas",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:08:39.307Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-11T14:16:51.181Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-18T16:29:44.890Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-19T15:55:18.957Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-30T16:34:56.914Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-09T13:37:35.712Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-09T16:45:30.819Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-14T16:23:00.039Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-10T13:34:41.450Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 172000,
+          "dt": "2026-07-10T13:58:15.043Z"
+        }
+      ]
+    },
+    {
+      "id": "raquel",
+      "nome": "Raquel",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:13:26.669Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-06-11T14:15:44.115Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T15:56:45.576Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-12T18:21:53.072Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-06-21T15:53:13.463Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-04T16:37:31.164Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-07T17:00:14.521Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-07-13T17:00:15.743Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 150000,
+          "dt": "2026-07-10T13:59:38.006Z"
+        }
+      ]
+    },
+    {
+      "id": "lion",
+      "nome": "Lion",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:14:49.753Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-22T18:00:46.359Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 95000,
+          "dt": "2026-07-10T14:04:53.209Z"
+        }
+      ]
+    },
+    {
+      "id": "simone",
+      "nome": "Simone",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:14:24.200Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-13T14:49:54.384Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-15T17:01:41.928Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-16T15:58:49.550Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-16T15:59:09.877Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-05T15:42:30.519Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-13T16:01:04.345Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 100000,
+          "dt": "2026-07-10T14:00:33.200Z"
+        }
+      ]
+    },
+    {
+      "id": "ariana",
+      "nome": "Ariana",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:08:39.307Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:14:12.432Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:16:03.286Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-26T18:51:26.831Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-04T16:37:31.165Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-09T13:37:35.712Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-14T16:19:43.152Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-03T15:16:56.270Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 180000,
+          "dt": "2026-07-10T14:01:54.306Z"
+        }
+      ]
+    },
+    {
+      "id": "ruan",
+      "nome": "Ruan",
+      "fig": [
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-11T14:11:07.480Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T16:24:55.590Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-21T16:50:41.622Z"
+        }
+      ],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "ricardo",
+      "nome": "Ricardo",
+      "fig": [
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-11T14:11:07.481Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-11T14:13:12.854Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:13:36.720Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T16:24:55.591Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-14T19:10:07.148Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-11T16:14:12.140Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-14T16:19:43.152Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-09T13:53:12.701Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 50000,
+          "dt": "2026-07-12T13:35:29.753Z"
+        }
+      ]
+    },
+    {
+      "id": "daniel_bbk",
+      "nome": "Daniel BBK",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:11:26.250Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-21T18:16:23.483Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-26T15:35:32.702Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-28T16:07:14.992Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-09T13:53:21.527Z"
+        }
+      ],
+      "vgv": []
+    },
+    {
+      "id": "jayme",
+      "nome": "Jayme",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:07:47.197Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:12:01.116Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:13:54.612Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-13T15:55:52.195Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-13T15:56:03.898Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-20T16:37:42.290Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-11T17:27:58.263Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-13T19:30:04.065Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-07-14T15:50:42.034Z"
+        }
+      ],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "bianca",
+      "nome": "Bianca",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:12:01.116Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-06-11T14:15:44.115Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-28T16:07:14.992Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-11T16:14:12.141Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-12T16:56:02.858Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-03T12:56:47.564Z"
+        },
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-10T13:34:55.407Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 50000,
+          "dt": "2026-07-12T13:34:11.935Z"
+        }
+      ]
+    },
+    {
+      "id": "kaic",
+      "nome": "Kaic",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:06:34.144Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:08:23.937Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:11:38.624Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:13:54.612Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-11T14:16:51.181Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-15T17:01:41.929Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-16T15:58:49.550Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-16T15:59:09.877Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-21T18:16:23.484Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-03T12:57:02.027Z"
+        }
+      ],
+      "vgv": []
+    },
+    {
+      "id": "brenda",
+      "nome": "Brenda",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:18:20.696Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-13T15:55:52.196Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-13T15:56:03.898Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-30T16:34:56.915Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-04T17:50:24.179Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-07-05T16:19:12.781Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-10T16:35:52.561Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 168000,
+          "dt": "2026-07-10T14:03:10.633Z"
+        }
+      ]
+    },
+    {
+      "id": "taylor",
+      "nome": "Taylor",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:16:03.286Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-26T18:51:26.831Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-28T16:07:01.663Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-04T17:50:00.249Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-07-05T16:19:12.783Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-12T16:06:45.553Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-13T15:57:59.360Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-03T12:56:54.266Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 110000,
+          "dt": "2026-07-10T13:59:56.937Z"
+        }
+      ]
+    },
+    {
+      "id": "thaysa",
+      "nome": "Thaysa",
+      "fig": [],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "daniel",
+      "nome": "Daniel",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:11:38.624Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-11T14:12:55.305Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:14:41.331Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-11T14:16:26.698Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-11T14:17:18.013Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:18:20.696Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-11T17:01:43.439Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-06-19T16:51:53.820Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-06-21T14:48:55.403Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-21T16:50:41.624Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-30T18:15:50.247Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-04T17:50:24.179Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-07-06T16:22:26.372Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-10T16:35:52.561Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-07-12T16:17:53.616Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 168000,
+          "dt": "2026-07-10T13:59:18.431Z"
+        },
+        {
+          "valor": 241000,
+          "dt": "2026-07-12T13:34:39.951Z"
+        }
+      ]
+    },
+    {
+      "id": "moatez",
+      "nome": "Moatez",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:15:09.966Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-11T14:17:47.753Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-21T16:23:33.378Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-21T17:49:38.932Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-27T17:19:15.929Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-27T17:19:18.626Z"
+        },
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-27T17:19:21.440Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-10T16:36:10.883Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-10T19:10:02.294Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-12T16:56:02.860Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-12T16:59:07.986Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-10T13:35:13.394Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 175000,
+          "dt": "2026-07-12T13:34:55.276Z"
+        }
+      ]
+    },
+    {
+      "id": "milena",
+      "nome": "Milena",
+      "fig": [
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:14:41.331Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T14:15:09.967Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-11T14:17:18.013Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-12T18:21:53.074Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-14T19:10:07.148Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-10T19:10:02.295Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-13T19:30:04.067Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 100000,
+          "dt": "2026-07-12T13:31:54.779Z"
+        }
+      ]
+    },
+    {
+      "id": "helenice",
+      "nome": "Helenice",
+      "fig": [
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-20T16:37:42.291Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-26T15:35:32.702Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-07T17:00:14.521Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 70000,
+          "dt": "2026-07-10T14:05:46.985Z"
+        }
+      ]
+    },
+    {
+      "id": "edu",
+      "nome": "Edu",
+      "fig": [
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-21T17:49:38.932Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-10T13:35:01.269Z"
+        }
+      ],
+      "vgv": []
+    },
+    {
+      "id": "joana",
+      "nome": "Joana",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-22T16:18:19.385Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-02T21:10:20.484Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-03T20:41:39.209Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-07-12T16:06:45.555Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-07-13T17:00:15.745Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 150000,
+          "dt": "2026-07-10T14:03:36.672Z"
+        }
+      ]
+    },
+    {
+      "id": "rafaela",
+      "nome": "Rafaela",
+      "fig": [
+        {
+          "sid": "master_inverno",
+          "dt": "2026-06-11T14:17:47.753Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-11T15:56:45.577Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-06-21T15:53:13.465Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-07-04T17:50:00.249Z"
+        },
+        {
+          "sid": "luxo_super_alta",
+          "dt": "2026-07-13T15:57:59.361Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-09T13:54:33.674Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 50000,
+          "dt": "2026-07-10T14:06:29.311Z"
+        }
+      ]
+    },
+    {
+      "id": "isabella",
+      "nome": "Isabella",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-19T15:55:18.957Z"
+        },
+        {
+          "sid": "master_verao",
+          "dt": "2026-06-28T16:07:01.663Z"
+        },
+        {
+          "sid": "luxo_alta",
+          "dt": "2026-07-06T16:22:26.372Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-12T17:42:28.516Z"
+        }
+      ],
+      "pun": [],
+      "vgv": [
+        {
+          "valor": 60000,
+          "dt": "2026-07-10T14:06:02.920Z"
+        }
+      ]
+    },
+    {
+      "id": "fernando",
+      "nome": "Fernando",
+      "fig": [
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-11T14:08:11.835Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-06-12T17:50:44.992Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-13T16:44:00.475Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-13T18:52:02.415Z"
+        }
+      ],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "matheus",
+      "nome": "Matheus",
+      "fig": [],
+      "pun": [],
+      "vgv": []
+    },
+    {
+      "id": "gabriel",
+      "nome": "Gabriel",
+      "fig": [
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-19T15:53:00.138Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-19T16:01:25.484Z"
+        },
+        {
+          "sid": "luxo_inverno",
+          "dt": "2026-06-19T16:01:32.008Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-19T16:01:38.142Z"
+        },
+        {
+          "sid": "luxo_media",
+          "dt": "2026-06-19T16:01:51.495Z"
+        },
+        {
+          "sid": "luxo_verao",
+          "dt": "2026-07-05T15:42:30.519Z"
+        }
+      ],
+      "pun": [
+        {
+          "pid": "amarelo",
+          "dt": "2026-07-12T13:36:43.331Z"
+        }
+      ],
+      "vgv": [
+        {
+          "valor": 100000,
+          "dt": "2026-07-10T14:04:14.000Z"
+        }
+      ]
+    }
+  ]
+}
