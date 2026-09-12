@@ -1,0 +1,9 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {applyOperation} from './sync.mjs';
+const original={clients:[{id:'a',name:'Ana',notes:'Original',sent:{d1:'2026-09-01'},skipped:{}},{id:'b',name:'Bruno'}],templates:{d1:{text:'Olá',media:'https://example.com'}}};
+test('different client changes preserve each other',()=>{let d=applyOperation(original,{kind:'patch',id:'a',patch:{name:'Ana Silva'}});d=applyOperation(d,{kind:'patch',id:'b',patch:{name:'Bruno Lima'}});assert.equal(d.clients[0].name,'Ana Silva');assert.equal(d.clients[1].name,'Bruno Lima');assert.equal(original.clients[0].name,'Ana');});
+test('different fields preserve concurrent updates',()=>{let d=applyOperation(original,{kind:'patch',id:'a',patch:{notes:'Changed'}});d=applyOperation(d,{kind:'patch',id:'a',patch:{name:'Ana Silva'}});assert.equal(d.clients[0].notes,'Changed');});
+test('stale edit never resurrects deleted client',()=>{let d=applyOperation(original,{kind:'delete',id:'a'});d=applyOperation(d,{kind:'patch',id:'a',patch:{name:'Old'}});assert.equal(d.clients.length,1);});
+test('retrying add is idempotent',()=>{const op={kind:'add',client:{id:'c',name:'Carla'}};const d=applyOperation(applyOperation(original,op),op);assert.equal(d.clients.length,3);});
+test('undo preserves unrelated followups',()=>{let d=applyOperation(original,{kind:'step',id:'a',key:'d7',state:'sent',date:'2026-09-11'});d=applyOperation(d,{kind:'step',id:'a',key:'d7',state:'undo'});assert.deepEqual(d.clients[0].sent,{d1:'2026-09-01'});});
+test('empty list is a valid snapshot',()=>assert.deepEqual(applyOperation({clients:[]},{kind:'delete',id:'x'}).clients,[]));
+test('template edit preserves media',()=>assert.equal(applyOperation(original,{kind:'template',id:'d1',patch:{text:'Hola'}}).templates.d1.media,'https://example.com'));
