@@ -400,9 +400,9 @@
       style="width:100%;background:#0f1c2e;border:1px solid #1e3352;border-radius:10px;color:#eef2f7;font-size:16px;padding:14px 16px;outline:none;text-align:center;letter-spacing:4px;font-family:inherit;"
       onkeydown="if(event.key==='Enter')unlock()">
     <button id="lock-btn" onclick="unlock()" style="width:100%;padding:14px;background:#4CC5B9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">Entrar</button>
-    <div id="lock-error" style="text-align:center;font-size:13px;color:#e05252;display:none;"></div>
-    <div id="lock-success" style="text-align:center;font-size:13px;color:#4CC5B9;display:none;"></div>
-    <button onclick="forgotPassword()" style="background:none;border:none;color:#7a9bbf;font-size:13px;cursor:pointer;font-family:inherit;padding:4px;text-decoration:underline;">Esqueci minha senha</button>
+    <div id="lock-error" role="alert" style="text-align:center;font-size:13px;color:#e05252;display:none;"></div>
+    <div id="lock-success" role="status" aria-live="polite" style="text-align:center;font-size:13px;color:#4CC5B9;display:none;"></div>
+    <button id="reset-btn" type="button" onclick="forgotPassword()" style="background:none;border:none;color:#7a9bbf;font-size:13px;cursor:pointer;font-family:inherit;padding:4px;text-decoration:underline;">Esqueci minha senha</button>
   </div>
 </div>
 
@@ -551,23 +551,54 @@ async function saveName() {
 }
 
 async function forgotPassword() {
-  const email  = document.getElementById('lock-email').value.trim();
-  const errEl  = document.getElementById('lock-error');
+  const emailEl = document.getElementById('lock-email');
+  const email = emailEl.value.trim();
+  const errEl = document.getElementById('lock-error');
   const succEl = document.getElementById('lock-success');
+  const btn = document.getElementById('reset-btn');
+  if (btn.disabled) return;
   errEl.style.display = 'none';
   succEl.style.display = 'none';
-  if (!email) {
-    errEl.textContent = 'Digite seu email primeiro';
+  emailEl.value = email;
+  if (!email || !emailEl.checkValidity()) {
+    errEl.textContent = 'Digite um email válido no campo acima.';
+    errEl.style.display = 'block';
+    emailEl.focus();
+    return;
+  }
+  if (!fbAuth) {
+    errEl.textContent = 'O serviço de acesso não carregou. Verifique sua conexão e recarregue a página.';
     errEl.style.display = 'block';
     return;
   }
+  btn.disabled = true;
+  btn.textContent = 'Solicitando redefinição...';
   try {
+    fbAuth.languageCode = 'pt-BR';
     await fbAuth.sendPasswordResetEmail(email);
-    succEl.textContent = 'Email enviado! Verifique sua caixa de entrada.';
+    succEl.textContent = 'Solicitação concluída. Se este email estiver cadastrado, você receberá um link para redefinir a senha. Confira também Spam e Lixo eletrônico.';
     succEl.style.display = 'block';
   } catch(e) {
-    errEl.textContent = 'Email não encontrado';
-    errEl.style.display = 'block';
+    const messages = {
+      'auth/invalid-email': 'O formato do email é inválido. Confira o endereço digitado.',
+      'auth/network-request-failed': 'Não foi possível conectar ao serviço. Verifique sua internet e tente novamente.',
+      'auth/too-many-requests': 'Muitas tentativas em pouco tempo. Aguarde alguns minutos antes de tentar novamente.',
+      'auth/operation-not-allowed': 'A recuperação por email está indisponível. O administrador precisa revisar o Firebase Authentication.',
+      'auth/invalid-api-key': 'A configuração de acesso do app é inválida. O administrador precisa revisar o Firebase.',
+      'auth/app-not-authorized': 'Este app não está autorizado no Firebase. O administrador precisa revisar a configuração.',
+      'auth/unauthorized-domain': 'Este domínio não está autorizado no Firebase. O administrador precisa revisar a configuração.'
+    };
+    if (e.code === 'auth/user-not-found') {
+      succEl.textContent = 'Solicitação concluída. Se este email estiver cadastrado, você receberá um link para redefinir a senha. Confira também Spam e Lixo eletrônico.';
+      succEl.style.display = 'block';
+    } else {
+      errEl.textContent = messages[e.code] || 'Não foi possível solicitar a redefinição. Tente novamente mais tarde.';
+      if (e.code) errEl.textContent += ' Código: ' + e.code + '.';
+      errEl.style.display = 'block';
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Esqueci minha senha';
   }
 }
 
